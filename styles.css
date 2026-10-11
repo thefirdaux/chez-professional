@@ -308,7 +308,7 @@ a { color: inherit; }
 
 /* ---------- Keratin ---------- */
 .keratin {
-  padding: 20px 0 122px;
+  padding: 20px 0 110px;
 }
 
 .keratin__title {
@@ -333,7 +333,7 @@ a { color: inherit; }
 
 .duo {
   position: relative;
-  margin-top: 12px;
+  margin-top: 10px;
   aspect-ratio: 402 / 341;
 }
 
@@ -362,7 +362,7 @@ a { color: inherit; }
 .duo__label--right { left: calc(75% - 0.5px); }
 
 .duo__brand { font-size: 8px; line-height: 10px; }
-.duo__name { font-size: 10px; line-height: 12px; }
+.duo__name { font-size: 10px; line-height: 12px; font-weight: 600; }
 
 .product-list {
   padding: 0 var(--gutter);
@@ -376,3 +376,61 @@ a { color: inherit; }
 }
 
 .product-list__item + .product-list__item { border-top: 1px solid var(--color-divider); }
+
+/* Keratin Spray */
+.spray__headline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 38px;
+  padding: 10px var(--gutter);
+  text-align: center;
+}
+
+.spray__product {
+  /* bounding box of the rotated product shot */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 141.111px;
+  height: 284.927px;
+  margin: 8px auto 0;
+}
+
+.spray__image {
+  flex: none;
+  width: 94.384px;
+  height: 272.527px;
+  transform: rotate(10.19deg);
+}
+
+.spray__copy {
+  margin-top: 23px;
+  padding: 0 var(--gutter);
+}
+
+.benefits {
+  display: flex;
+  gap: 8px;
+  margin-top: 44px;
+  padding: 0 var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+
+.benefits::-webkit-scrollbar { display: none; }
+
+.benefit-card {
+  flex: 0 0 177px;
+  height: 269px;
+  padding: 153px 10px 0; /* 154 / 11 minus the 1px border */
+  background: #fff;
+  border: 1px solid var(--color-divider);
+  border-radius: 16px;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.benefit-card:first-child { padding-top: 156px; }
