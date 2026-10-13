@@ -1,7 +1,7 @@
 (function () {
   var button = document.querySelector('.site-header__menu');
   var nav = document.getElementById('site-nav');
-  if (!button || !nav) return;
+  if (!button || !nav || button.disabled) return;
 
   function setOpen(open) {
     nav.hidden = !open;

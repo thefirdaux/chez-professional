@@ -169,6 +169,8 @@ a { color: inherit; }
   cursor: pointer;
 }
 
+.site-header__menu:disabled { cursor: default; }
+
 .site-header__menu::before {
   /* enlarge tap target to 44px */
   content: "";
