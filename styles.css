@@ -191,7 +191,7 @@ a { color: inherit; }
 
 /* ---------- Hero ---------- */
 .hero {
-  padding: 27px var(--gutter) 31px;
+  padding: 27px var(--gutter) 27px;
   text-align: center;
 }
 
@@ -225,13 +225,14 @@ a { color: inherit; }
 .btn--accent { background: var(--color-brown); }
 
 .hero__image {
-  margin: 77px 0 0 3px;
-  aspect-ratio: 367 / 306;
+  margin: 15px calc(-1 * var(--gutter)) 0;
+  aspect-ratio: 402 / 268;
 }
 
 /* ---------- Transformation ---------- */
 .transformation {
-  padding: 32px 0 53px;
+  margin-top: 36px;
+  padding-top: 32px;
 }
 
 .transformation__title { padding: 0 var(--gutter); }
@@ -267,48 +268,9 @@ a { color: inherit; }
   letter-spacing: -0.45px;
 }
 
-/* ---------- Hair Tonic ---------- */
-.tonic {
-  background: var(--color-bg);
-  text-align: center;
-}
-
-.tonic__hero { aspect-ratio: 402 / 538; }
-
-.tonic__intro {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 0 22px;
-}
-
-.tonic__subtitle {
-  margin-top: 32px;
-  padding: 0 var(--gutter);
-}
-
-.tonic__scalp {
-  width: calc(100% - 25px);
-  margin: 32px auto 0;
-  aspect-ratio: 377 / 473.595;
-  left: -0.5px;
-}
-
-.tonic__note {
-  margin-top: 26px;
-  padding: 0 var(--gutter);
-  font-weight: 500;
-}
-
-.tonic__placeholder {
-  height: 495px;
-  margin-top: 28px;
-  background: var(--color-placeholder);
-}
-
 /* ---------- Keratin ---------- */
 .keratin {
-  padding: 20px 0 110px;
+  padding: 20px 0 144px; /* 152 minus the benefit cards' shadow room */
 }
 
 .keratin__title {
@@ -316,10 +278,9 @@ a { color: inherit; }
   text-align: center;
 }
 
-.keratin__hero {
-  width: calc(100% - 2 * var(--gutter));
-  margin: 24px auto 0;
-  aspect-ratio: 370 / 509;
+.keratin__poster {
+  margin-top: 31px;
+  aspect-ratio: 402 / 302;
 }
 
 .keratin__headline {
@@ -333,38 +294,52 @@ a { color: inherit; }
 
 .duo {
   position: relative;
-  margin-top: 10px;
+  margin-top: -4px;
   aspect-ratio: 402 / 341;
+  overflow: hidden;
 }
 
 .duo__image {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 51.49%; /* 207 / 402 */
-  height: 79.18%; /* 270 / 341 */
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: calc(50% + 0.5px);
+  width: 56.47%; /* 227 / 402 */
+  height: 100%;
+  object-fit: cover;
+  transform: translateX(-50%);
 }
 
 .duo__label {
   position: absolute;
-  top: 50%;
-  z-index: 1;
+  top: 47.21%; /* 161 / 341 */
   display: flex;
   flex-direction: column;
-  width: 85px;
-  transform: translateY(-50%);
-  letter-spacing: 0.06px;
+  font-family: "Inter", var(--font);
+  line-height: normal;
   white-space: nowrap;
 }
 
-.duo__label--left { left: 10px; }
-.duo__label--right { left: calc(75% - 0.5px); }
+.duo__label--left { left: 4.23%; } /* 17 / 402 */
+.duo__label--right { left: 72.39%; } /* 291 / 402 */
 
-.duo__brand { font-size: 8px; line-height: 10px; }
-.duo__name { font-size: 10px; line-height: 12px; font-weight: 600; }
+.duo__brand,
+.duo__size { font-size: 8px; }
+.duo__name { font-size: 12px; font-weight: 600; }
+
+.keratin__buy {
+  display: flex;
+  justify-content: center;
+  margin-top: -10px;
+  padding: 0 var(--gutter);
+}
+
+.keratin__buy .btn {
+  position: relative;
+  flex: 0 1 271px;
+}
 
 .product-list {
+  margin-top: 40px;
   padding: 0 var(--gutter);
 }
 
@@ -382,55 +357,60 @@ a { color: inherit; }
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 38px;
-  padding: 10px var(--gutter);
+  margin-top: 47px;
+  padding: 0 var(--gutter);
   text-align: center;
 }
 
-.spray__product {
-  /* bounding box of the rotated product shot */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 141.111px;
-  height: 284.927px;
-  margin: 8px auto 0;
-}
-
 .spray__image {
-  flex: none;
-  width: 94.384px;
-  height: 272.527px;
-  transform: rotate(10.19deg);
+  width: 216px;
+  height: 323px;
+  margin: -15px auto 0;
+  object-fit: cover;
 }
 
 .spray__copy {
-  margin-top: 23px;
+  margin-top: 3px;
   padding: 0 var(--gutter);
 }
 
 .benefits {
   display: flex;
-  gap: 8px;
-  margin-top: 44px;
-  padding: 0 var(--gutter);
+  gap: 29px;
+  margin-top: 45px;
+  padding: 0 20px 8px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--gutter);
+  scroll-padding-inline: 20px;
   scrollbar-width: none;
 }
 
 .benefits::-webkit-scrollbar { display: none; }
 
 .benefit-card {
-  flex: 0 0 177px;
-  height: 269px;
-  padding: 153px 10px 0; /* 154 / 11 minus the 1px border */
-  background: #fff;
-  border: 1px solid var(--color-divider);
-  border-radius: 16px;
+  position: relative;
+  flex: 0 0 287px;
+  height: 312px;
+  border-radius: 32px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   scroll-snap-align: start;
 }
 
-.benefit-card:first-child { padding-top: 156px; }
+.benefit-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.benefit-card__text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  height: 98px;
+  padding: 6px 10px;
+  background: rgba(235, 214, 195, 0.71);
+}

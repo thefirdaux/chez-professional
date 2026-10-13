@@ -22,9 +22,8 @@
       </button>
       <nav class="site-nav" id="site-nav" hidden>
         <ul>
-          <li><a href="#transformation">Hair transformation</a></li>
-          <li><a href="#hair-tonic">Hair Tonic</a></li>
           <li><a href="#keratin">Keratin treatment</a></li>
+          <li><a href="#transformation">Hair transformation</a></li>
           <li><a href="#keratin-spray">Keratin Spray</a></li>
         </ul>
       </nav>
@@ -40,57 +39,15 @@
           <a class="btn btn--accent" href="#transformation">Discover our story</a>
         </div>
         <div class="crop hero__image">
-          <img src="assets/hero-products.png" alt="Chez Professional keratin shampoo, keratin mask, keratin spray and hair tonic" style="width:153.91%;height:123.08%;left:-28.26%;top:-12.14%">
+          <img class="cover" src="assets/hero-banner.png" alt="Chez Professional keratin shampoo, keratin mask, keratin spray and hair tonic">
         </div>
-      </section>
-
-      <!-- Hair transformation -->
-      <section class="transformation section--beige" id="transformation">
-        <h2 class="text-large-title transformation__title">Start your hair<br>transformation now<br>with our<br>professional hair<br>care routines.</h2>
-        <ul class="carousel" aria-label="Hair results">
-          <li class="carousel__item">
-            <div class="crop carousel__image">
-              <img src="assets/hair-strength.png" alt="Before and after: straight blonde hair, anti-breakage and strength" style="width:129.93%;height:100%;left:-14.97%;top:3.49%">
-            </div>
-            <p class="carousel__caption">Anti-breakage &amp;<br>strength.</p>
-          </li>
-          <li class="carousel__item">
-            <div class="crop carousel__image">
-              <img class="cover" src="assets/hair-curly.png" alt="Before and after: dark curly hair">
-            </div>
-            <p class="carousel__caption">Curly Hair.</p>
-          </li>
-          <li class="carousel__item">
-            <div class="crop carousel__image">
-              <img class="cover" src="assets/hair-frizz.png" alt="Before and after: frizz control">
-            </div>
-            <p class="carousel__caption">Frizz Control.</p>
-          </li>
-        </ul>
-      </section>
-
-      <!-- Hair Tonic -->
-      <section class="tonic" id="hair-tonic">
-        <div class="crop tonic__hero">
-          <img class="cover" src="assets/hair-tonic-hero.png" alt="Chez Professional Root Booster Hair Tonic surrounded by a golden splash">
-        </div>
-        <div class="tonic__intro">
-          <h2 class="text-large-title">Scalp Treatment and<br><span class="accent">Regenerate Hair<br>Growth</span></h2>
-          <p class="text-callout">Powered by ingredients like ginseng, biotin, and menthol to help nourish hair roots, invigorate the scalp, and support healthy hair growth.</p>
-        </div>
-        <h2 class="text-large-title tonic__subtitle">A cleaner scalp.<br><span class="accent">A Fresher You</span></h2>
-        <div class="crop tonic__scalp">
-          <img src="assets/healthy-scalp.png" alt="A comb parting healthy, clean hair at the scalp" style="width:100%;height:118.81%;left:0;top:-18.71%">
-        </div>
-        <p class="text-callout tonic__note">Powered by ingredients like ginseng, biotin, and menthol to help nourish hair roots, invigorate the scalp, and support healthy hair growth.</p>
-        <div class="tonic__placeholder" aria-hidden="true"></div>
       </section>
 
       <!-- Keratin -->
       <section class="keratin section--beige" id="keratin">
         <h2 class="text-large-title keratin__title">Salon-quality keratin.<br><span class="accent">Right at home.</span></h2>
-        <div class="crop keratin__hero">
-          <img src="assets/keratin-hero.png" alt="Keratin Treatment Shampoo, Keratin Treatment Mask and Leave-in Keratin Spray on display blocks" style="width:100%;height:130.36%;left:0;top:-24.68%">
+        <div class="crop keratin__poster">
+          <img class="cover" src="assets/keratin-poster.png" alt="Keratin Treatment Shampoo, Keratin Treatment Mask and Leave-in Keratin Spray on display blocks">
         </div>
 
         <div class="keratin__headline">
@@ -99,17 +56,21 @@
         </div>
 
         <div class="duo">
+          <img class="duo__image" src="assets/keratin-shampoo-mask.png" alt="Keratin Treatment Shampoo and Keratin Treatment Mask, 280ml each">
           <div class="duo__label duo__label--left">
-            <span class="duo__brand">Chez Professional</span>
-            <span class="duo__name">Keratin<br>Treatment<br>Shampoo</span>
-          </div>
-          <div class="crop duo__image">
-            <img src="assets/product-keratin-duo.png" alt="Keratin Treatment Shampoo and Keratin Treatment Mask" style="width:187.72%;height:115.19%;left:-43.4%;top:-9.19%">
+            <span class="duo__brand">CHEZ PROFESSIONAL</span>
+            <span class="duo__name">KERATIN<br>TREATMENT<br>SHAMPOO</span>
+            <span class="duo__size">280ml</span>
           </div>
           <div class="duo__label duo__label--right">
-            <span class="duo__brand">Chez Professional</span>
-            <span class="duo__name">Keratin<br>Treatment<br>Mask</span>
+            <span class="duo__brand">CHEZ PROFESSIONAL</span>
+            <span class="duo__name">KERATIN<br>TREATMENT<br>MASK</span>
+            <span class="duo__size">280ml</span>
           </div>
+        </div>
+
+        <div class="keratin__buy">
+          <a class="btn btn--dark" href="#">Buy this product</a>
         </div>
 
         <dl class="product-list">
@@ -123,22 +84,56 @@
           </div>
         </dl>
 
+        <!-- Hair transformation -->
+        <div class="transformation" id="transformation">
+          <h2 class="text-large-title transformation__title">Start your hair<br>transformation now<br>with our<br>professional hair<br>care routines.</h2>
+          <ul class="carousel" aria-label="Hair results">
+            <li class="carousel__item">
+              <div class="crop carousel__image">
+                <img src="assets/hair-strength.png" alt="Before and after: straight blonde hair, anti-breakage and strength" style="width:129.93%;height:100%;left:-14.97%;top:3.49%">
+              </div>
+              <p class="carousel__caption">Anti-breakage &amp;<br>strength.</p>
+            </li>
+            <li class="carousel__item">
+              <div class="crop carousel__image">
+                <img class="cover" src="assets/hair-curly.png" alt="Before and after: dark curly hair">
+              </div>
+              <p class="carousel__caption">Curly Hair.</p>
+            </li>
+            <li class="carousel__item">
+              <div class="crop carousel__image">
+                <img class="cover" src="assets/hair-frizz.png" alt="Before and after: frizz control">
+              </div>
+              <p class="carousel__caption">Frizz Control.</p>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Keratin Spray -->
         <div class="spray" id="keratin-spray">
           <div class="spray__headline">
             <p class="text-callout">Keratin Spray</p>
             <h3 class="text-title1">Smooth Hair.<br><span class="accent">Lasting Protection</span></h3>
           </div>
-          <div class="spray__product">
-            <div class="crop spray__image">
-              <img src="assets/keratin-spray.png" alt="Chez Professional Leave-in Keratin Spray" style="width:292.33%;height:135.59%;left:-106.36%;top:-27.18%">
-            </div>
-          </div>
+          <img class="spray__image" src="assets/keratin-spray-product.png" alt="Chez Professional Leave-in Keratin Spray, 120ml" width="216" height="323">
           <p class="spray__copy text-subheadline">Enhance hair manageability with lasting moisture, heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
           <ul class="benefits" aria-label="Keratin Spray benefits">
-            <li class="benefit-card text-subheadline">Provides better control and manageability for your hair.</li>
-            <li class="benefit-card text-subheadline">Provides extra moisture to your hair while protecting it from heat and harsh weather conditions.</li>
-            <li class="benefit-card text-subheadline">Protects your hair from the heat of hair dryers.</li>
-            <li class="benefit-card text-subheadline">Enriched with keratin protein to leave your hair healthier, softer, and smoother.</li>
+            <li class="benefit-card">
+              <img class="benefit-card__image" src="assets/benefit-control.jpg" alt="Woman blow-drying and brushing her hair">
+              <p class="benefit-card__text text-headline"><span>Provides better control and<br>manageability for your hair</span></p>
+            </li>
+            <li class="benefit-card">
+              <img class="benefit-card__image" src="assets/benefit-moisture.jpg" alt="Smooth, moisturized long hair">
+              <p class="benefit-card__text text-headline"><span>Provides extra moisture to your hair.</span></p>
+            </li>
+            <li class="benefit-card">
+              <img class="benefit-card__image" src="assets/benefit-heat.png" alt="Hair being styled with a heat tool">
+              <p class="benefit-card__text text-headline"><span>Protects your hair from the heat of hair dryers / iron</span></p>
+            </li>
+            <li class="benefit-card">
+              <img class="benefit-card__image" src="assets/benefit-keratin.jpg" alt="Healthy, soft and smooth hair">
+              <p class="benefit-card__text text-headline"><span>Enriched with keratin protein to leave your hair healthier, softer and smoother.</span></p>
+            </li>
           </ul>
         </div>
       </section>
