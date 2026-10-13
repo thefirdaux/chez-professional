@@ -280,7 +280,7 @@ a { color: inherit; }
 
 /* ---------- Keratin ---------- */
 .keratin {
-  padding: 20px 0 144px; /* 152 minus the benefit cards' shadow room */
+  padding: 20px 0 228px; /* 236 minus the benefit cards' shadow room */
 }
 
 .keratin__title {
@@ -423,4 +423,40 @@ a { color: inherit; }
   height: 98px;
   padding: 6px 10px;
   background: rgba(235, 214, 195, 0.71);
+}
+
+.benefit-card__text--auto {
+  height: auto;
+  padding: 14px 10px;
+}
+
+/* Hair Tonic */
+.tonic {
+  margin-top: 91px;
+  text-align: center;
+}
+
+.tonic__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 22px;
+}
+
+.tonic__hero {
+  margin-top: 16px;
+  aspect-ratio: 402 / 538;
+}
+
+.tonic__subtitle {
+  margin-top: 16px;
+  padding: 0 var(--gutter);
+}
+
+.tonic__cards {
+  margin-top: 47px;
+  padding-left: 18px;
+  padding-right: 18px;
+  scroll-padding-inline: 18px;
+  text-align: left;
 }
