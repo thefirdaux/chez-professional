@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=789f213e">
+  <link rel="stylesheet" href="styles.css?v=4a49a063">
 </head>
 <body>
   <div class="page">
@@ -117,7 +117,7 @@
           <p class="text-subheadline">SLS can strip away natural oils, leaving hair and scalp<br>feeling dry, while parabens are preservatives used to prevent bacterial and fungal growth in hair-care products. Our formula is free from both, offering an alternative for those who prefer a gentler cleansing experience without added parabens.</p>
         </div>
 
-        <ul class="shop shop--keratin" aria-label="Shop Keratin Shampoo and Mask">
+        <ul class="shop shop--keratin" id="shop-keratin" aria-label="Shop Keratin Shampoo and Mask">
             <li class="shop-card">
               <img class="shop-card__image" src="assets/products/shampoo-1.png" alt="One bottle of Keratin Treatment Shampoo" loading="lazy">
               <div class="shop-card__body">
@@ -128,7 +128,7 @@
                   </div>
                   <p class="shop-card__price">RM 42.90</p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="shampoo-1">Buy Now</button>
               </div>
             </li>
             <li class="shop-card">
@@ -141,7 +141,7 @@
                   </div>
                   <p class="shop-card__price shop-card__price--sale"><s>RM 128.70</s> <span>RM 120.00</span></p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="shampoo-3">Buy Now</button>
               </div>
             </li>
             <li class="shop-card">
@@ -154,7 +154,7 @@
                   </div>
                   <p class="shop-card__price">RM 42.90</p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="mask-1">Buy Now</button>
               </div>
             </li>
             <li class="shop-card">
@@ -167,7 +167,7 @@
                   </div>
                   <p class="shop-card__price shop-card__price--sale"><s>RM 128.70</s> <span>RM 120.00</span></p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="mask-3">Buy Now</button>
               </div>
             </li>
             <li class="shop-card shop-card--combo">
@@ -180,7 +180,7 @@
                   </div>
                   <p class="shop-card__price shop-card__price--sale"><s>RM 85.80</s> <span>RM 80.00</span></p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="shampoo-mask-combo">Buy Now</button>
               </div>
             </li>
         </ul>
@@ -223,7 +223,7 @@
                   </div>
                   <p class="shop-card__price">RM 39.90</p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="spray-1">Buy Now</button>
               </div>
             </li>
             <li class="shop-card">
@@ -236,7 +236,7 @@
                   </div>
                   <p class="shop-card__price shop-card__price--sale"><s>RM 119.70</s> <span>RM 110.00</span></p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="spray-3">Buy Now</button>
               </div>
             </li>
         </ul>
@@ -273,7 +273,7 @@
                   </div>
                   <p class="shop-card__price">RM 39.90</p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="tonic-1">Buy Now</button>
               </div>
             </li>
             <li class="shop-card">
@@ -286,7 +286,7 @@
                   </div>
                   <p class="shop-card__price shop-card__price--sale"><s>RM 119.70</s> <span>RM 110.00</span></p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="tonic-3">Buy Now</button>
               </div>
             </li>
             <li class="shop-card shop-card--combo">
@@ -299,7 +299,7 @@
                   </div>
                   <p class="shop-card__price shop-card__price--sale"><s>RM 79.80</s> <span>RM 70.00</span></p>
                 </div>
-                <button class="shop-card__buy" type="button">Buy Now</button>
+                <button class="shop-card__buy" type="button" data-product="spray-tonic-combo">Buy Now</button>
               </div>
             </li>
         </ul>
@@ -307,6 +307,30 @@
     </main>
   </div>
 
-  <script src="script.js?v=c88baefa"></script>
+  <!-- Product bottom sheet: filled in by script.js from the tapped card -->
+  <dialog class="sheet" id="product-sheet" aria-labelledby="sheet-title">
+    <div class="sheet__panel" tabindex="-1" autofocus>
+      <div class="sheet__grabber" aria-hidden="true"></div>
+      <button class="sheet__close" type="button" aria-label="Close">&times;</button>
+      <img class="sheet__image" src="" alt="">
+      <div class="sheet__summary">
+        <p class="section-eyebrow text-subheadline" data-field="eyebrow"></p>
+        <h2 class="text-title1" id="sheet-title" data-field="name"></h2>
+        <p class="sheet__size" data-field="size"></p>
+        <p class="sheet__price"><s data-field="was"></s><span data-field="price"></span></p>
+        <a class="sheet__pay" href="#">Pay Now</a>
+        <p class="sheet__note">Online payment opening soon.</p>
+        <p class="sheet__secure">Secure checkout by CHIP · FPX, DuitNow QR, e-wallets &amp; cards</p>
+      </div>
+      <div class="sheet__details">
+        <h3 class="text-headline">About this product</h3>
+        <p class="text-subheadline" data-field="description"></p>
+        <h3 class="text-headline">Highlights</h3>
+        <ul class="sheet__highlights text-subheadline" data-field="highlights"></ul>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=83ad6a96"></script>
 </body>
 </html>
