@@ -199,49 +199,114 @@ a { color: inherit; }
 
 .site-nav li + li a { border-top: 1px solid var(--color-divider); }
 
-/* ---------- Hero ---------- */
-.hero {
-  padding: 27px var(--gutter) 27px;
+/* ---------- Sections ---------- */
+/* Sections sit 4px apart so a thin white line separates them, as in the design */
+main > section + section { margin-top: 4px; }
+
+.section-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 36px var(--gutter) 0;
   text-align: center;
 }
 
-.hero__lead { margin-top: 11px; }
+.section-intro--eyebrow { gap: 8px; }
 
-.hero__actions {
+.section-title {
   display: flex;
-  gap: 8px;
-  margin-top: 26px;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0.8;
 }
 
-.btn {
-  flex: 1 1 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 56px;
-  padding: 10px 16px;
-  border-radius: 99px;
-  color: #fff;
-  font-size: 15px;
-  line-height: 20px;
-  letter-spacing: -0.23px;
-  text-decoration: none;
-  transition: filter 0.15s ease, transform 0.15s ease;
+.section-eyebrow {
+  padding: 4px 0;
+  opacity: 0.8;
 }
 
-.btn:active { transform: scale(0.98); }
-.btn:hover { filter: brightness(1.08); }
-.btn--dark { background: var(--color-brown-dark); }
-.btn--accent { background: var(--color-brown); }
+.section-intro--eyebrow .section-title { opacity: 0.8; }
+
+.section-copy {
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+/* ---------- Hero ---------- */
+.hero { padding-bottom: 38px; }
 
 .hero__image {
-  margin: 15px calc(-1 * var(--gutter)) 0;
+  margin-top: 16px;
   aspect-ratio: 402 / 268;
 }
 
-/* ---------- Transformation ---------- */
+/* ---------- Main product ---------- */
+.main-product { padding-bottom: 74px; }
+
+.main-product__poster {
+  margin-top: 37px;
+  aspect-ratio: 402 / 302;
+}
+
+/* ---------- Keratin Shampoo & Mask ---------- */
+.keratin { padding: 51px 0 64px; }
+
+.keratin__headline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+.duo {
+  position: relative;
+  margin-top: 10px;
+  aspect-ratio: 402 / 341;
+  overflow: hidden;
+}
+
+.duo__image {
+  position: absolute;
+  top: 0;
+  left: calc(50% + 0.5px);
+  width: 56.47%; /* 227 / 402 */
+  height: 100%;
+  object-fit: cover;
+  transform: translateX(-50%);
+}
+
+.duo__label {
+  position: absolute;
+  top: 47.21%; /* 161 / 341 */
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", var(--font);
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.duo__label--left { left: 4.23%; } /* 17 / 402 */
+.duo__label--right { left: 72.39%; } /* 291 / 402 */
+
+.duo__brand,
+.duo__size { font-size: 8px; }
+.duo__name { font-size: 12px; font-weight: 600; }
+
+.product-list { padding: 0 var(--gutter); }
+
+.product-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.product-list__item + .product-list__item { border-top: 1px solid var(--color-divider); }
+
+/* Hair transformation */
 .transformation {
-  margin-top: 36px;
+  margin-top: 24px;
   padding-top: 32px;
 }
 
@@ -278,117 +343,117 @@ a { color: inherit; }
   letter-spacing: -0.45px;
 }
 
-/* ---------- Keratin ---------- */
-.keratin {
-  padding: 20px 0 228px; /* 236 minus the benefit cards' shadow room */
-}
-
-.keratin__title {
+/* No SLS / No Paraben */
+.gentle {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
   padding: 0 var(--gutter);
-  text-align: center;
 }
 
-.keratin__poster {
-  margin-top: 31px;
-  aspect-ratio: 402 / 302;
+/* ---------- Shop cards ---------- */
+.shop {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 16px;
+  padding: 0 var(--gutter);
 }
 
-.keratin__headline {
+.shop--keratin {
+  margin-top: 62px;
+  row-gap: 35px;
+}
+
+.shop--keratin .shop-card--combo { margin-top: -10px; }
+
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shop-card--combo {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc((100% - 16px) / 2);
+}
+
+.shop-card__image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.shop-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.shop-card__details {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 68px;
-  padding: 0 var(--gutter);
-  text-align: center;
 }
 
-.duo {
-  position: relative;
-  margin-top: -4px;
-  aspect-ratio: 402 / 341;
-  overflow: hidden;
-}
-
-.duo__image {
-  position: absolute;
-  top: 0;
-  left: calc(50% + 0.5px);
-  width: 56.47%; /* 227 / 402 */
-  height: 100%;
-  object-fit: cover;
-  transform: translateX(-50%);
-}
-
-.duo__label {
-  position: absolute;
-  top: 47.21%; /* 161 / 341 */
+.shop-card__name {
   display: flex;
   flex-direction: column;
-  font-family: "Inter", var(--font);
-  line-height: normal;
+  gap: 4px;
+}
+
+.shop-card__name h4 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: -0.23px;
+}
+
+.shop-card__name p {
+  color: #757575;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.08px;
+}
+
+.shop-card__price {
+  display: flex;
+  flex-wrap: wrap; /* sale prices stack on narrow phones */
+  column-gap: 10px;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: -0.23px;
   white-space: nowrap;
 }
 
-.duo__label--left { left: 4.23%; } /* 17 / 402 */
-.duo__label--right { left: 72.39%; } /* 291 / 402 */
+.shop-card__price s { font-weight: 400; }
+.shop-card__price--sale span { color: #a81318; }
 
-.duo__brand,
-.duo__size { font-size: 8px; }
-.duo__name { font-size: 12px; font-weight: 600; }
-
-.keratin__buy {
-  display: flex;
-  justify-content: center;
-  margin-top: -10px;
-  padding: 0 var(--gutter);
+.shop-card__buy {
+  padding: 10px;
+  border: 0;
+  border-radius: 99px;
+  background: var(--color-brown);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: -0.23px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.keratin__buy .btn {
-  position: relative;
-  flex: 0 1 271px;
-}
+.shop-card__buy:hover { filter: brightness(1.08); }
+.shop-card__buy:active { transform: scale(0.98); }
 
-.product-list {
-  margin-top: 40px;
-  padding: 0 var(--gutter);
-}
-
-.product-list__item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px 0;
-}
-
-.product-list__item + .product-list__item { border-top: 1px solid var(--color-divider); }
-
-/* Keratin Spray */
-.spray__headline {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 47px;
-  padding: 0 var(--gutter);
-  text-align: center;
-}
-
-.spray__image {
-  width: 216px;
-  height: 323px;
-  margin: -15px auto 0;
-  object-fit: cover;
-}
-
-.spray__copy {
-  margin-top: 3px;
-  padding: 0 var(--gutter);
-}
-
+/* ---------- Benefit cards ---------- */
 .benefits {
   display: flex;
   gap: 29px;
-  margin-top: 45px;
-  padding: 0 20px 8px;
+  padding: 0 20px 8px; /* bottom room for the card shadow */
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-padding-inline: 20px;
@@ -430,33 +495,36 @@ a { color: inherit; }
   padding: 14px 10px;
 }
 
-/* Hair Tonic */
-.tonic {
-  margin-top: 91px;
-  text-align: center;
+/* ---------- Keratin Spray ---------- */
+.spray { padding-bottom: 54px; }
+
+.spray__image {
+  width: 274px;
+  height: 411px;
+  margin: 8px auto 0;
+  object-fit: cover;
+  opacity: 0.8;
 }
 
-.tonic__intro {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 0 22px;
+.spray .section-copy { margin-top: 8px; }
+.spray__benefits { margin-top: 32px; }
+.spray__shop { margin-top: 50px; }
+
+/* ---------- Hair Tonic ---------- */
+.tonic { padding-bottom: 70px; }
+
+.tonic__image {
+  margin-top: 13px;
+  aspect-ratio: 1;
 }
 
-.tonic__hero {
-  margin-top: 16px;
-  aspect-ratio: 402 / 538;
-}
+.tonic .section-copy { margin-top: 12px; }
 
-.tonic__subtitle {
-  margin-top: 16px;
-  padding: 0 var(--gutter);
-}
-
-.tonic__cards {
-  margin-top: 47px;
+.tonic__benefits {
+  margin-top: 34px;
   padding-left: 18px;
   padding-right: 18px;
   scroll-padding-inline: 18px;
-  text-align: left;
 }
+
+.tonic__shop { margin-top: 59px; }

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=5a5e6c6d">
+  <link rel="stylesheet" href="styles.css?v=789f213e">
 </head>
 <body>
   <div class="page">
@@ -34,27 +34,31 @@
     <main id="top">
       <!-- Hero -->
       <section class="hero section--beige">
-        <h1 class="text-large-title">Professional Haircare. Made for you</h1>
-        <p class="hero__lead text-subheadline">Discover your haircare essentials, from root care to keratin treatments, designed to complement your daily routine.</p>
-        <div class="hero__actions">
-          <a class="btn btn--dark" href="#keratin">Explore Our Products</a>
-          <a class="btn btn--accent" href="#transformation">Discover our story</a>
+        <div class="section-intro">
+          <h1 class="section-title text-title1"><span>Professional Haircare.</span> <span class="accent">Made for you.</span></h1>
+          <p class="text-callout">Discover your haircare essentials, from root care to keratin treatments, designed to complement your daily routine.</p>
         </div>
         <div class="crop hero__image">
           <img class="cover" src="assets/hero-banner.png" alt="Chez Professional keratin shampoo, keratin mask, keratin spray and hair tonic">
         </div>
       </section>
 
-      <!-- Keratin -->
-      <section class="keratin section--beige" id="keratin">
-        <h2 class="text-large-title keratin__title">Salon-quality keratin.<br><span class="accent">Right at home.</span></h2>
-        <div class="crop keratin__poster">
+      <!-- Main product -->
+      <section class="main-product section--beige" id="keratin">
+        <div class="section-intro">
+          <h2 class="section-title text-title1"><span>Salon-quality keratin.</span> <span class="accent">Right at home.</span></h2>
+          <p class="text-callout">Discover your haircare essentials, from root care to keratin treatments, designed to complement your daily routine.</p>
+        </div>
+        <div class="crop main-product__poster">
           <img class="cover" src="assets/keratin-poster.png" alt="Keratin Treatment Shampoo, Keratin Treatment Mask and Leave-in Keratin Spray on display blocks">
         </div>
+      </section>
 
+      <!-- Keratin Shampoo & Mask -->
+      <section class="keratin section--beige" id="keratin-shampoo-mask">
         <div class="keratin__headline">
-          <p class="text-callout">Keratin Treatment Shampoo &amp; Mask</p>
-          <h3 class="text-title1">Restore <span class="accent-olive">moisture</span>.<br>Strengthen every strand.</h3>
+          <p class="text-callout">KERATIN SHAMPOO &amp; MASK</p>
+          <h2 class="text-title1">Restore <span class="accent-olive">moisture</span>.<br>Strengthen every strand.</h2>
         </div>
 
         <div class="duo">
@@ -69,10 +73,6 @@
             <span class="duo__name">KERATIN<br>TREATMENT<br>MASK</span>
             <span class="duo__size">280ml</span>
           </div>
-        </div>
-
-        <div class="keratin__buy">
-          <a class="btn btn--dark" href="#">Buy this product</a>
         </div>
 
         <dl class="product-list">
@@ -111,55 +111,198 @@
           </ul>
         </div>
 
-        <!-- Keratin Spray -->
-        <div class="spray" id="keratin-spray">
-          <div class="spray__headline">
-            <p class="text-callout">Keratin Spray</p>
-            <h3 class="text-title1">Smooth Hair.<br><span class="accent">Lasting Protection</span></h3>
-          </div>
-          <img class="spray__image" src="assets/keratin-spray-product.png" alt="Chez Professional Leave-in Keratin Spray, 120ml" width="216" height="323">
-          <p class="spray__copy text-subheadline">Enhance hair manageability with lasting moisture, heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
-          <ul class="benefits" aria-label="Keratin Spray benefits">
-            <li class="benefit-card">
-              <img class="benefit-card__image" src="assets/benefit-control.jpg" alt="Woman blow-drying and brushing her hair">
-              <p class="benefit-card__text text-headline"><span>Provides better control and<br>manageability for your hair</span></p>
-            </li>
-            <li class="benefit-card">
-              <img class="benefit-card__image" src="assets/benefit-moisture.jpg" alt="Smooth, moisturized long hair">
-              <p class="benefit-card__text text-headline"><span>Provides extra moisture to your hair.</span></p>
-            </li>
-            <li class="benefit-card">
-              <img class="benefit-card__image" src="assets/benefit-heat.png" alt="Hair being styled with a heat tool">
-              <p class="benefit-card__text text-headline"><span>Protects your hair from the heat of hair dryers / iron</span></p>
-            </li>
-            <li class="benefit-card">
-              <img class="benefit-card__image" src="assets/benefit-keratin.jpg" alt="Healthy, soft and smooth hair">
-              <p class="benefit-card__text text-headline"><span>Enriched with keratin protein to leave your hair healthier, softer and smoother.</span></p>
-            </li>
-          </ul>
+        <!-- No SLS / No Paraben -->
+        <div class="gentle">
+          <h2 class="text-large-title">No SLS.<br>No Paraben.<br>Gentle Hair Care</h2>
+          <p class="text-subheadline">SLS can strip away natural oils, leaving hair and scalp<br>feeling dry, while parabens are preservatives used to prevent bacterial and fungal growth in hair-care products. Our formula is free from both, offering an alternative for those who prefer a gentler cleansing experience without added parabens.</p>
         </div>
 
-        <!-- Hair Tonic -->
-        <div class="tonic" id="hair-tonic">
-          <div class="tonic__intro">
-            <h2 class="text-large-title">Scalp Treatment and<br><span class="accent">Regenerate Hair<br>Growth</span></h2>
-            <p class="text-callout">Powered by ingredients like ginseng, biotin, and menthol to help nourish hair roots, invigorate the scalp, and support healthy hair growth.</p>
-          </div>
-          <div class="crop tonic__hero">
-            <img class="cover" src="assets/hair-tonic-hero.png" alt="Chez Professional Root Soother Hair Tonic surrounded by a golden splash">
-          </div>
-          <h2 class="text-large-title tonic__subtitle">A cleaner scalp.<br><span class="accent">A Fresher You</span></h2>
-          <ul class="benefits tonic__cards" aria-label="Hair Tonic benefits">
-            <li class="benefit-card">
-              <img class="benefit-card__image" src="assets/tonic-card-ingredients.png" alt="A comb parting clean, healthy hair at the scalp">
-              <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Powered by ingredients like ginseng, biotin, menthol to help nourish hair roots, invigorate the scalp</span></p>
+        <ul class="shop shop--keratin" aria-label="Shop Keratin Shampoo and Mask">
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/shampoo-1.png" alt="One bottle of Keratin Treatment Shampoo" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Treatment Shampoo</h4>
+                    <p>280ml x 1 bottle</p>
+                  </div>
+                  <p class="shop-card__price">RM 42.90</p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
             </li>
-            <li class="benefit-card">
-              <img class="benefit-card__image" src="assets/tonic-card-hijab.jpg" alt="Woman in a hijab feeling fresh and confident">
-              <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Keep your scalp fresh and comfortable all day, even under your hijab. Feel refreshed and confident from the roots up.</span></p>
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/shampoo-3.png" alt="Three bottles of Keratin Treatment Shampoo" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Treatment Shampoo</h4>
+                    <p>280ml x 3 bottle</p>
+                  </div>
+                  <p class="shop-card__price shop-card__price--sale"><s>RM 128.70</s> <span>RM 120.00</span></p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
             </li>
-          </ul>
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/mask-1.png" alt="One bottle of Keratin Treatment Mask" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Treatment Mask</h4>
+                    <p>280ml x 1 bottle</p>
+                  </div>
+                  <p class="shop-card__price">RM 42.90</p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/mask-3.png" alt="Three bottles of Keratin Treatment Mask" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Treatment Mask</h4>
+                    <p>280ml x 3 bottle</p>
+                  </div>
+                  <p class="shop-card__price shop-card__price--sale"><s>RM 128.70</s> <span>RM 120.00</span></p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+            <li class="shop-card shop-card--combo">
+              <img class="shop-card__image" src="assets/products/shampoo-mask-combo.png" alt="Keratin Treatment Shampoo and Mask combo" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Treatment Shampoo + Mask (Combo)</h4>
+                    <p>280ml x 2 bottle</p>
+                  </div>
+                  <p class="shop-card__price shop-card__price--sale"><s>RM 85.80</s> <span>RM 80.00</span></p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+        </ul>
+      </section>
+
+      <!-- Keratin Spray -->
+      <section class="spray section--beige" id="keratin-spray">
+        <div class="section-intro section-intro--eyebrow">
+          <p class="section-eyebrow text-subheadline">KERATIN SPRAY</p>
+          <h2 class="section-title text-title1"><span>Smooth Hair</span> <span class="accent">Lasting Protection.</span></h2>
         </div>
+        <img class="spray__image" src="assets/keratin-spray-hero.png" alt="Chez Professional Leave-in Keratin Spray" width="274" height="411">
+        <p class="section-copy text-callout">Enhance hair manageability with lasting moisture,<br>heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
+        <ul class="benefits spray__benefits" aria-label="Keratin Spray benefits">
+          <li class="benefit-card">
+            <img class="benefit-card__image" src="assets/benefit-control.jpg" alt="Woman blow-drying and brushing her hair" loading="lazy">
+            <p class="benefit-card__text text-headline"><span>Provides better control and<br>manageability for your hair</span></p>
+          </li>
+          <li class="benefit-card">
+            <img class="benefit-card__image" src="assets/benefit-moisture.jpg" alt="Smooth, moisturized long hair" loading="lazy">
+            <p class="benefit-card__text text-headline"><span>Provides extra moisture to your hair.</span></p>
+          </li>
+          <li class="benefit-card">
+            <img class="benefit-card__image" src="assets/benefit-heat.png" alt="Hair being styled with a heat tool" loading="lazy">
+            <p class="benefit-card__text text-headline"><span>Protects your hair from the heat of hair dryers / iron</span></p>
+          </li>
+          <li class="benefit-card">
+            <img class="benefit-card__image" src="assets/benefit-keratin.jpg" alt="Healthy, soft and smooth hair" loading="lazy">
+            <p class="benefit-card__text text-headline"><span>Enriched with keratin protein to leave your hair healthier, softer and smoother.</span></p>
+          </li>
+        </ul>
+        <ul class="shop spray__shop" aria-label="Shop Keratin Spray">
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/spray-1.png" alt="One bottle of Keratin Spray Leave In" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Spray Leave In</h4>
+                    <p>135ml x 1 bottle</p>
+                  </div>
+                  <p class="shop-card__price">RM 39.90</p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/spray-3.png" alt="Three bottles of Keratin Spray Leave In" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Spray Leave In</h4>
+                    <p>135ml x 3 bottle</p>
+                  </div>
+                  <p class="shop-card__price shop-card__price--sale"><s>RM 119.70</s> <span>RM 110.00</span></p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+        </ul>
+      </section>
+
+      <!-- Hair Tonic -->
+      <section class="tonic section--beige" id="hair-tonic">
+        <div class="section-intro section-intro--eyebrow">
+          <p class="section-eyebrow text-subheadline">HAIR TONIC</p>
+          <h2 class="section-title text-title1"><span>Scalp Treatment and</span> <span class="accent">Regenerate Hair Growth</span></h2>
+        </div>
+        <div class="crop tonic__image">
+          <img class="cover" src="assets/hair-tonic-product.png" alt="Chez Professional Root Booster Hair Tonic">
+        </div>
+        <p class="section-copy text-callout">Enhance hair manageability with lasting moisture,<br>heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
+        <ul class="benefits tonic__benefits" aria-label="Hair Tonic benefits">
+          <li class="benefit-card">
+            <img class="benefit-card__image" src="assets/tonic-card-ingredients.png" alt="A comb parting clean, healthy hair at the scalp" loading="lazy">
+            <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Powered by ingredients like ginseng, biotin, menthol to help nourish hair roots, invigorate the scalp</span></p>
+          </li>
+          <li class="benefit-card">
+            <img class="benefit-card__image" src="assets/tonic-card-hijab.jpg" alt="Woman in a hijab feeling fresh and confident" loading="lazy">
+            <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Keep your scalp fresh and comfortable all day, even under your hijab. Feel refreshed and confident from the roots up.</span></p>
+          </li>
+        </ul>
+        <ul class="shop tonic__shop" aria-label="Shop Hair Tonic">
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/tonic-1.png" alt="One bottle of Root Booster Hair Tonic" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Root Booster Hair Tonic</h4>
+                    <p>135ml x 1 bottle</p>
+                  </div>
+                  <p class="shop-card__price">RM 39.90</p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+            <li class="shop-card">
+              <img class="shop-card__image" src="assets/products/tonic-3.png" alt="Three bottles of Root Booster Hair Tonic" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Root Booster Hair Tonic</h4>
+                    <p>135ml x 3 bottle</p>
+                  </div>
+                  <p class="shop-card__price shop-card__price--sale"><s>RM 119.70</s> <span>RM 110.00</span></p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+            <li class="shop-card shop-card--combo">
+              <img class="shop-card__image" src="assets/products/spray-tonic-combo.png" alt="Keratin Spray and Hair Tonic combo" loading="lazy">
+              <div class="shop-card__body">
+                <div class="shop-card__details">
+                  <div class="shop-card__name">
+                    <h4>Keratin Spray + Hair Tonic (Combo)</h4>
+                    <p>135ml x 2 bottle</p>
+                  </div>
+                  <p class="shop-card__price shop-card__price--sale"><s>RM 79.80</s> <span>RM 70.00</span></p>
+                </div>
+                <button class="shop-card__buy" type="button">Buy Now</button>
+              </div>
+            </li>
+        </ul>
       </section>
     </main>
   </div>
