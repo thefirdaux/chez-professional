@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=4a49a063">
+  <link rel="stylesheet" href="styles.css?v=068735ef">
 </head>
 <body>
   <div class="page">
@@ -17,6 +17,10 @@
       <a class="site-header__logo" href="#top" aria-label="Chez Professional home">
         <img src="assets/logo.png" alt="Chez Professional" width="98" height="39">
       </a>
+      <button class="site-header__cart" type="button" aria-label="Cart" aria-haspopup="dialog" aria-controls="cart-sheet">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9V6a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="site-header__cart-count" data-cart-count hidden>0</span>
+      </button>
       <!-- Menu temporarily disabled: remove the "disabled" attribute to turn it back on -->
       <button class="site-header__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav" disabled>
         <img src="assets/icon-menu.svg" alt="" width="24" height="24">
@@ -117,73 +121,7 @@
           <p class="text-subheadline">SLS can strip away natural oils, leaving hair and scalp<br>feeling dry, while parabens are preservatives used to prevent bacterial and fungal growth in hair-care products. Our formula is free from both, offering an alternative for those who prefer a gentler cleansing experience without added parabens.</p>
         </div>
 
-        <ul class="shop shop--keratin" id="shop-keratin" aria-label="Shop Keratin Shampoo and Mask">
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/shampoo-1.png" alt="One bottle of Keratin Treatment Shampoo" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Treatment Shampoo</h4>
-                    <p>280ml x 1 bottle</p>
-                  </div>
-                  <p class="shop-card__price">RM 42.90</p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="shampoo-1">Buy Now</button>
-              </div>
-            </li>
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/shampoo-3.png" alt="Three bottles of Keratin Treatment Shampoo" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Treatment Shampoo</h4>
-                    <p>280ml x 3 bottle</p>
-                  </div>
-                  <p class="shop-card__price shop-card__price--sale"><s>RM 128.70</s> <span>RM 120.00</span></p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="shampoo-3">Buy Now</button>
-              </div>
-            </li>
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/mask-1.png" alt="One bottle of Keratin Treatment Mask" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Treatment Mask</h4>
-                    <p>280ml x 1 bottle</p>
-                  </div>
-                  <p class="shop-card__price">RM 42.90</p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="mask-1">Buy Now</button>
-              </div>
-            </li>
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/mask-3.png" alt="Three bottles of Keratin Treatment Mask" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Treatment Mask</h4>
-                    <p>280ml x 3 bottle</p>
-                  </div>
-                  <p class="shop-card__price shop-card__price--sale"><s>RM 128.70</s> <span>RM 120.00</span></p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="mask-3">Buy Now</button>
-              </div>
-            </li>
-            <li class="shop-card shop-card--combo">
-              <img class="shop-card__image" src="assets/products/shampoo-mask-combo.png" alt="Keratin Treatment Shampoo and Mask combo" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Treatment Shampoo + Mask (Combo)</h4>
-                    <p>280ml x 2 bottle</p>
-                  </div>
-                  <p class="shop-card__price shop-card__price--sale"><s>RM 85.80</s> <span>RM 80.00</span></p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="shampoo-mask-combo">Buy Now</button>
-              </div>
-            </li>
-        </ul>
+        <ul class="shop shop--keratin" id="shop-keratin" data-shop="keratin" aria-label="Shop Keratin Shampoo and Mask"></ul>
       </section>
 
       <!-- Keratin Spray -->
@@ -212,34 +150,7 @@
             <p class="benefit-card__text text-headline"><span>Enriched with keratin protein to leave your hair healthier, softer and smoother.</span></p>
           </li>
         </ul>
-        <ul class="shop spray__shop" aria-label="Shop Keratin Spray">
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/spray-1.png" alt="One bottle of Keratin Spray Leave In" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Spray Leave In</h4>
-                    <p>135ml x 1 bottle</p>
-                  </div>
-                  <p class="shop-card__price">RM 39.90</p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="spray-1">Buy Now</button>
-              </div>
-            </li>
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/spray-3.png" alt="Three bottles of Keratin Spray Leave In" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Spray Leave In</h4>
-                    <p>135ml x 3 bottle</p>
-                  </div>
-                  <p class="shop-card__price shop-card__price--sale"><s>RM 119.70</s> <span>RM 110.00</span></p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="spray-3">Buy Now</button>
-              </div>
-            </li>
-        </ul>
+        <ul class="shop spray__shop" data-shop="spray" aria-label="Shop Keratin Spray"></ul>
       </section>
 
       <!-- Hair Tonic -->
@@ -262,47 +173,7 @@
             <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Keep your scalp fresh and comfortable all day, even under your hijab. Feel refreshed and confident from the roots up.</span></p>
           </li>
         </ul>
-        <ul class="shop tonic__shop" aria-label="Shop Hair Tonic">
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/tonic-1.png" alt="One bottle of Root Booster Hair Tonic" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Root Booster Hair Tonic</h4>
-                    <p>135ml x 1 bottle</p>
-                  </div>
-                  <p class="shop-card__price">RM 39.90</p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="tonic-1">Buy Now</button>
-              </div>
-            </li>
-            <li class="shop-card">
-              <img class="shop-card__image" src="assets/products/tonic-3.png" alt="Three bottles of Root Booster Hair Tonic" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Root Booster Hair Tonic</h4>
-                    <p>135ml x 3 bottle</p>
-                  </div>
-                  <p class="shop-card__price shop-card__price--sale"><s>RM 119.70</s> <span>RM 110.00</span></p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="tonic-3">Buy Now</button>
-              </div>
-            </li>
-            <li class="shop-card shop-card--combo">
-              <img class="shop-card__image" src="assets/products/spray-tonic-combo.png" alt="Keratin Spray and Hair Tonic combo" loading="lazy">
-              <div class="shop-card__body">
-                <div class="shop-card__details">
-                  <div class="shop-card__name">
-                    <h4>Keratin Spray + Hair Tonic (Combo)</h4>
-                    <p>135ml x 2 bottle</p>
-                  </div>
-                  <p class="shop-card__price shop-card__price--sale"><s>RM 79.80</s> <span>RM 75.00</span></p>
-                </div>
-                <button class="shop-card__buy" type="button" data-product="spray-tonic-combo">Buy Now</button>
-              </div>
-            </li>
-        </ul>
+        <ul class="shop tonic__shop" data-shop="tonic" aria-label="Shop Hair Tonic"></ul>
       </section>
     </main>
   </div>
@@ -318,8 +189,10 @@
         <h2 class="text-title1" id="sheet-title" data-field="name"></h2>
         <p class="sheet__size" data-field="size"></p>
         <p class="sheet__price"><s data-field="was"></s><span data-field="price"></span></p>
-        <a class="sheet__pay" href="#">Pay Now</a>
-        <p class="sheet__note">Online payment opening soon.</p>
+        <div class="sheet__actions">
+          <button class="sheet__add" type="button">Add to Cart</button>
+          <button class="sheet__buy" type="button">Buy Now</button>
+        </div>
         <p class="sheet__secure">Secure checkout by CHIP · FPX, DuitNow QR, e-wallets &amp; cards</p>
       </div>
       <div class="sheet__details">
@@ -331,6 +204,28 @@
     </div>
   </dialog>
 
-  <script src="script.js?v=83ad6a96"></script>
+  <!-- Cart sheet -->
+  <dialog class="sheet" id="cart-sheet" aria-labelledby="cart-title">
+    <div class="sheet__panel" tabindex="-1" autofocus>
+      <div class="sheet__grabber" aria-hidden="true"></div>
+      <button class="sheet__close" type="button" aria-label="Close">&times;</button>
+      <div class="cart">
+        <h2 class="text-title1" id="cart-title">Your Cart</h2>
+        <p class="cart__empty text-subheadline">Your cart is empty.</p>
+        <ul class="cart__items" data-cart-items></ul>
+        <div class="cart__footer">
+          <div class="cart__row cart__row--total"><span>Subtotal</span><span data-cart-subtotal></span></div>
+          <p class="cart__hint">Shipping is calculated at checkout.</p>
+          <a class="cart__checkout" href="checkout.html">Checkout</a>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="products.js?v=3188603c"></script>
+  <script src="cart.js?v=935cc6ec"></script>
+  <script src="script.js?v=a9a2e248"></script>
 </body>
 </html>

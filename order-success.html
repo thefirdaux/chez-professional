@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5ebe1">
+  <meta name="robots" content="noindex">
+  <title>Thank you — Chez Professional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=068735ef">
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="site-header__logo" href="index.html" aria-label="Chez Professional home">
+        <img src="assets/logo.png" alt="Chez Professional" width="98" height="39">
+      </a>
+    </header>
+
+    <main class="checkout section--beige">
+      <div class="success">
+        <div class="success__icon" aria-hidden="true">✓</div>
+        <h1 class="text-title1">Thank you!</h1>
+        <p class="text-callout">Your order has been received. We'll send your receipt and tracking number by email.</p>
+        <p class="checkout__demo" data-demo-notice hidden>
+          <strong>Demo order.</strong> Online payment is not connected yet, so no payment was taken and this order will not be shipped.
+        </p>
+      </div>
+
+      <section class="checkout__section" data-order hidden>
+        <h2 class="text-headline">Order <span data-order-number></span></h2>
+        <ul class="success__items" data-order-items></ul>
+        <div class="checkout__totals">
+          <div class="cart__row"><span>Subtotal</span><span data-order-subtotal></span></div>
+          <div class="cart__row"><span>Shipping</span><span data-order-shipping></span></div>
+          <div class="cart__row cart__row--total"><span>Total</span><span data-order-total></span></div>
+        </div>
+        <h2 class="text-headline">Shipping to</h2>
+        <p class="text-subheadline success__address" data-order-address></p>
+      </section>
+
+      <a class="cart__checkout success__home" href="index.html">Back to home</a>
+    </main>
+  </div>
+
+  <script src="products.js?v=3188603c"></script>
+  <script>
+    (function () {
+      var rm = window.CHEZ.formatRM;
+      var demo = new URLSearchParams(location.search).get('demo') === '1';
+      document.querySelector('[data-demo-notice]').hidden = !demo;
+
+      var order = null;
+      try { order = JSON.parse(sessionStorage.getItem('chez-last-order')); } catch (e) { /* none */ }
+      if (!order) return;
+
+      document.querySelector('[data-order]').hidden = false;
+      document.querySelector('[data-order-number]').textContent = order.number;
+      var list = document.querySelector('[data-order-items]');
+      order.items.forEach(function (item) {
+        var li = document.createElement('li');
+        li.className = 'cart__row';
+        var name = document.createElement('span');
+        name.textContent = item.qty + ' × ' + item.name + ' (' + item.size + ')';
+        var price = document.createElement('span');
+        price.textContent = rm(item.price * item.qty);
+        li.appendChild(name);
+        li.appendChild(price);
+        list.appendChild(li);
+      });
+      document.querySelector('[data-order-subtotal]').textContent = rm(order.subtotal);
+      document.querySelector('[data-order-shipping]').textContent = rm(order.shipping);
+      document.querySelector('[data-order-total]').textContent = rm(order.total);
+      var a = order.shipTo;
+      document.querySelector('[data-order-address]').textContent =
+        [a.name, a.phone, a.address1, a.address2, a.postcode + ' ' + a.city, a.state].filter(Boolean).join('\n');
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5ebe1">
+  <meta name="robots" content="noindex">
+  <title>Checkout — Chez Professional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=068735ef">
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="site-header__logo" href="index.html" aria-label="Chez Professional home">
+        <img src="assets/logo.png" alt="Chez Professional" width="98" height="39">
+      </a>
+    </header>
+
+    <main class="checkout section--beige">
+      <a class="checkout__back text-subheadline" href="index.html#shop-keratin">&lsaquo; Continue shopping</a>
+      <h1 class="text-title1 checkout__title">Checkout</h1>
+
+      <p class="checkout__demo" data-demo-notice hidden>
+        <strong>Demo mode.</strong> Online payment is not connected yet, so no payment will be taken.
+      </p>
+
+      <div class="checkout__empty" data-checkout-empty hidden>
+        <p class="text-subheadline">Your cart is empty.</p>
+        <a class="cart__checkout" href="index.html#shop-keratin">Shop products</a>
+      </div>
+
+      <form class="checkout__form" data-checkout-form novalidate>
+        <section class="checkout__section">
+          <h2 class="text-headline">Order summary</h2>
+          <ul class="cart__items" data-cart-items></ul>
+        </section>
+
+        <section class="checkout__section">
+          <h2 class="text-headline">Contact</h2>
+          <label class="field">
+            <span class="field__label">Full name</span>
+            <input class="field__input" name="name" autocomplete="name" required maxlength="80">
+            <span class="field__error">Please enter your full name.</span>
+          </label>
+          <label class="field">
+            <span class="field__label">Phone number</span>
+            <input class="field__input" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="012-345 6789" required maxlength="20">
+            <span class="field__error">Please enter a valid Malaysian mobile number.</span>
+          </label>
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input class="field__input" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120">
+            <span class="field__error">Please enter a valid email for your receipt.</span>
+          </label>
+        </section>
+
+        <section class="checkout__section">
+          <h2 class="text-headline">Shipping address</h2>
+          <label class="field">
+            <span class="field__label">Address</span>
+            <input class="field__input" name="address1" autocomplete="address-line1" placeholder="House number, street" required maxlength="120">
+            <span class="field__error">Please enter your address.</span>
+          </label>
+          <label class="field">
+            <span class="field__label">Address line 2 <span class="field__optional">(optional)</span></span>
+            <input class="field__input" name="address2" autocomplete="address-line2" placeholder="Taman, apartment, unit" maxlength="120">
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span class="field__label">Postcode</span>
+              <input class="field__input" name="postcode" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required>
+              <span class="field__error">5 digits.</span>
+            </label>
+            <label class="field">
+              <span class="field__label">City</span>
+              <input class="field__input" name="city" autocomplete="address-level2" required maxlength="60">
+              <span class="field__error">Please enter your city.</span>
+            </label>
+          </div>
+          <label class="field">
+            <span class="field__label">State</span>
+            <select class="field__input" name="state" autocomplete="address-level1" required data-state-select>
+              <option value="">Select state</option>
+            </select>
+            <span class="field__error">Please select your state.</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="remember" checked>
+            <span>Save my details on this device for next time</span>
+          </label>
+        </section>
+
+        <section class="checkout__section">
+          <h2 class="text-headline">Shipping</h2>
+          <p class="checkout__shipping text-subheadline" data-shipping-info>Select your state to see the shipping fee.</p>
+        </section>
+
+        <section class="checkout__section checkout__totals">
+          <div class="cart__row"><span>Subtotal</span><span data-subtotal></span></div>
+          <div class="cart__row"><span>Shipping</span><span data-shipping>—</span></div>
+          <div class="cart__row cart__row--total"><span>Total</span><span data-total></span></div>
+        </section>
+
+        <p class="checkout__error" data-form-error role="alert" hidden></p>
+        <button class="checkout__pay" type="submit" data-pay-button>Pay Now</button>
+        <p class="sheet__secure">Secure checkout by CHIP · FPX, DuitNow QR, e-wallets &amp; cards</p>
+      </form>
+    </main>
+  </div>
+
+  <script src="products.js?v=3188603c"></script>
+  <script src="cart.js?v=935cc6ec"></script>
+  <script src="checkout.js?v=7e19a07a"></script>
+</body>
+</html>
