@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=068735ef">
+  <link rel="stylesheet" href="styles.css?v=e1568c8d">
 </head>
 <body>
   <div class="page">
@@ -18,21 +18,9 @@
         <img src="assets/logo.png" alt="Chez Professional" width="98" height="39">
       </a>
       <button class="site-header__cart" type="button" aria-label="Cart" aria-haspopup="dialog" aria-controls="cart-sheet">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9V6a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <img src="assets/icon-bag.svg" alt="" width="16" height="18">
         <span class="site-header__cart-count" data-cart-count hidden>0</span>
       </button>
-      <!-- Menu temporarily disabled: remove the "disabled" attribute to turn it back on -->
-      <button class="site-header__menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav" disabled>
-        <img src="assets/icon-menu.svg" alt="" width="24" height="24">
-      </button>
-      <nav class="site-nav" id="site-nav" hidden>
-        <ul>
-          <li><a href="#keratin">Keratin treatment</a></li>
-          <li><a href="#transformation">Hair transformation</a></li>
-          <li><a href="#keratin-spray">Keratin Spray</a></li>
-          <li><a href="#hair-tonic">Hair Tonic</a></li>
-        </ul>
-      </nav>
     </header>
 
     <main id="top">
@@ -56,6 +44,7 @@
         <div class="crop main-product__poster">
           <img class="cover" src="assets/keratin-poster.png" alt="Keratin Treatment Shampoo, Keratin Treatment Mask and Leave-in Keratin Spray on display blocks">
         </div>
+        <ul class="shop main-product__shop" data-shop="featured" aria-label="Combo deals"></ul>
       </section>
 
       <!-- Keratin Shampoo & Mask -->
@@ -150,6 +139,32 @@
             <p class="benefit-card__text text-headline"><span>Enriched with keratin protein to leave your hair healthier, softer and smoother.</span></p>
           </li>
         </ul>
+        <div class="reviews">
+          <h3 class="text-title1 reviews__title">Review</h3>
+          <ul class="reviews__list" aria-label="Keratin Spray reviews">
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+              </div>
+              <p>This was my third purchase from this awesome seller. Very high quality product made by very profesional hair stylist. Highly recommended to buy. Just follow the guideline and enjoy.</p>
+            </li>
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+              </div>
+              <p>Keratin spray mmg superb. lps cuci rambut, pakai hair tonic, wajib yer spray keratin ni..wangi, lembut rambut, senang sikat yer..</p>
+            </li>
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+              </div>
+              <p>This is my second bottle. Rambut frizzy and dry spray leave in keratin ni on damp hair, rambut jadi lembut tak kusut after blow dry. Lurve sangat.</p>
+            </li>
+          </ul>
+        </div>
         <ul class="shop spray__shop" data-shop="spray" aria-label="Shop Keratin Spray"></ul>
       </section>
 
@@ -173,7 +188,58 @@
             <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Keep your scalp fresh and comfortable all day, even under your hijab. Feel refreshed and confident from the roots up.</span></p>
           </li>
         </ul>
+        <div class="reviews">
+          <h3 class="text-title1 reviews__title">Review</h3>
+          <ul class="reviews__list" aria-label="Hair Tonic reviews">
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+              </div>
+              <p>Best sangat tonic ni, anak rambut cepat naik, rambut kurang gugur and paling penting kulit kepala tak gatal dah ye.. Thanks didi suggest this product</p>
+            </li>
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+              </div>
+              <p>This one also.. wajib pakai lpa cuci rambut... supaya scalp sihat, rambut kurang gugur, anak rambut tumbuh, dan bau dia perghh wangi tau.. then ada rasa cooling jer lps spray..best..</p>
+            </li>
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+              </div>
+              <p>Serious best. kulit kepala rasa segar je bila pakai. dah pakai more than 1 week. rambut dh kurang gugur.<br>Scent: bau fresh menthol</p>
+            </li>
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+              </div>
+              <p>Rambut i kurang gugur and itchy pun no more. Kulit kepala rasa cool plus wangi. Produk yang terbaik that why i repeat beli kali ke-2</p>
+            </li>
+          </ul>
+        </div>
         <ul class="shop tonic__shop" data-shop="tonic" aria-label="Shop Hair Tonic"></ul>
+      </section>
+
+      <!-- About -->
+      <section class="about" id="about">
+        <div class="about__intro">
+          <h2 class="text-title1">CHEZ HAMDAN</h2>
+          <p class="text-subheadline">Professional Hairstylist</p>
+          <ul class="about__roles text-subheadline">
+            <li>Master Stylist</li>
+            <li>Creative Director</li>
+          </ul>
+        </div>
+        <img class="about__image" src="assets/chez-hamdan.png" alt="Chez Hamdan, professional hairstylist" width="928" height="1152" loading="lazy">
+        <div class="about__text text-subheadline">
+          <p>Based in Kuala Lumpur, Malaysia, Chez Hamdan is a professional hairstylist with a creative approach to hair design, personal style and individual expression.</p>
+          <p>His professional identity brings together hairstyling, artistic vision and an appreciation for how the right hairstyle can complement a person’s character and confidence.</p>
+          <p>Hair is more than appearance. It is a form of personal expression.</p>
+        </div>
       </section>
     </main>
   </div>
@@ -183,7 +249,7 @@
     <div class="sheet__panel" tabindex="-1" autofocus>
       <div class="sheet__grabber" aria-hidden="true"></div>
       <button class="sheet__close" type="button" aria-label="Close">&times;</button>
-      <img class="sheet__image" src="" alt="">
+      <img class="sheet__image" alt="">
       <div class="sheet__summary">
         <p class="section-eyebrow text-subheadline" data-field="eyebrow"></p>
         <h2 class="text-title1" id="sheet-title" data-field="name"></h2>
@@ -224,8 +290,8 @@
 
   <div class="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="products.js?v=3188603c"></script>
+  <script src="products.js?v=400a705b"></script>
   <script src="cart.js?v=935cc6ec"></script>
-  <script src="script.js?v=a9a2e248"></script>
+  <script src="script.js?v=c084480f"></script>
 </body>
 </html>

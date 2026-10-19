@@ -1,34 +1,3 @@
-(function () {
-  var button = document.querySelector('.site-header__menu');
-  var nav = document.getElementById('site-nav');
-  if (!button || !nav || button.disabled) return;
-
-  function setOpen(open) {
-    nav.hidden = !open;
-    button.setAttribute('aria-expanded', String(open));
-    button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  }
-
-  button.addEventListener('click', function () {
-    setOpen(nav.hidden);
-  });
-
-  nav.addEventListener('click', function (event) {
-    if (event.target.closest('a')) setOpen(false);
-  });
-
-  document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && !nav.hidden) {
-      setOpen(false);
-      button.focus();
-    }
-  });
-
-  document.addEventListener('click', function (event) {
-    if (!nav.hidden && !event.target.closest('.site-header')) setOpen(false);
-  });
-})();
-
 /* ---------- Shop, product sheet and cart ---------- */
 (function () {
   var CHEZ = window.CHEZ;
@@ -59,9 +28,12 @@
 
   /* --- Shop grids, rendered from products.js --- */
   document.querySelectorAll('[data-shop]').forEach(function (list) {
-    CHEZ.shops[list.dataset.shop].forEach(function (id) {
+    var ids = CHEZ.shops[list.dataset.shop];
+    ids.forEach(function (id, index) {
       var product = products[id];
-      var card = el('li', 'shop-card' + (product.combo ? ' shop-card--combo' : ''));
+      // A card left alone on the last row of the 2-column grid is centred, as in the design
+      var alone = ids.length % 2 === 1 && index === ids.length - 1;
+      var card = el('li', 'shop-card' + (alone ? ' shop-card--alone' : ''));
       var img = el('img', 'shop-card__image');
       img.src = 'assets/products/' + id + '.png';
       img.alt = product.name + ', ' + product.size;

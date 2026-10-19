@@ -57,6 +57,7 @@
 
   // Which products appear in each shop grid on the home page, in order
   var shops = {
+    featured: ['shampoo-mask-combo', 'spray-tonic-combo'],
     keratin: ['shampoo-1', 'shampoo-3', 'mask-1', 'mask-3', 'shampoo-mask-combo'],
     spray: ['spray-1', 'spray-3'],
     tonic: ['tonic-1', 'tonic-3', 'spray-tonic-combo']
