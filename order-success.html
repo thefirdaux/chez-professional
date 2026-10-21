@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=e1568c8d">
+  <link rel="stylesheet" href="styles.css?v=09dd0f00">
 </head>
 <body>
   <div class="page">
@@ -20,10 +20,10 @@
     </header>
 
     <main class="checkout section--beige">
-      <div class="success">
-        <div class="success__icon" aria-hidden="true">✓</div>
-        <h1 class="text-title1">Thank you!</h1>
-        <p class="text-callout">Your order has been received. We'll send your receipt and tracking number by email.</p>
+      <div class="success" data-state="paid">
+        <div class="success__icon" aria-hidden="true" data-status-icon>✓</div>
+        <h1 class="text-title1" data-status-title>Thank you!</h1>
+        <p class="text-callout" data-status-text>Your order has been received. We'll send your receipt and tracking number by email.</p>
         <p class="checkout__demo" data-demo-notice hidden>
           <strong>Demo order.</strong> Online payment is not connected yet, so no payment was taken and this order will not be shipped.
         </p>
@@ -45,16 +45,64 @@
     </main>
   </div>
 
-  <script src="products.js?v=400a705b"></script>
-  <script>
+  <script type="module" src="products.js?v=c8a07034"></script>
+  <script type="module">
     (function () {
       var rm = window.CHEZ.formatRM;
-      var demo = new URLSearchParams(location.search).get('demo') === '1';
+      var params = new URLSearchParams(location.search);
+      var demo = params.get('demo') === '1';
+      var orderId = params.get('order');
       document.querySelector('[data-demo-notice]').hidden = !demo;
+
+      var STATES = {
+        paid: ['✓', 'Thank you!', 'Your payment was successful. CHIP will email your receipt, and we will send your tracking number once your order ships.'],
+        pending: ['…', 'Confirming your payment', 'This usually takes a few seconds. Please keep this page open.'],
+        waiting: ['…', 'Payment being confirmed', 'We have not received confirmation from the bank yet. If you completed the payment, your receipt from CHIP will arrive by email shortly.'],
+        failed: ['!', 'Payment not completed', 'Your payment did not go through, so nothing was charged. Your cart is still saved; you can go back and try again.']
+      };
+
+      function show(state) {
+        var s = STATES[state];
+        document.querySelector('[data-status-icon]').textContent = s[0];
+        document.querySelector('[data-status-title]').textContent = s[1];
+        document.querySelector('[data-status-text]').textContent = s[2];
+        document.querySelector('.success').dataset.state = state;
+        var home = document.querySelector('.success__home');
+        if (state === 'failed') {
+          home.textContent = 'Back to checkout';
+          home.href = 'checkout.html';
+        }
+      }
+
+      // Live orders: ask the order server for the real payment status
+      if (orderId && !demo) {
+        show('pending');
+        var tries = 0;
+        (function check() {
+          fetch('/api/order-status?order=' + encodeURIComponent(orderId), { cache: 'no-store' })
+            .then(function (res) { return res.ok ? res.json() : null; })
+            .then(function (result) {
+              var status = result && result.status;
+              if (status === 'paid') {
+                show('paid');
+                try { localStorage.setItem('chez-cart', '[]'); } catch (e) { /* ignore */ }
+              } else if (status === 'failed') {
+                show('failed');
+              } else if (++tries < 10) {
+                setTimeout(check, 3000);
+              } else {
+                show('waiting');
+              }
+            })
+            .catch(function () {
+              if (++tries < 10) setTimeout(check, 3000); else show('waiting');
+            });
+        })();
+      }
 
       var order = null;
       try { order = JSON.parse(sessionStorage.getItem('chez-last-order')); } catch (e) { /* none */ }
-      if (!order) return;
+      if (!order || (orderId && order.number !== orderId)) return;
 
       document.querySelector('[data-order]').hidden = false;
       document.querySelector('[data-order-number]').textContent = order.number;

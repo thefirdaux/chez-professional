@@ -921,6 +921,16 @@ html.is-sheet-open { overflow: hidden; }
   line-height: 18px;
 }
 
+.checkout__notice {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fde8e8;
+  color: #7a0f12;
+  font-size: 13px;
+  line-height: 18px;
+}
+
 .checkout__empty {
   display: flex;
   flex-direction: column;
@@ -1159,3 +1169,7 @@ select.field__input {
   padding: 0 var(--gutter);
   text-align: left;
 }
+
+.success[data-state="pending"] .success__icon,
+.success[data-state="waiting"] .success__icon { background: #9e9e9e; }
+.success[data-state="failed"] .success__icon { background: #a81318; }

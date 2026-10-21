@@ -1,20 +1,33 @@
 /*
  * Checkout page: order summary, contact and address form, shipping fee and totals.
- * While CHEZ.config.orderApi is empty the page runs in demo mode: nothing is charged.
+ * Runs in demo mode (nothing is charged) until the order server reports that CHIP payment
+ * is switched on; see functions/api/checkout-config.js.
  */
 (function () {
   var CHEZ = window.CHEZ;
   var cart = CHEZ.cart;
   var rm = CHEZ.formatRM;
   var SAVED_KEY = 'chez-customer';
-  var demo = !CHEZ.config.orderApi;
+  var demo = true;
+  var testMode = false;
 
   var form = document.querySelector('[data-checkout-form]');
   var stateSelect = form.querySelector('[data-state-select]');
   var payButton = form.querySelector('[data-pay-button]');
   var formError = form.querySelector('[data-form-error]');
 
-  document.querySelector('[data-demo-notice]').hidden = !demo;
+  var demoNotice = document.querySelector('[data-demo-notice]');
+  var testNotice = document.querySelector('[data-test-notice]');
+  var paymentNotice = document.querySelector('[data-payment-notice]');
+
+  // Coming back from CHIP without paying
+  var payment = new URLSearchParams(window.location.search).get('payment');
+  if (payment === 'failed' || payment === 'cancelled') {
+    paymentNotice.textContent = payment === 'failed'
+      ? 'Your payment was not completed. Your cart is still here, so you can try again.'
+      : 'Payment cancelled. Your cart is still here whenever you are ready.';
+    paymentNotice.hidden = false;
+  }
 
   CHEZ.states.forEach(function (state) {
     var option = document.createElement('option');
@@ -59,11 +72,25 @@
       ? 'Standard delivery to ' + shipping.label + ': ' + rm(shipping.fee)
       : 'Select your state to see the shipping fee.';
     payButton.textContent = (demo ? 'Place demo order · ' : 'Pay ') + rm(total);
+    demoNotice.hidden = !demo;
+    testNotice.hidden = demo || !testMode;
   }
 
   document.addEventListener('cart:change', render);
   stateSelect.addEventListener('change', render);
   render();
+
+  // Ask the order server whether real payment is on. No server, an error or a slow answer keeps demo mode.
+  var configReady = fetch(CHEZ.config.orderApi + '/checkout-config', { cache: 'no-store' })
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (config) {
+      if (config && config.enabled) {
+        demo = false;
+        testMode = Boolean(config.testMode);
+      }
+    })
+    .catch(function () { /* stay in demo mode */ })
+    .then(render);
 
   /* --- Validation --- */
   function normalizePhone(value) {
@@ -100,6 +127,10 @@
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     formError.hidden = true;
+    configReady.then(function () { submit(); });
+  });
+
+  function submit() {
 
     var firstInvalid = null;
     form.querySelectorAll('.field__input').forEach(function (input) {
@@ -118,20 +149,24 @@
 
     var items = cart.items();
     var shipping = shippingFee();
+    var order = {
+      number: 'DEMO-' + String(Date.now()).slice(-6),
+      items: items.map(function (item) {
+        var p = CHEZ.products[item.id];
+        return { name: p.name, size: p.size, qty: item.qty, price: p.price };
+      }),
+      subtotal: cart.subtotal(),
+      shipping: shipping.fee,
+      total: cart.subtotal() + shipping.fee,
+      shipTo: details
+    };
+
+    function remember(summary) {
+      try { sessionStorage.setItem('chez-last-order', JSON.stringify(summary)); } catch (e) { /* ignore */ }
+    }
 
     if (demo) {
-      var order = {
-        number: 'DEMO-' + String(Date.now()).slice(-6),
-        items: items.map(function (item) {
-          var p = CHEZ.products[item.id];
-          return { name: p.name, size: p.size, qty: item.qty, price: p.price };
-        }),
-        subtotal: cart.subtotal(),
-        shipping: shipping.fee,
-        total: cart.subtotal() + shipping.fee,
-        shipTo: details
-      };
-      try { sessionStorage.setItem('chez-last-order', JSON.stringify(order)); } catch (e) { /* ignore */ }
+      remember(order);
       cart.clear();
       window.location.href = 'order-success.html?demo=1';
       return;
@@ -148,14 +183,22 @@
     })
       .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, body: body }; }); })
       .then(function (result) {
-        if (!result.ok || !result.body.checkoutUrl) throw new Error(result.body.error || 'checkout failed');
+        if (!result.ok || !result.body.checkoutUrl) {
+          var serverError = new Error(result.body.error || '');
+          serverError.fromServer = true;
+          throw serverError;
+        }
+        // The cart is only emptied once the thank-you page confirms the payment
+        order.number = result.body.orderId;
+        order.total = result.body.total;
+        remember(order);
         window.location.href = result.body.checkoutUrl;
       })
-      .catch(function () {
-        formError.textContent = 'Sorry, we could not start the payment. Please try again in a moment.';
+      .catch(function (error) {
+        formError.textContent = (error.fromServer && error.message) || 'Sorry, we could not start the payment. Please try again in a moment.';
         formError.hidden = false;
         payButton.disabled = false;
         render();
       });
-  });
+  }
 })();

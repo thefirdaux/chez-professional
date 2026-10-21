@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=e1568c8d">
+  <link rel="stylesheet" href="styles.css?v=09dd0f00">
 </head>
 <body>
   <div class="page">
@@ -23,6 +23,10 @@
       <a class="checkout__back text-subheadline" href="index.html#shop-keratin">&lsaquo; Continue shopping</a>
       <h1 class="text-title1 checkout__title">Checkout</h1>
 
+      <p class="checkout__notice" data-payment-notice role="alert" hidden></p>
+      <p class="checkout__demo" data-test-notice hidden>
+        <strong>Test mode.</strong> Payments go to CHIP's test system. No real money is charged.
+      </p>
       <p class="checkout__demo" data-demo-notice hidden>
         <strong>Demo mode.</strong> Online payment is not connected yet, so no payment will be taken.
       </p>
@@ -111,8 +115,8 @@
     </main>
   </div>
 
-  <script src="products.js?v=400a705b"></script>
-  <script src="cart.js?v=935cc6ec"></script>
-  <script src="checkout.js?v=7e19a07a"></script>
+  <script type="module" src="products.js?v=c8a07034"></script>
+  <script type="module" src="cart.js?v=935cc6ec"></script>
+  <script type="module" src="checkout.js?v=7b2286eb"></script>
 </body>
 </html>
