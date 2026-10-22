@@ -64,9 +64,10 @@
 
     var subtotal = cart.subtotal();
     var shipping = shippingFee();
-    var total = subtotal + (shipping ? shipping.fee : 0);
+    var total = subtotal + (shipping ? shipping.fee : 0) + CHEZ.paymentFee.fee;
     form.querySelector('[data-subtotal]').textContent = rm(subtotal);
     form.querySelector('[data-shipping]').textContent = shipping ? rm(shipping.fee) : '—';
+    form.querySelector('[data-fee]').textContent = rm(CHEZ.paymentFee.fee);
     form.querySelector('[data-total]').textContent = rm(total);
     form.querySelector('[data-shipping-info]').textContent = shipping
       ? 'Standard delivery to ' + shipping.label + ': ' + rm(shipping.fee)
@@ -157,7 +158,8 @@
       }),
       subtotal: cart.subtotal(),
       shipping: shipping.fee,
-      total: cart.subtotal() + shipping.fee,
+      fee: CHEZ.paymentFee.fee,
+      total: cart.subtotal() + shipping.fee + CHEZ.paymentFee.fee,
       shipTo: details
     };
 

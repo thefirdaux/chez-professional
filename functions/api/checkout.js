@@ -29,11 +29,11 @@ export async function onRequestPost({ request, env }) {
   const id = newOrderId();
   const c = order.customer;
   await env.DB.prepare(
-    `INSERT INTO orders (id, created_at, status, items, subtotal, shipping, total,
+    `INSERT INTO orders (id, created_at, status, items, subtotal, shipping, fee, total,
        name, phone, email, address1, address2, postcode, city, state)
-     VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
-    .bind(id, new Date().toISOString(), JSON.stringify(order.items), order.subtotal, order.shipping, order.total,
+    .bind(id, new Date().toISOString(), JSON.stringify(order.items), order.subtotal, order.shipping, order.fee, order.total,
       c.name, c.phone, c.email, c.address1, c.address2, c.postcode, c.city, c.state)
     .run();
 
@@ -66,7 +66,10 @@ export async function onRequestPost({ request, env }) {
         language: 'en',
         products: order.items
           .map((item) => ({ name: item.name + ' (' + item.size + ')', quantity: String(item.qty), price: item.price }))
-          .concat([{ name: 'Shipping: ' + order.shippingLabel, quantity: '1', price: order.shipping }])
+          .concat([
+            { name: 'Shipping: ' + order.shippingLabel, quantity: '1', price: order.shipping },
+            { name: order.feeLabel, quantity: '1', price: order.fee }
+          ])
       },
       success_redirect: origin + '/order-success?order=' + id,
       failure_redirect: origin + '/checkout?payment=failed',

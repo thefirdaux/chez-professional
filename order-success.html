@@ -35,6 +35,7 @@
         <div class="checkout__totals">
           <div class="cart__row"><span>Subtotal</span><span data-order-subtotal></span></div>
           <div class="cart__row"><span>Shipping</span><span data-order-shipping></span></div>
+          <div class="cart__row" data-order-fee-row hidden><span>Payment processing fee</span><span data-order-fee></span></div>
           <div class="cart__row cart__row--total"><span>Total</span><span data-order-total></span></div>
         </div>
         <h2 class="text-headline">Shipping to</h2>
@@ -45,7 +46,7 @@
     </main>
   </div>
 
-  <script type="module" src="products.js?v=c8a07034"></script>
+  <script type="module" src="products.js?v=7267d461"></script>
   <script type="module">
     (function () {
       var rm = window.CHEZ.formatRM;
@@ -120,6 +121,10 @@
       });
       document.querySelector('[data-order-subtotal]').textContent = rm(order.subtotal);
       document.querySelector('[data-order-shipping]').textContent = rm(order.shipping);
+      if (order.fee) {
+        document.querySelector('[data-order-fee]').textContent = rm(order.fee);
+        document.querySelector('[data-order-fee-row]').hidden = false;
+      }
       document.querySelector('[data-order-total]').textContent = rm(order.total);
       var a = order.shipTo;
       document.querySelector('[data-order-address]').textContent =

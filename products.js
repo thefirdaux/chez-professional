@@ -62,12 +62,15 @@ var shops = {
   tonic: ['tonic-1', 'tonic-3', 'spray-tonic-combo']
 };
 
-// Shipping in sen. PLACEHOLDER flat rates until EasyParcel live rates are connected:
-// confirm the real rates with the client before taking payments.
+// Shipping in sen. The client charges one flat rate for the whole of Malaysia.
 var shipping = {
-  west: { label: 'Peninsular Malaysia', fee: 800 },
-  east: { label: 'Sabah, Sarawak & Labuan', fee: 1500 }
+  west: { label: 'Peninsular Malaysia', fee: 400 },
+  east: { label: 'Sabah, Sarawak & Labuan', fee: 400 }
 };
+
+// Payment processing fee in sen, listed as its own line on every order.
+// RM1.00 matches CHIP's FPX charge.
+var paymentFee = { label: 'Payment processing fee', fee: 100 };
 
 var states = [
   ['Johor', 'west'], ['Kedah', 'west'], ['Kelantan', 'west'], ['Melaka', 'west'],
@@ -85,8 +88,8 @@ function formatRM(sen) {
   return 'RM ' + (sen / 100).toFixed(2);
 }
 
-export { products, shops, shipping, states, config, formatRM };
+export { products, shops, shipping, paymentFee, states, config, formatRM };
 
 if (typeof window !== 'undefined') {
-  window.CHEZ = { products: products, shops: shops, shipping: shipping, states: states, config: config, formatRM: formatRM };
+  window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, config: config, formatRM: formatRM };
 }

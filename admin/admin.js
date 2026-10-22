@@ -3,11 +3,11 @@
  * Data comes from /api/admin/orders, which only answers for allowed admins (Cloudflare Access).
  */
 (function () {
-  // Sender details printed on every label. Fill these in with the client's details.
+  // Sender details printed on every label
   var SENDER = {
     name: 'Chez Professional',
-    phone: '',
-    address: ''
+    phone: '011-59500464',
+    address: ['No. 2, Lorong 3/27C, Seksyen 5', 'Wangsa Maju', '53300 Kuala Lumpur']
   };
 
   var view = 'paid';
@@ -155,7 +155,7 @@
       from.appendChild(el('p', 'label__heading', 'FROM'));
       from.appendChild(el('p', 'label__name', SENDER.name));
       if (SENDER.phone) from.appendChild(el('p', null, SENDER.phone));
-      if (SENDER.address) from.appendChild(el('p', null, SENDER.address));
+      SENDER.address.forEach(function (line) { from.appendChild(el('p', null, line)); });
       label.appendChild(from);
 
       var meta = el('div', 'label__block label__meta');
@@ -196,10 +196,6 @@
       load();
     });
   });
-
-  if (!SENDER.address) {
-    document.querySelector('[data-user]').textContent = 'Sender address is not set yet; labels will show the shop name only.';
-  }
 
   load();
 })();

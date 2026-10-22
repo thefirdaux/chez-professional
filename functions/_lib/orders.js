@@ -2,7 +2,7 @@
  * Order rules shared by the checkout, callback and admin endpoints.
  * Prices and shipping always come from products.js, never from the browser.
  */
-import { products, shipping, states } from '../../products.js';
+import { products, shipping, paymentFee, states } from '../../products.js';
 
 export const MAX_QTY = 20;
 const MAX_LINES = 20;
@@ -65,7 +65,12 @@ export function priceOrder(input) {
     subtotal += p.price * qty;
   }
   const ship = shipping[state[1]];
-  return { items, customer, subtotal, shipping: ship.fee, shippingLabel: ship.label, total: subtotal + ship.fee };
+  return {
+    items, customer, subtotal,
+    shipping: ship.fee, shippingLabel: ship.label,
+    fee: paymentFee.fee, feeLabel: paymentFee.label,
+    total: subtotal + ship.fee + paymentFee.fee
+  };
 }
 
 /** Order numbers like CP261021-7K3Q: date plus 4 random characters. */
@@ -93,6 +98,7 @@ export function ensureSchema(db) {
         items TEXT NOT NULL,
         subtotal INTEGER NOT NULL,
         shipping INTEGER NOT NULL,
+        fee INTEGER NOT NULL DEFAULT 0,
         total INTEGER NOT NULL,
         name TEXT, phone TEXT, email TEXT,
         address1 TEXT, address2 TEXT, postcode TEXT, city TEXT, state TEXT,
@@ -101,7 +107,12 @@ export function ensureSchema(db) {
       )`),
       db.prepare('CREATE INDEX IF NOT EXISTS orders_chip ON orders (chip_purchase_id)'),
       db.prepare('CREATE INDEX IF NOT EXISTS orders_status ON orders (status, created_at)')
-    ]).catch((error) => {
+    ]).then(() =>
+      // Tables created before the payment fee existed get the column here
+      db.prepare('ALTER TABLE orders ADD COLUMN fee INTEGER NOT NULL DEFAULT 0').run().catch((error) => {
+        if (!/duplicate column/i.test(String(error && error.message))) throw error;
+      })
+    ).catch((error) => {
       schemaReady = null;
       throw error;
     });
