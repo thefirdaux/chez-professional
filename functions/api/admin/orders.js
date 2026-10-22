@@ -1,7 +1,7 @@
 /*
  * GET  /api/admin/orders?status=paid|pending|shipped|all   list orders (newest first)
  * POST /api/admin/orders  { id, action: 'printed' | 'shipped' | 'unshipped' }
- * Both require a signed-in admin (see _lib/access.js).
+ * Both require a signed-in admin (see _lib/access.js and login.js).
  */
 import { ensureSchema, isConfigured } from '../../_lib/orders.js';
 import { requireAdmin } from '../../_lib/access.js';

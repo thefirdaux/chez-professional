@@ -106,7 +106,9 @@ export function ensureSchema(db) {
         paid_at TEXT, printed_at TEXT, shipped_at TEXT
       )`),
       db.prepare('CREATE INDEX IF NOT EXISTS orders_chip ON orders (chip_purchase_id)'),
-      db.prepare('CREATE INDEX IF NOT EXISTS orders_status ON orders (status, created_at)')
+      db.prepare('CREATE INDEX IF NOT EXISTS orders_status ON orders (status, created_at)'),
+      db.prepare('CREATE TABLE IF NOT EXISTS login_failures (ip TEXT NOT NULL, at INTEGER NOT NULL)'),
+      db.prepare('CREATE INDEX IF NOT EXISTS login_failures_at ON login_failures (at)')
     ]).then(() =>
       // Tables created before the payment fee existed get the column here
       db.prepare('ALTER TABLE orders ADD COLUMN fee INTEGER NOT NULL DEFAULT 0').run().catch((error) => {

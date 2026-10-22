@@ -1,6 +1,6 @@
 /*
  * Admin: list paid orders, mark them shipped and print A5 shipping labels.
- * Data comes from /api/admin/orders, which only answers for allowed admins (Cloudflare Access).
+ * Data comes from /api/admin/orders, which only answers once the admin has signed in with the password.
  */
 (function () {
   // Sender details printed on every label
@@ -16,6 +16,10 @@
   var message = document.querySelector('[data-message]');
   var printButton = document.querySelector('[data-print]');
   var selectAll = document.querySelector('[data-select-all]');
+  var app = document.querySelector('[data-app]');
+  var loginForm = document.querySelector('[data-login]');
+  var loginError = document.querySelector('[data-login-error]');
+  var logoutButton = document.querySelector('[data-logout]');
 
   function rm(sen) {
     return 'RM ' + (sen / 100).toFixed(2);
@@ -54,18 +58,49 @@
     printButton.textContent = count ? 'Print ' + count + ' A5 label' + (count === 1 ? '' : 's') : 'Print A5 labels';
   }
 
-  function api(method, body) {
-    return fetch('/api/admin/orders' + (method === 'GET' ? '?status=' + view : ''), {
+  function request(url, method, body) {
+    return fetch(url, {
       method: method,
       headers: body ? { 'Content-Type': 'application/json' } : {},
       body: body ? JSON.stringify(body) : undefined,
+      credentials: 'same-origin',
       cache: 'no-store'
     }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) {
-        if (!res.ok) throw new Error(data.error || 'Something went wrong (' + res.status + ').');
+        if (!res.ok) {
+          var error = new Error(data.error || 'Something went wrong (' + res.status + ').');
+          error.status = res.status;
+          throw error;
+        }
         return data;
       });
     });
+  }
+
+  function api(method, body) {
+    return request('/api/admin/orders' + (method === 'GET' ? '?status=' + view : ''), method, body);
+  }
+
+  function showLogin(error) {
+    app.hidden = true;
+    logoutButton.hidden = true;
+    loginForm.hidden = false;
+    loginError.textContent = error || '';
+    loginError.hidden = !error;
+    showMessage('');
+    loginForm.elements.password.focus();
+  }
+
+  function showApp() {
+    loginForm.hidden = true;
+    loginForm.reset();
+    app.hidden = false;
+    logoutButton.hidden = false;
+  }
+
+  function handleError(error) {
+    if (error.status === 401) showLogin();
+    else showMessage(error.message);
   }
 
   function render() {
@@ -112,7 +147,7 @@
           ship.disabled = true;
           api('POST', { id: order.id, action: order.shipped_at ? 'unshipped' : 'shipped' }).then(load, function (error) {
             ship.disabled = false;
-            showMessage(error.message);
+            handleError(error);
           });
         });
         foot.appendChild(ship);
@@ -127,13 +162,14 @@
   function load() {
     showMessage('Loading…');
     api('GET').then(function (data) {
+      showApp();
       showMessage('');
       orders = data.orders;
       render();
     }, function (error) {
       orders = [];
       render();
-      showMessage(error.message);
+      handleError(error);
     });
   }
 
@@ -179,7 +215,7 @@
     // Record that these labels were printed
     Promise.all(selected.map(function (order) {
       return api('POST', { id: order.id, action: 'printed' });
-    })).then(load, function (error) { showMessage(error.message); });
+    })).then(load, handleError);
   });
 
   selectAll.addEventListener('change', function () {
@@ -195,6 +231,28 @@
       });
       load();
     });
+  });
+
+  loginForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var button = loginForm.querySelector('button');
+    button.disabled = true;
+    request('/api/admin/login', 'POST', { password: loginForm.elements.password.value }).then(function () {
+      button.disabled = false;
+      load();
+    }, function (error) {
+      button.disabled = false;
+      loginForm.elements.password.value = '';
+      showLogin(error.message);
+    });
+  });
+
+  logoutButton.addEventListener('click', function () {
+    request('/api/admin/logout', 'POST').then(function () {
+      orders = [];
+      render();
+      showLogin();
+    }, handleError);
   });
 
   load();

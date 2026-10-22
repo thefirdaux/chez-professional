@@ -5,32 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <title>Orders — Chez Professional Admin</title>
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="admin.css?v=a89548a7">
 </head>
 <body>
   <header class="admin-header">
     <h1>Orders</h1>
-    <p class="admin-header__user" data-user></p>
+    <button type="button" class="button" data-logout hidden>Log out</button>
   </header>
 
-  <nav class="tabs" aria-label="Order views">
-    <button type="button" data-view="paid" aria-pressed="true">To ship</button>
-    <button type="button" data-view="shipped" aria-pressed="false">Shipped</button>
-    <button type="button" data-view="pending" aria-pressed="false">Awaiting payment</button>
-    <button type="button" data-view="all" aria-pressed="false">All</button>
-  </nav>
-
-  <div class="toolbar">
-    <label class="toolbar__select"><input type="checkbox" data-select-all> Select all</label>
-    <button type="button" class="button button--primary" data-print disabled>Print A5 labels</button>
-  </div>
-
   <p class="message" data-message hidden></p>
-  <ul class="orders" data-orders></ul>
+
+  <form class="login" data-login hidden>
+    <label class="login__label" for="admin-password">Admin password</label>
+    <input class="login__input" id="admin-password" name="password" type="password" autocomplete="current-password" required>
+    <p class="login__error" data-login-error role="alert" hidden></p>
+    <button type="submit" class="button button--primary">Sign in</button>
+  </form>
+
+  <div data-app hidden>
+    <nav class="tabs" aria-label="Order views">
+      <button type="button" data-view="paid" aria-pressed="true">To ship</button>
+      <button type="button" data-view="shipped" aria-pressed="false">Shipped</button>
+      <button type="button" data-view="pending" aria-pressed="false">Awaiting payment</button>
+      <button type="button" data-view="all" aria-pressed="false">All</button>
+    </nav>
+
+    <div class="toolbar">
+      <label class="toolbar__select"><input type="checkbox" data-select-all> Select all</label>
+      <button type="button" class="button button--primary" data-print disabled>Print A5 labels</button>
+    </div>
+
+    <ul class="orders" data-orders></ul>
+  </div>
 
   <!-- Filled just before printing; only this part is printed -->
   <div class="labels" data-labels aria-hidden="true"></div>
 
-  <script src="admin.js"></script>
+  <script src="admin.js?v=d2228337"></script>
 </body>
 </html>
