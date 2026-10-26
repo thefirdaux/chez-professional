@@ -36,5 +36,8 @@ Settings in the Pages project (Settings → Variables and secrets / Bindings), p
 | `CHIP_TEST_MODE` | Text | `1` while using CHIP test keys; remove for live |
 | `ADMIN_PASSWORD` | Secret | admin sign-in password, at least 12 characters |
 
+At checkout the city and state fill in from the postcode, using `assets/postcodes.json`
+(built from the `malaysia-postcodes` package, ISC licence). A city the buyer types is never overwritten.
+
 Checkout stays in demo mode until `DB`, `CHIP_BRAND_ID` and `CHIP_SECRET_KEY` are all set.
 Changes to these settings take effect on the next deployment.

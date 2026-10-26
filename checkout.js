@@ -48,6 +48,56 @@
     if (saved) FIELDS.forEach(function (name) { if (saved[name]) form.elements[name].value = saved[name]; });
   } catch (e) { /* nothing saved or storage blocked */ }
 
+  /* --- Postcode lookup: fills in city and state once five digits are typed --- */
+  var postcodeInput = form.elements.postcode;
+  var cityInput = form.elements.city;
+  var cityTypedByBuyer = false;
+  var postcodeTable = null;
+
+  function loadPostcodes() {
+    if (!postcodeTable) {
+      postcodeTable = fetch('assets/postcodes.json?v=33470926').then(function (res) {
+        if (!res.ok) throw new Error('postcodes ' + res.status);
+        return res.json();
+      }).then(function (data) {
+        // codes: "43000123.9,…" = postcode, index into cities, ".", index into states
+        var map = {};
+        data.codes.split(',').forEach(function (row) {
+          var dot = row.indexOf('.');
+          map[row.slice(0, 5)] = [data.cities[+row.slice(5, dot)], data.states[+row.slice(dot + 1)]];
+        });
+        return map;
+      }).catch(function () {
+        postcodeTable = null; // try again next time; the buyer can still type city and state
+        return {};
+      });
+    }
+    return postcodeTable;
+  }
+
+  function fillFromPostcode() {
+    var code = postcodeInput.value.trim();
+    if (!/^\d{5}$/.test(code)) return;
+    loadPostcodes().then(function (map) {
+      var match = map[code];
+      if (!match || postcodeInput.value.trim() !== code) return;
+      // Never overwrite a city the buyer typed on this page (saved or auto-filled ones are fine)
+      if (!cityTypedByBuyer || !cityInput.value.trim()) {
+        cityInput.value = match[0];
+        if (cityInput.closest('.field').classList.contains('is-invalid')) checkField(cityInput);
+      }
+      if (stateSelect.value !== match[1]) {
+        stateSelect.value = match[1];
+        stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        if (stateSelect.closest('.field').classList.contains('is-invalid')) checkField(stateSelect);
+      }
+    });
+  }
+
+  postcodeInput.addEventListener('focus', loadPostcodes);
+  postcodeInput.addEventListener('input', fillFromPostcode);
+  cityInput.addEventListener('input', function () { cityTypedByBuyer = true; });
+
   /* --- Summary and totals --- */
   function shippingFee() {
     var region = regionOf(stateSelect.value);
