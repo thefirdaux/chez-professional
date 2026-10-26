@@ -9,11 +9,15 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=cb1b552d">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=1056d844">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=9d50453a">
-  <link rel="stylesheet" href="admin.css?v=d56e0d52">
+  <link rel="stylesheet" href="admin.css?v=5bdd2166">
 </head>
 <body>
   <header class="admin-header">
-    <h1>Orders</h1>
+    <h1 class="visually-hidden">Chez Professional admin</h1>
+    <nav class="sections" aria-label="Admin sections" data-sections hidden>
+      <button type="button" data-section="orders" aria-pressed="true">Orders</button>
+      <button type="button" data-section="analytics" aria-pressed="false">Analytics</button>
+    </nav>
     <button type="button" class="button" data-logout hidden>Log out</button>
   </header>
 
@@ -42,6 +46,7 @@
   </section>
 
   <div data-app hidden>
+    <div data-orders-section>
     <nav class="tabs" aria-label="Order views">
       <button type="button" data-view="paid" aria-pressed="true">To ship</button>
       <button type="button" data-view="shipped" aria-pressed="false">Shipped</button>
@@ -55,11 +60,67 @@
     </div>
 
     <ul class="orders" data-orders></ul>
+    </div>
+
+    <section class="analytics" data-analytics-section aria-label="Analytics" hidden>
+      <nav class="tabs" aria-label="Date range">
+        <button type="button" data-days="7" aria-pressed="false">Last 7 days</button>
+        <button type="button" data-days="30" aria-pressed="true">Last 30 days</button>
+        <button type="button" data-days="90" aria-pressed="false">Last 90 days</button>
+      </nav>
+
+      <div class="analytics__body" data-analytics-body>
+        <div class="kpis" data-kpis></div>
+
+        <div class="analytics__grid">
+          <article class="card card--wide">
+            <h2 class="card__title">Visitors per day</h2>
+            <p class="card__sub">People who opened the shop each day</p>
+            <div class="chart" data-chart="visitors"></div>
+          </article>
+          <article class="card card--wide">
+            <h2 class="card__title">Sales per day</h2>
+            <p class="card__sub">Paid orders in RM, test payments not counted</p>
+            <div class="chart" data-chart="sales"></div>
+          </article>
+          <article class="card">
+            <h2 class="card__title">Where visitors come from</h2>
+            <ul class="bars" data-list="sources"></ul>
+          </article>
+          <article class="card">
+            <h2 class="card__title">Devices</h2>
+            <ul class="bars" data-list="devices"></ul>
+          </article>
+          <article class="card">
+            <h2 class="card__title">Pages viewed</h2>
+            <ul class="bars" data-list="pages"></ul>
+          </article>
+          <article class="card">
+            <h2 class="card__title">Top products</h2>
+            <table class="table" data-products>
+              <thead><tr><th scope="col">Product</th><th scope="col" class="num">Sold</th><th scope="col" class="num">Sales</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </article>
+          <details class="card card--wide">
+            <summary class="card__title">Daily numbers</summary>
+            <table class="table" data-daily>
+              <thead><tr><th scope="col">Day</th><th scope="col" class="num">Visitors</th><th scope="col" class="num">Page views</th><th scope="col" class="num">Orders</th><th scope="col" class="num">Sales</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </details>
+        </div>
+
+        <p class="analytics__note">Visitors are counted without cookies and without storing anything personal. Links opened from WhatsApp often show as “Direct”; to see WhatsApp separately, share <strong>chezprofessional.com/?utm_source=whatsapp</strong> (or <em>tiktok</em>, <em>instagram</em>, <em>facebook</em>).</p>
+      </div>
+    </section>
   </div>
+
+  <div class="tooltip" data-tooltip role="status" hidden></div>
 
   <!-- Filled just before printing; only this part is printed -->
   <div class="labels" data-labels aria-hidden="true"></div>
 
-  <script src="admin.js?v=49ebcc00"></script>
+  <script src="admin.js?v=56b4b4fb"></script>
 </body>
 </html>

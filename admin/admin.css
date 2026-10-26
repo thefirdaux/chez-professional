@@ -21,7 +21,7 @@ body {
 h1 { margin: 0; font-size: 28px; line-height: 34px; }
 p { margin: 0; }
 
-.admin-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.admin-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -261,3 +261,115 @@ p { margin: 0; }
   .label__meta { font-size: 10pt; }
   .label__meta ul { margin: 0; padding-left: 5mm; }
 }
+
+/* ---------- Orders / Analytics switch ---------- */
+.sections { display: flex; gap: 8px; }
+
+.sections button {
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: #000;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sections button[aria-pressed="true"] { background: #fff; color: var(--brown); }
+
+/* ---------- Analytics ---------- */
+.analytics__body { margin-top: 16px; transition: opacity 0.15s ease; }
+.analytics__body.is-loading { opacity: 0.5; }
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.kpi {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.kpi__label { color: var(--muted); font-size: 13px; line-height: 18px; }
+.kpi__value { margin-top: 4px; font-size: 24px; line-height: 30px; font-weight: 600; white-space: nowrap; }
+
+.analytics__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.card {
+  min-width: 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.card__title { margin: 0; font-size: 17px; line-height: 22px; font-weight: 600; }
+.card__sub { margin-top: 2px; color: var(--muted); font-size: 13px; line-height: 18px; }
+details.card summary { cursor: pointer; }
+
+@media (min-width: 900px) {
+  .analytics__grid { grid-template-columns: 1fr 1fr; }
+  .card--wide { grid-column: 1 / -1; }
+}
+
+/* Column chart */
+.chart { position: relative; margin-top: 12px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart__grid { stroke: #ece6df; stroke-width: 1; }
+.chart__tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart__bar { fill: var(--brown); }
+.chart__bar.is-active { fill: #c07a5c; }
+.chart__hit { fill: transparent; cursor: default; outline: none; }
+.chart__hit:focus-visible { fill: rgba(166, 93, 63, 0.08); }
+
+.chart__empty {
+  position: absolute;
+  inset: 0 0 28px 52px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 10;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  line-height: 18px;
+  pointer-events: none;
+}
+
+.tooltip__title { color: var(--muted); }
+.tooltip__row strong { font-size: 15px; }
+
+/* Bar lists */
+.bars { margin: 12px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.bars__head { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; line-height: 18px; }
+.bars__value { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bars__bar { height: 8px; margin-top: 6px; border-radius: 0 4px 4px 0; background: var(--brown); }
+.bars__empty { color: var(--muted); font-size: 13px; }
+
+/* Tables */
+.table { width: 100%; margin-top: 12px; border-collapse: collapse; font-size: 14px; line-height: 18px; }
+.table th { color: var(--muted); font-weight: 400; text-align: left; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.table td { padding: 8px 0; border-bottom: 1px solid #f2ede8; vertical-align: top; }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 12px; }
+.table__name { display: block; }
+.table__size { display: block; color: var(--muted); font-size: 12px; }
+.table__empty { color: var(--muted); }
+
+.analytics__note { margin-top: 16px; color: var(--muted); font-size: 13px; line-height: 18px; }

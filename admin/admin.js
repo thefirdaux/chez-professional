@@ -22,9 +22,10 @@
   var passwordToggle = document.querySelector('[data-toggle-password]');
   var loginError = document.querySelector('[data-login-error]');
   var logoutButton = document.querySelector('[data-logout]');
+  var sectionsNav = document.querySelector('[data-sections]');
 
   function rm(sen) {
-    return 'RM ' + (sen / 100).toFixed(2);
+    return 'RM ' + (sen / 100).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function el(tag, className, text) {
@@ -87,6 +88,7 @@
     document.body.classList.add('is-signed-out');
     app.hidden = true;
     logoutButton.hidden = true;
+    sectionsNav.hidden = true;
     loginScreen.hidden = false;
     loginError.textContent = error || '';
     loginError.hidden = !error;
@@ -101,6 +103,7 @@
     setPasswordVisible(false);
     app.hidden = false;
     logoutButton.hidden = false;
+    sectionsNav.hidden = false;
   }
 
   function setPasswordVisible(visible) {
@@ -277,6 +280,280 @@
       render();
       showLogin();
     }, handleError);
+  });
+
+  /* --- Orders / Analytics switch --- */
+  var ordersSection = document.querySelector('[data-orders-section]');
+  var analyticsSection = document.querySelector('[data-analytics-section]');
+  var analyticsBody = document.querySelector('[data-analytics-body]');
+  var tooltip = document.querySelector('[data-tooltip]');
+  var statsDays = 30;
+  var lastStats = null;
+
+  document.querySelectorAll('[data-section]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var analytics = button.dataset.section === 'analytics';
+      document.querySelectorAll('[data-section]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b === button));
+      });
+      ordersSection.hidden = analytics;
+      analyticsSection.hidden = !analytics;
+      if (analytics) loadStats(); else load();
+    });
+  });
+
+  document.querySelectorAll('[data-days]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      statsDays = Number(button.dataset.days);
+      document.querySelectorAll('[data-days]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b === button));
+      });
+      loadStats();
+    });
+  });
+
+  function loadStats() {
+    // Keep the previous numbers on screen, dimmed, while the new range loads
+    analyticsBody.classList.add('is-loading');
+    request('/api/admin/stats?days=' + statsDays, 'GET').then(function (data) {
+      analyticsBody.classList.remove('is-loading');
+      showMessage('');
+      lastStats = data;
+      renderStats(data);
+    }, function (error) {
+      analyticsBody.classList.remove('is-loading');
+      handleError(error);
+    });
+  }
+
+  /* --- Formatting --- */
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function shortDate(day) {
+    var parts = day.split('-');
+    return Number(parts[2]) + ' ' + MONTHS[Number(parts[1]) - 1];
+  }
+
+  function compact(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(n >= 10000000 ? 0 : 1).replace(/\.0$/, '') + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'K';
+    return String(n);
+  }
+
+  function rmCompact(sen) {
+    return 'RM ' + compact(Math.round(sen / 100));
+  }
+
+  function percent(fraction) {
+    if (!fraction) return '0%';
+    var value = fraction * 100;
+    return (value < 10 ? value.toFixed(1) : Math.round(value)) + '%';
+  }
+
+  /* --- Render --- */
+  function renderStats(data) {
+    var t = data.totals;
+    var kpis = document.querySelector('[data-kpis]');
+    kpis.textContent = '';
+    [
+      ['Visitors', t.visitors.toLocaleString('en-MY')],
+      ['Page views', t.views.toLocaleString('en-MY')],
+      ['Reached checkout', t.checkoutVisitors.toLocaleString('en-MY')],
+      ['Orders', t.orders.toLocaleString('en-MY')],
+      ['Sales', t.sales >= 100000 ? 'RM ' + Math.round(t.sales / 100).toLocaleString('en-MY') : rm(t.sales)],
+      ['Average order', t.orders ? rm(t.averageOrder) : '—'],
+      ['Visitors who bought', percent(t.conversion)]
+    ].forEach(function (kpi) {
+      var tile = el('div', 'kpi');
+      tile.appendChild(el('p', 'kpi__label', kpi[0]));
+      tile.appendChild(el('p', 'kpi__value', kpi[1]));
+      kpis.appendChild(tile);
+    });
+
+    columnChart(document.querySelector('[data-chart="visitors"]'), data.daily, function (d) { return d.visitors; }, {
+      format: function (v) { return v.toLocaleString('en-MY'); },
+      tick: compact,
+      empty: 'No visits recorded in this period yet.',
+      details: function (d) { return [[d.visitors.toLocaleString('en-MY'), 'visitors'], [d.views.toLocaleString('en-MY'), 'page views']]; }
+    });
+    columnChart(document.querySelector('[data-chart="sales"]'), data.daily, function (d) { return d.sales; }, {
+      format: rm,
+      tick: rmCompact,
+      empty: 'No paid orders in this period yet.',
+      details: function (d) { return [[rm(d.sales), 'sales'], [String(d.orders), d.orders === 1 ? 'order' : 'orders']]; }
+    });
+
+    barList(document.querySelector('[data-list="sources"]'), data.sources, 'No visits yet.');
+    barList(document.querySelector('[data-list="devices"]'), data.devices, 'No visits yet.');
+    barList(document.querySelector('[data-list="pages"]'), data.pages, 'No visits yet.');
+
+    var products = document.querySelector('[data-products] tbody');
+    products.textContent = '';
+    if (!data.products.length) {
+      var emptyRow = el('tr');
+      var cell = el('td', 'table__empty', 'No paid orders in this period yet.');
+      cell.colSpan = 3;
+      emptyRow.appendChild(cell);
+      products.appendChild(emptyRow);
+    }
+    data.products.forEach(function (p) {
+      var row = el('tr');
+      var name = el('td');
+      name.appendChild(el('span', 'table__name', p.name));
+      name.appendChild(el('span', 'table__size', p.size));
+      row.appendChild(name);
+      row.appendChild(el('td', 'num', String(p.qty)));
+      row.appendChild(el('td', 'num', rm(p.sales)));
+      products.appendChild(row);
+    });
+
+    var daily = document.querySelector('[data-daily] tbody');
+    daily.textContent = '';
+    data.daily.slice().reverse().forEach(function (d) {
+      var row = el('tr');
+      row.appendChild(el('td', null, shortDate(d.day)));
+      row.appendChild(el('td', 'num', String(d.visitors)));
+      row.appendChild(el('td', 'num', String(d.views)));
+      row.appendChild(el('td', 'num', String(d.orders)));
+      row.appendChild(el('td', 'num', rm(d.sales)));
+      daily.appendChild(row);
+    });
+  }
+
+  /* Horizontal bars: one brand colour, value at the end of each bar */
+  function barList(list, rows, emptyText) {
+    list.textContent = '';
+    if (!rows.length) {
+      list.appendChild(el('li', 'bars__empty', emptyText));
+      return;
+    }
+    var total = rows.reduce(function (sum, r) { return sum + r.count; }, 0);
+    var max = Math.max.apply(null, rows.map(function (r) { return r.count; }));
+    rows.forEach(function (r) {
+      var item = el('li', 'bars__item');
+      var head = el('div', 'bars__head');
+      head.appendChild(el('span', 'bars__name', r.name));
+      head.appendChild(el('span', 'bars__value', r.count.toLocaleString('en-MY') + ' · ' + percent(r.count / total)));
+      item.appendChild(head);
+      var bar = el('div', 'bars__bar');
+      bar.style.width = Math.max(2, (r.count / max) * 100) + '%';
+      item.appendChild(bar);
+      list.appendChild(item);
+    });
+  }
+
+  /* Column chart drawn as SVG: thin columns, 4px rounded tops, hover tooltip per day */
+  var SVG = 'http://www.w3.org/2000/svg';
+
+  function svg(tag, attrs) {
+    var node = document.createElementNS(SVG, tag);
+    Object.keys(attrs || {}).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+    return node;
+  }
+
+  function niceMax(value) {
+    if (value <= 0) return 4;
+    var power = Math.pow(10, Math.floor(Math.log10(value)));
+    var steps = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+    for (var i = 0; i < steps.length; i++) if (steps[i] * power >= value) return steps[i] * power;
+    return 10 * power;
+  }
+
+  function columnChart(box, rows, valueOf, options) {
+    box.textContent = '';
+    var width = Math.max(280, box.clientWidth);
+    var height = 220;
+    var pad = { top: 12, right: 8, bottom: 28, left: 52 };
+    var innerW = width - pad.left - pad.right;
+    var innerH = height - pad.top - pad.bottom;
+    var values = rows.map(valueOf);
+    var max = niceMax(Math.max.apply(null, values));
+    var band = innerW / rows.length;
+    var barW = Math.max(2, Math.min(24, band - 2));
+    var y = function (v) { return pad.top + innerH - (v / max) * innerH; };
+
+    var chart = svg('svg', { viewBox: '0 0 ' + width + ' ' + height, width: width, height: height, role: 'img' });
+    chart.setAttribute('aria-label', box.parentNode.querySelector('.card__title').textContent + ', ' + rows.length + ' days. See the daily numbers table for every value.');
+
+    // Hairline gridlines with clean tick values
+    [0, 0.5, 1].forEach(function (f) {
+      var v = max * f;
+      var gy = y(v);
+      chart.appendChild(svg('line', { x1: pad.left, x2: width - pad.right, y1: gy, y2: gy, class: 'chart__grid' }));
+      var label = svg('text', { x: pad.left - 8, y: gy + 4, class: 'chart__tick', 'text-anchor': 'end' });
+      label.textContent = options.tick(v);
+      chart.appendChild(label);
+    });
+
+    // A few date labels along the bottom
+    var labelEvery = Math.ceil(rows.length / 6);
+    rows.forEach(function (row, i) {
+      if (i % labelEvery !== 0 && i !== rows.length - 1) return;
+      if (i !== rows.length - 1 && rows.length - 1 - i < labelEvery / 2) return;
+      var t = svg('text', { x: pad.left + band * i + band / 2, y: height - 8, class: 'chart__tick', 'text-anchor': 'middle' });
+      t.textContent = shortDate(row.day);
+      chart.appendChild(t);
+    });
+
+    rows.forEach(function (row, i) {
+      var v = values[i];
+      var cx = pad.left + band * i + band / 2;
+      if (v > 0) {
+        var top = y(v);
+        var h = pad.top + innerH - top;
+        var r = Math.min(4, barW / 2, h);
+        var x0 = cx - barW / 2;
+        var x1 = cx + barW / 2;
+        var base = pad.top + innerH;
+        var d = 'M' + x0 + ',' + base + 'V' + (top + r) + 'Q' + x0 + ',' + top + ' ' + (x0 + r) + ',' + top +
+          'H' + (x1 - r) + 'Q' + x1 + ',' + top + ' ' + x1 + ',' + (top + r) + 'V' + base + 'Z';
+        chart.appendChild(svg('path', { d: d, class: 'chart__bar', 'data-index': i }));
+      }
+      // The whole day's column is the hover/focus target, not just the painted bar
+      var hit = svg('rect', { x: pad.left + band * i, y: pad.top, width: band, height: innerH, class: 'chart__hit', tabindex: 0 });
+      hit.setAttribute('aria-label', shortDate(row.day) + ': ' + options.details(row).map(function (p) { return p.join(' '); }).join(', '));
+      var show = function (event) { showTooltip(event, shortDate(row.day), options.details(row)); highlight(chart, i); };
+      hit.addEventListener('pointermove', show);
+      hit.addEventListener('focus', show);
+      hit.addEventListener('pointerleave', function () { hideTooltip(); highlight(chart, -1); });
+      hit.addEventListener('blur', function () { hideTooltip(); highlight(chart, -1); });
+      chart.appendChild(hit);
+    });
+
+    box.appendChild(chart);
+    if (values.every(function (v) { return !v; })) box.appendChild(el('p', 'chart__empty', options.empty));
+  }
+
+  function highlight(chart, index) {
+    chart.querySelectorAll('.chart__bar').forEach(function (bar) {
+      bar.classList.toggle('is-active', Number(bar.dataset.index) === index);
+    });
+  }
+
+  function showTooltip(event, title, parts) {
+    tooltip.textContent = '';
+    tooltip.appendChild(el('p', 'tooltip__title', title));
+    parts.forEach(function (p) {
+      var line = el('p', 'tooltip__row');
+      line.appendChild(el('strong', null, p[0]));
+      line.appendChild(document.createTextNode(' ' + p[1]));
+      tooltip.appendChild(line);
+    });
+    tooltip.hidden = false;
+    var rect = event.target.getBoundingClientRect();
+    var x = event.clientX || rect.left + rect.width / 2;
+    var yPos = event.clientY || rect.top;
+    var w = tooltip.offsetWidth;
+    tooltip.style.left = Math.min(window.innerWidth - w - 8, Math.max(8, x - w / 2)) + 'px';
+    tooltip.style.top = Math.max(8, yPos - tooltip.offsetHeight - 12) + 'px';
+  }
+
+  function hideTooltip() { tooltip.hidden = true; }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { if (lastStats && !analyticsSection.hidden) renderStats(lastStats); }, 150);
   });
 
   load();
