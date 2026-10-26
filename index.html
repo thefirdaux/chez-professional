@@ -9,16 +9,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=09dd0f00">
+  <link rel="stylesheet" href="styles.css?v=4a33ef81">
 </head>
 <body>
   <div class="page">
     <header class="site-header">
       <a class="site-header__logo" href="#top" aria-label="Chez Professional home">
-        <img src="assets/logo.png" alt="Chez Professional" width="98" height="39">
+        <img src="assets/logo.png" alt="Chez Professional" width="85" height="40">
       </a>
       <button class="site-header__cart" type="button" aria-label="Cart" aria-haspopup="dialog" aria-controls="cart-sheet">
-        <img src="assets/icon-bag.svg" alt="" width="16" height="18">
+        <img src="assets/icon-bag.svg" alt="" width="32" height="32">
         <span class="site-header__cart-count" data-cart-count hidden>0</span>
       </button>
     </header>
@@ -27,10 +27,10 @@
       <!-- Hero -->
       <section class="hero section--beige">
         <div class="section-intro">
-          <h1 class="section-title text-title1"><span>Professional Haircare.</span> <span class="accent">Made for you.</span></h1>
-          <p class="text-callout">Discover your haircare essentials, from root care to keratin treatments, designed to complement your daily routine.</p>
+          <h1 class="section-title text-title1"><span>Professional Hair Care.</span> <span>Made for you.</span></h1>
+          <p class="text-body"><span class="line">Discover your haircare essentials,</span> <span class="line">from root care to keratin treatments,</span> <span class="line">designed to complement your daily routine.</span></p>
         </div>
-        <div class="crop hero__image">
+        <div class="crop section-image hero__image">
           <img class="cover" src="assets/hero-banner.png" alt="Chez Professional keratin shampoo, keratin mask, keratin spray and hair tonic">
         </div>
       </section>
@@ -38,24 +38,24 @@
       <!-- Main product -->
       <section class="main-product section--beige" id="keratin">
         <div class="section-intro">
-          <h2 class="section-title text-title1"><span>Salon-quality keratin.</span> <span class="accent">Right at home.</span></h2>
-          <p class="text-callout">Discover your haircare essentials, from root care to keratin treatments, designed to complement your daily routine.</p>
+          <h2 class="section-title text-title1"><span>Salon-quality keratin.</span> <span>Right at home.</span></h2>
+          <p class="text-body">Enjoy salon-quality hair care at home with keratin treatments that nourish, smooth, and restore your hair for a softer, healthier-looking finish.</p>
         </div>
-        <div class="crop main-product__poster">
+        <div class="crop section-image main-product__poster">
           <img class="cover" src="assets/keratin-poster.png" alt="Keratin Treatment Shampoo, Keratin Treatment Mask and Leave-in Keratin Spray on display blocks">
         </div>
-        <ul class="shop main-product__shop" data-shop="featured" aria-label="Combo deals"></ul>
       </section>
 
       <!-- Keratin Shampoo & Mask -->
       <section class="keratin section--beige" id="keratin-shampoo-mask">
-        <div class="keratin__headline">
-          <p class="text-callout">KERATIN SHAMPOO &amp; MASK</p>
-          <h2 class="text-title1">Restore <span class="accent-olive">moisture</span>.<br>Strengthen every strand.</h2>
+        <div class="section-intro">
+          <h2 class="section-title text-title1"><span>Restore moisture.</span> <span>Strengthen every strand.</span></h2>
         </div>
 
         <div class="duo">
-          <img class="duo__image" src="assets/keratin-shampoo-mask.png" alt="Keratin Treatment Shampoo and Keratin Treatment Mask, 280ml each">
+          <div class="crop duo__image">
+            <img src="assets/keratin-shampoo-mask.png" alt="Keratin Treatment Shampoo and Keratin Treatment Mask, 280ml each" style="width:122.36%;height:133.03%;left:-7.38%;top:-14.98%">
+          </div>
           <div class="duo__label duo__label--left">
             <span class="duo__brand">CHEZ PROFESSIONAL</span>
             <span class="duo__name">KERATIN<br>TREATMENT<br>SHAMPOO</span>
@@ -70,18 +70,22 @@
 
         <dl class="product-list">
           <div class="product-list__item">
-            <dt class="text-headline">Keratin Treatment Shampoo</dt>
+            <dt class="text-callout-emphasized">KERATIN TREATMENT SHAMPOO</dt>
             <dd class="text-subheadline">Designed to nourish and care for your hair, this formula helps boost hydration, improve hair structure, and reduce stiffness caused by seawater buildup.</dd>
           </div>
           <div class="product-list__item">
-            <dt class="text-headline">Keratin Treatment Mask</dt>
-            <dd class="text-subheadline">Deeply moisturizes dry, brittle hair for softer, healthier strands. Replenishes keratin protein to repair damage from bleaching, coloring, and heat styling. Strengthens each strand to reduce breakage and split ends while smoothing frizz and tangles for easier styling.</dd>
+            <dt class="text-callout-emphasized">KERATIN TREATMENT MASK</dt>
+            <dd class="text-subheadline">Deeply moisturizes dry, brittle hair for softer, healthier strands. Replenishes keratin protein to repair damage from bleaching, coloring, and heat styling.</dd>
+          </div>
+          <div class="product-list__item">
+            <dt class="text-callout-emphasized">NO SLS. No Paraben.</dt>
+            <dd class="text-subheadline">SLS can strip away natural oils, leaving hair and scalp feeling dry, while parabens are preservatives used to prevent bacterial and fungal growth in hair-care products. Our formula is free from both, offering an alternative for those who prefer a gentler cleansing experience without added parabens.</dd>
           </div>
         </dl>
 
         <!-- Hair transformation -->
         <div class="transformation" id="transformation">
-          <h2 class="text-large-title transformation__title">Start your hair<br>transformation now<br>with our<br>professional hair<br>care routines.</h2>
+          <h2 class="text-title3 transformation__title"><span class="line">Start your hair transformation now</span> <span class="line">with our professional hair care routines.</span></h2>
           <ul class="carousel" aria-label="Hair results">
             <li class="carousel__item">
               <div class="crop carousel__image">
@@ -104,23 +108,46 @@
           </ul>
         </div>
 
-        <!-- No SLS / No Paraben -->
-        <div class="gentle">
-          <h2 class="text-large-title">No SLS.<br>No Paraben.<br>Gentle Hair Care</h2>
-          <p class="text-subheadline">SLS can strip away natural oils, leaving hair and scalp<br>feeling dry, while parabens are preservatives used to prevent bacterial and fungal growth in hair-care products. Our formula is free from both, offering an alternative for those who prefer a gentler cleansing experience without added parabens.</p>
+        <div class="reviews">
+          <h3 class="text-title3 reviews__title">Product Review</h3>
+          <ul class="reviews__list" aria-label="Keratin Shampoo and Mask reviews">
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
+              </div>
+              <p>Item Chez tak pernah mengecewakan, yang penting consistency. Pocket friendly 1st wash, dah rasa lembut.. wangi pon wangi.. from shampoo to serum, semua memang A++</p>
+            </li>
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
+              </div>
+              <p>Saya ni masalah rambut tebal dan kasar. So bila color rambut, rambut akan jadi kejung sikit. But suprisingly even pakai shampoo je pon da buat rambut soft gila! Dah la harga murah....</p>
+            </li>
+            <li class="review-card">
+              <div class="review-card__meta">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
+              </div>
+              <p>Baru first time try, scalp memang rasa ringan sangat. Selalunya hari-hari kena basuh ni, ni 2 hari sekali basuh pun scalp tak oily. Memang rasa scalp clean sangat.</p>
+            </li>
+          </ul>
         </div>
 
-        <ul class="shop shop--keratin" id="shop-keratin" data-shop="keratin" aria-label="Shop Keratin Shampoo and Mask"></ul>
+        <div class="shop-block shop-block--keratin" id="shop-keratin">
+          <h3 class="text-title3">Shop Product</h3>
+          <ul class="shop" data-shop="keratin" aria-label="Shop Keratin Shampoo and Mask"></ul>
+        </div>
       </section>
 
       <!-- Keratin Spray -->
       <section class="spray section--beige" id="keratin-spray">
-        <div class="section-intro section-intro--eyebrow">
-          <p class="section-eyebrow text-subheadline">KERATIN SPRAY</p>
-          <h2 class="section-title text-title1"><span>Smooth Hair</span> <span class="accent">Lasting Protection.</span></h2>
+        <div class="section-intro">
+          <h2 class="section-title text-title1"><span>Smooth Hair.</span> <span>Lasting Protection.</span></h2>
         </div>
         <img class="spray__image" src="assets/keratin-spray-hero.png" alt="Chez Professional Leave-in Keratin Spray" width="274" height="411">
-        <p class="section-copy text-callout">Enhance hair manageability with lasting moisture,<br>heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
+        <p class="section-copy text-body">Enhance hair manageability with lasting moisture, heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
         <ul class="benefits spray__benefits" aria-label="Keratin Spray benefits">
           <li class="benefit-card">
             <img class="benefit-card__image" src="assets/benefit-control.jpg" alt="Woman blow-drying and brushing her hair" loading="lazy">
@@ -140,88 +167,108 @@
           </li>
         </ul>
         <div class="reviews">
-          <h3 class="text-title1 reviews__title">Review</h3>
+          <h3 class="text-title3 reviews__title">Product Review</h3>
           <ul class="reviews__list" aria-label="Keratin Spray reviews">
             <li class="review-card">
               <div class="review-card__meta">
-                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
-                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
               </div>
-              <p>This was my third purchase from this awesome seller. Very high quality product made by very profesional hair stylist. Highly recommended to buy. Just follow the guideline and enjoy.</p>
+              <p>This was my 3rd purchase from this awesome seller. Very high quality product made by very professional hair stylist. Highly recommended to buy. Just follow the guideline and enjoy.</p>
             </li>
             <li class="review-card">
               <div class="review-card__meta">
-                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
-                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
               </div>
-              <p>Keratin spray mmg superb. lps cuci rambut, pakai hair tonic, wajib yer spray keratin ni..wangi, lembut rambut, senang sikat yer..</p>
+              <p>Keratin spray memang superb. Lepas cuci rambut, pakai hair tonic, wajib yer spray keratin ni.. wangi, rambut lembut, senang sikat yer..</p>
             </li>
             <li class="review-card">
               <div class="review-card__meta">
-                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
-                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
               </div>
-              <p>This is my second bottle. Rambut frizzy and dry spray leave in keratin ni on damp hair, rambut jadi lembut tak kusut after blow dry. Lurve sangat.</p>
+              <p>This is my 2nd bottle. Rambut frizzy and dry spray leave in keratin ni on damp hair, rambut jadi lembut tak kusut after blow dry. Lurve sangat</p>
             </li>
           </ul>
         </div>
-        <ul class="shop spray__shop" data-shop="spray" aria-label="Shop Keratin Spray"></ul>
+        <div class="shop-block">
+          <h3 class="text-title3">Shop Product</h3>
+          <ul class="shop" data-shop="spray" aria-label="Shop Keratin Spray"></ul>
+        </div>
       </section>
 
       <!-- Hair Tonic -->
       <section class="tonic section--beige" id="hair-tonic">
-        <div class="section-intro section-intro--eyebrow">
-          <p class="section-eyebrow text-subheadline">HAIR TONIC</p>
-          <h2 class="section-title text-title1"><span>Scalp Treatment and</span> <span class="accent">Regenerate Hair Growth</span></h2>
+        <div class="section-intro">
+          <h2 class="section-title text-title1"><span>Scalp Treatment and</span> <span>Regenerate Hair Growth.</span></h2>
         </div>
-        <div class="crop tonic__image">
+        <div class="crop section-image tonic__image">
           <img class="cover" src="assets/hair-tonic-product.png" alt="Chez Professional Root Booster Hair Tonic">
         </div>
-        <p class="section-copy text-callout">Enhance hair manageability with lasting moisture,<br>heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
+        <p class="section-copy text-body">A refreshing daily tonic designed to care for your scalp, help maintain moisture, and leave your hair feeling revitalised.</p>
         <ul class="benefits tonic__benefits" aria-label="Hair Tonic benefits">
           <li class="benefit-card">
             <img class="benefit-card__image" src="assets/tonic-card-ingredients.png" alt="A comb parting clean, healthy hair at the scalp" loading="lazy">
-            <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Powered by ingredients like ginseng, biotin, menthol to help nourish hair roots, invigorate the scalp</span></p>
+            <p class="benefit-card__text benefit-card__text--auto text-body"><span>Powered by ingredients like ginseng, biotin, menthol to help nourish hair roots, invigorate the scalp</span></p>
           </li>
           <li class="benefit-card">
             <img class="benefit-card__image" src="assets/tonic-card-hijab.jpg" alt="Woman in a hijab feeling fresh and confident" loading="lazy">
-            <p class="benefit-card__text benefit-card__text--auto text-headline"><span>Keep your scalp fresh and comfortable all day, even under your hijab. Feel refreshed and confident from the roots up.</span></p>
+            <p class="benefit-card__text benefit-card__text--auto text-body"><span>Keep your scalp fresh and comfortable all day, even under your hijab. Feel refreshed and confident from the roots up.</span></p>
           </li>
         </ul>
         <div class="reviews">
-          <h3 class="text-title1 reviews__title">Review</h3>
+          <h3 class="text-title3 reviews__title">Product Review</h3>
           <ul class="reviews__list" aria-label="Hair Tonic reviews">
             <li class="review-card">
               <div class="review-card__meta">
-                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
-                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
               </div>
               <p>Best sangat tonic ni, anak rambut cepat naik, rambut kurang gugur and paling penting kulit kepala tak gatal dah ye.. Thanks didi suggest this product</p>
             </li>
             <li class="review-card">
               <div class="review-card__meta">
-                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
-                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
               </div>
-              <p>This one also.. wajib pakai lpa cuci rambut... supaya scalp sihat, rambut kurang gugur, anak rambut tumbuh, dan bau dia perghh wangi tau.. then ada rasa cooling jer lps spray..best..</p>
+              <p>This one also.. wajib pakai lepas cuci rambut.. supaya scalp sihat, rambut kurang gugur, anak rambut tumbuh, dan bau dia perghh wangi tau.. then ada rasa cooling jer lepas spray..best</p>
             </li>
             <li class="review-card">
               <div class="review-card__meta">
-                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
-                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
               </div>
-              <p>Serious best. kulit kepala rasa segar je bila pakai. dah pakai more than 1 week. rambut dh kurang gugur.<br>Scent: bau fresh menthol</p>
+              <p>Serious best, kulit kepala rasa segar je bila pakai, dah more than 1 week, Rambut dah kurang gugur.<br>Scent : bau fresh menthol.</p>
             </li>
             <li class="review-card">
               <div class="review-card__meta">
-                <img src="assets/icon-tiktok.svg" alt="TikTok" width="20" height="20">
-                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="100" height="20">
+                <img src="assets/icon-tiktok.svg" alt="TikTok" width="16" height="16">
+                <img src="assets/stars-5.svg" alt="5 out of 5 stars" width="80" height="16">
               </div>
-              <p>Rambut i kurang gugur and itchy pun no more. Kulit kepala rasa cool plus wangi. Produk yang terbaik that why i repeat beli kali ke-2</p>
+              <p>Rambut i kurang gugur and itchy pon no more. Kulit kepala rasa cool plus wangi. Produk yang terbaik thats why i repeat beli kali ke-2</p>
             </li>
           </ul>
         </div>
-        <ul class="shop tonic__shop" data-shop="tonic" aria-label="Shop Hair Tonic"></ul>
+        <div class="shop-block">
+          <h3 class="text-title3">Shop Product</h3>
+          <ul class="shop" data-shop="tonic" aria-label="Shop Hair Tonic"></ul>
+        </div>
+      </section>
+
+      <!-- Combo deals -->
+      <section class="combos section--beige" id="combos">
+        <div class="section-intro">
+          <h2 class="section-title text-title1"><span>More Care.</span> <span>More Savings.</span></h2>
+          <p class="text-body">Pair your haircare essentials and enjoy exclusive savings with our specially curated combo deals</p>
+        </div>
+        <div class="crop section-image combos__image">
+          <img class="cover" src="assets/hero-banner.png" alt="Keratin shampoo, keratin mask, keratin spray and hair tonic together" loading="lazy">
+        </div>
+        <div class="shop-block">
+          <h3 class="text-title3">Shop Product</h3>
+          <ul class="shop" data-shop="combos" aria-label="Shop combo deals"></ul>
+        </div>
       </section>
 
       <!-- About -->
@@ -230,13 +277,13 @@
           <h2 class="text-title1">CHEZ HAMDAN</h2>
           <p class="text-subheadline">Professional Hairstylist</p>
           <ul class="about__roles text-subheadline">
-            <li>Master Stylist</li>
+            <li>Master Hairstylist</li>
             <li>Creative Director</li>
           </ul>
         </div>
         <img class="about__image" src="assets/chez-hamdan.jpg" alt="Chez Hamdan, professional hairstylist" width="1208" height="1500" loading="lazy">
-        <div class="about__text text-subheadline">
-          <p>Based in Kuala Lumpur, Malaysia, Chez Hamdan is a professional hairstylist with a creative approach to hair design, personal style and individual expression.</p>
+        <div class="about__text">
+          <p>Based in Kuala Lumpur Malaysia, Chez Hamdan is a professional hairstylist with a creative approach to hair design, personal style and individual expression.</p>
           <p>His professional identity brings together hairstyling, artistic vision and an appreciation for how the right hairstyle can complement a person’s character and confidence.</p>
           <p>Hair is more than appearance. It is a form of personal expression.</p>
         </div>
@@ -290,7 +337,7 @@
 
   <div class="toast" role="status" aria-live="polite" hidden></div>
 
-  <script type="module" src="products.js?v=7267d461"></script>
+  <script type="module" src="products.js?v=898d7f7e"></script>
   <script type="module" src="cart.js?v=935cc6ec"></script>
   <script type="module" src="script.js?v=c084480f"></script>
 </body>

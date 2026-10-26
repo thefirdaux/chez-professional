@@ -47,7 +47,7 @@ var products = {
   'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 11000, 11970, SPRAY),
   'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3990, null, TONIC),
   'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11000, 11970, TONIC),
-  'spray-tonic-combo': product('Keratin Spray + Hair Tonic (Combo)', '135ml x 2 bottle', 7500, 7980, {
+  'spray-tonic-combo': product('Leave In Keratin Spray + Root Booster Hair Tonic (Combo)', '135ml x 2 bottle', 7500, 7980, {
     eyebrow: 'KERATIN SPRAY + HAIR TONIC',
     description: 'Get both the Keratin Spray Leave In and the Root Booster Hair Tonic, 135ml each, to care for your hair and scalp.',
     highlights: ['Keratin Spray Leave In 135ml', 'Root Booster Hair Tonic 135ml']
@@ -56,10 +56,10 @@ var products = {
 
 // Which products appear in each shop grid on the home page, in order
 var shops = {
-  featured: ['shampoo-mask-combo', 'spray-tonic-combo'],
   keratin: ['shampoo-1', 'shampoo-3', 'mask-1', 'mask-3', 'shampoo-mask-combo'],
   spray: ['spray-1', 'spray-3'],
-  tonic: ['tonic-1', 'tonic-3', 'spray-tonic-combo']
+  tonic: ['tonic-1', 'tonic-3'],
+  combos: ['shampoo-mask-combo', 'spray-tonic-combo']
 };
 
 // Shipping in sen. The client charges one flat rate for the whole of Malaysia.
