@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=b5df02b3">
+  <link rel="stylesheet" href="styles.css?v=2fd42d29">
 </head>
 <body>
-  <div class="page">
+  <div class="page page--wide">
     <header class="site-header">
       <a class="site-header__logo" href="index.html" aria-label="Chez Professional home">
         <img src="assets/logo.png?v=ad0f70bf" alt="Chez Professional" width="85" height="40">
@@ -37,12 +37,9 @@
       </div>
 
       <form class="checkout__form" data-checkout-form novalidate>
-        <section class="checkout__section">
-          <h2 class="text-headline">Order summary</h2>
-          <ul class="cart__items" data-cart-items></ul>
-        </section>
-
-        <section class="checkout__section">
+        <!-- On phones both columns dissolve and the parts follow the order set in styles.css -->
+        <div class="checkout__main">
+        <section class="checkout__section checkout__section--contact">
           <h2 class="text-headline">Contact</h2>
           <label class="field">
             <span class="field__label">Full name</span>
@@ -61,7 +58,7 @@
           </label>
         </section>
 
-        <section class="checkout__section">
+        <section class="checkout__section checkout__section--address">
           <h2 class="text-headline">Shipping address</h2>
           <label class="field">
             <span class="field__label">Address</span>
@@ -97,9 +94,16 @@
           </label>
         </section>
 
-        <section class="checkout__section">
+        <section class="checkout__section checkout__section--shipping">
           <h2 class="text-headline">Shipping</h2>
           <p class="checkout__shipping text-subheadline" data-shipping-info>Select your state to see the shipping fee.</p>
+        </section>
+        </div>
+
+        <aside class="checkout__aside" aria-label="Order summary">
+        <section class="checkout__section checkout__section--summary">
+          <h2 class="text-headline">Order summary</h2>
+          <ul class="cart__items" data-cart-items></ul>
         </section>
 
         <section class="checkout__section checkout__totals">
@@ -112,6 +116,7 @@
         <p class="checkout__error" data-form-error role="alert" hidden></p>
         <button class="checkout__pay" type="submit" data-pay-button>Pay Now</button>
         <p class="sheet__secure">Secure checkout by CHIP · FPX online banking &amp; DuitNow QR</p>
+        </aside>
       </form>
     </main>
   </div>
