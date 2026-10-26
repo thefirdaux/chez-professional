@@ -1571,8 +1571,7 @@ select.field__input {
   }
 
   .page--home .about__intro p,
-  .page--home .about__roles,
-  .page--home .about__text {
+  .page--home .about__roles {
     font-size: clamp(21px, 2.1875vw, 34px);
     line-height: 1.21;
     letter-spacing: -0.4px;
@@ -1586,7 +1585,14 @@ select.field__input {
     aspect-ratio: 1856 / 2304;
   }
 
-  .page--home .about__text { gap: 34px; margin-top: 48px; }
+  /* Headline style: 22px / 28px at 1280px, a blank line between paragraphs */
+  .page--home .about__text {
+    gap: 1.2727em;
+    margin-top: 48px;
+    font-size: clamp(17px, 1.71875vw, 27px);
+    line-height: 1.2727;
+    letter-spacing: -0.3px;
+  }
 }
 
 /* =====================================================================
