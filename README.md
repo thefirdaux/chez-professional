@@ -35,6 +35,7 @@ Settings in the Pages project (Settings → Variables and secrets / Bindings), p
 | `CHIP_SECRET_KEY` | Secret | CHIP → Developers → API Keys (test or live) |
 | `CHIP_TEST_MODE` | Text | `1` while using CHIP test keys; remove for live |
 | `ADMIN_PASSWORD` | Secret | admin sign-in password, at least 12 characters |
+| `ADMIN_USERNAME` | Text | admin sign-in username (not case-sensitive); if unset, only the password is checked |
 
 At checkout the city and state fill in from the postcode, using `assets/postcodes.json`
 (built from the `malaysia-postcodes` package, ISC licence). A city the buyer types is never overwritten.

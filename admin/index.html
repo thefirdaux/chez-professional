@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=cb1b552d">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=1056d844">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=9d50453a">
-  <link rel="stylesheet" href="admin.css?v=a89548a7">
+  <link rel="stylesheet" href="admin.css?v=d56e0d52">
 </head>
 <body>
   <header class="admin-header">
@@ -19,12 +19,27 @@
 
   <p class="message" data-message hidden></p>
 
-  <form class="login" data-login hidden>
-    <label class="login__label" for="admin-password">Admin password</label>
-    <input class="login__input" id="admin-password" name="password" type="password" autocomplete="current-password" required>
-    <p class="login__error" data-login-error role="alert" hidden></p>
-    <button type="submit" class="button button--primary">Sign in</button>
-  </form>
+  <section class="login-screen" data-login-screen hidden>
+    <div class="login-screen__brand">
+      <img class="login-screen__logo" src="/assets/logo-756.png" alt="Chez Professional" width="378" height="178">
+      <img class="login-screen__image" src="/assets/hero-banner.png?v=7d73bdc0" srcset="/assets/hero-banner.png?v=7d73bdc0 900w, /assets/hero-banner-1264.webp 1264w" sizes="580px" alt="">
+    </div>
+
+    <form class="login" data-login novalidate>
+      <h1 class="login__title">Admin Login</h1>
+      <label class="visually-hidden" for="admin-username">Username</label>
+      <input class="login__input" id="admin-username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Username" required>
+      <div class="login__password">
+        <label class="visually-hidden" for="admin-password">Password</label>
+        <input class="login__input" id="admin-password" name="password" type="password" autocomplete="current-password" placeholder="Password" required>
+        <button type="button" class="login__toggle" data-toggle-password aria-label="Show password" aria-pressed="false">
+          <img src="/admin/icon-eye.svg" alt="" width="24" height="24">
+        </button>
+      </div>
+      <p class="login__error" data-login-error role="alert" hidden></p>
+      <button type="submit" class="login__submit">Sign In</button>
+    </form>
+  </section>
 
   <div data-app hidden>
     <nav class="tabs" aria-label="Order views">
@@ -45,6 +60,6 @@
   <!-- Filled just before printing; only this part is printed -->
   <div class="labels" data-labels aria-hidden="true"></div>
 
-  <script src="admin.js?v=d2228337"></script>
+  <script src="admin.js?v=49ebcc00"></script>
 </body>
 </html>

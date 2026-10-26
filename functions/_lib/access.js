@@ -1,8 +1,9 @@
 /*
- * Admin sign-in with a single password.
+ * Admin sign-in with a username and password.
  *
- * Setting (Cloudflare Pages → Settings → Variables and secrets, type Secret):
- *   ADMIN_PASSWORD  at least 12 characters
+ * Settings (Cloudflare Pages → Settings → Variables and secrets):
+ *   ADMIN_PASSWORD  Secret, at least 12 characters
+ *   ADMIN_USERNAME  Text; when it is not set, any username is accepted (password only)
  *
  * Signing in sets a session cookie signed with the password, so changing the
  * password signs every device out. Failed attempts are counted in D1 to slow
@@ -68,8 +69,11 @@ export async function signIn(request, env) {
   if (!sameOrigin(request)) return { status: 403, error: 'Request blocked.' };
 
   let password = '';
+  let username = '';
   try {
-    password = String((await request.json()).password || '');
+    const body = await request.json();
+    password = String(body.password || '');
+    username = String(body.username || '').trim().toLowerCase();
   } catch (e) { /* treated as a wrong password */ }
 
   const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -82,13 +86,15 @@ export async function signIn(request, env) {
   }
 
   // Compare fixed-length digests so the check takes the same time whatever was typed
-  const correct = sameString(await hmac('admin-password', password), await hmac('admin-password', env.ADMIN_PASSWORD));
-  if (!correct) {
+  const expectedUser = String(env.ADMIN_USERNAME || '').trim().toLowerCase();
+  const userOk = !expectedUser || sameString(await hmac('admin-user', username), await hmac('admin-user', expectedUser));
+  const passwordOk = sameString(await hmac('admin-password', password), await hmac('admin-password', env.ADMIN_PASSWORD));
+  if (!(userOk && passwordOk)) {
     await env.DB.batch([
       env.DB.prepare('INSERT INTO login_failures (ip, at) VALUES (?, ?)').bind(ip, now),
       env.DB.prepare('DELETE FROM login_failures WHERE at < ?').bind(now - 24 * 60 * 60 * 1000)
     ]);
-    return { status: 401, error: 'Wrong password.' };
+    return { status: 401, error: 'Wrong username or password.' };
   }
 
   const expires = Math.floor(now / 1000) + SESSION_SECONDS;

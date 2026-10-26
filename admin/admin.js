@@ -1,6 +1,6 @@
 /*
  * Admin: list paid orders, mark them shipped and print A5 shipping labels.
- * Data comes from /api/admin/orders, which only answers once the admin has signed in with the password.
+ * Data comes from /api/admin/orders, which only answers once the admin has signed in.
  */
 (function () {
   // Sender details printed on every label
@@ -17,7 +17,9 @@
   var printButton = document.querySelector('[data-print]');
   var selectAll = document.querySelector('[data-select-all]');
   var app = document.querySelector('[data-app]');
+  var loginScreen = document.querySelector('[data-login-screen]');
   var loginForm = document.querySelector('[data-login]');
+  var passwordToggle = document.querySelector('[data-toggle-password]');
   var loginError = document.querySelector('[data-login-error]');
   var logoutButton = document.querySelector('[data-logout]');
 
@@ -82,21 +84,36 @@
   }
 
   function showLogin(error) {
+    document.body.classList.add('is-signed-out');
     app.hidden = true;
     logoutButton.hidden = true;
-    loginForm.hidden = false;
+    loginScreen.hidden = false;
     loginError.textContent = error || '';
     loginError.hidden = !error;
     showMessage('');
-    loginForm.elements.password.focus();
+    (loginForm.elements.username.value ? loginForm.elements.password : loginForm.elements.username).focus();
   }
 
   function showApp() {
-    loginForm.hidden = true;
+    document.body.classList.remove('is-signed-out');
+    loginScreen.hidden = true;
     loginForm.reset();
+    setPasswordVisible(false);
     app.hidden = false;
     logoutButton.hidden = false;
   }
+
+  function setPasswordVisible(visible) {
+    loginForm.elements.password.type = visible ? 'text' : 'password';
+    passwordToggle.setAttribute('aria-pressed', String(visible));
+    passwordToggle.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+    passwordToggle.querySelector('img').src = visible ? '/admin/icon-eye-off.svg' : '/admin/icon-eye.svg';
+  }
+
+  passwordToggle.addEventListener('click', function () {
+    setPasswordVisible(loginForm.elements.password.type === 'password');
+    loginForm.elements.password.focus();
+  });
 
   function handleError(error) {
     if (error.status === 401) showLogin();
@@ -235,9 +252,16 @@
 
   loginForm.addEventListener('submit', function (event) {
     event.preventDefault();
-    var button = loginForm.querySelector('button');
+    var button = loginForm.querySelector('.login__submit');
+    if (!loginForm.elements.username.value.trim() || !loginForm.elements.password.value) {
+      showLogin('Please enter your username and password.');
+      return;
+    }
     button.disabled = true;
-    request('/api/admin/login', 'POST', { password: loginForm.elements.password.value }).then(function () {
+    request('/api/admin/login', 'POST', {
+      username: loginForm.elements.username.value.trim(),
+      password: loginForm.elements.password.value
+    }).then(function () {
       button.disabled = false;
       load();
     }, function (error) {
