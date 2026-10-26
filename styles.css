@@ -1223,10 +1223,12 @@ select.field__input {
    Sizes scale down smoothly between 768px and 1280px.
    ===================================================================== */
 @media (min-width: 768px) {
+  /* Fills the whole window: below 1280px things shrink with the window, above it they grow
+     in the same proportions as the 1280px design */
   .page--home {
-    --gutter: clamp(24px, 3.75vw, 48px);
+    --gutter: max(24px, 3.75vw);
     --header-height: 80px;
-    max-width: 1280px;
+    max-width: none;
   }
 
   .br-desktop { display: inline; }
@@ -1247,7 +1249,7 @@ select.field__input {
   .page--home .section-title {
     display: block;
     padding: 0;
-    font-size: clamp(40px, 4.375vw, 56px);
+    font-size: clamp(40px, 4.375vw, 72px);
     line-height: 1.07;
     font-weight: 600;
     letter-spacing: -1.5px;
@@ -1262,9 +1264,9 @@ select.field__input {
   .page--home .accent-olive { color: var(--color-olive); }
 
   .page--home .section-intro > p {
-    max-width: 1000px;
+    max-width: max(1000px, 78vw);
     margin: 0 auto;
-    font-size: clamp(17px, 1.5625vw, 20px);
+    font-size: clamp(17px, 1.5625vw, 24px);
     line-height: 1.4;
     font-weight: 500;
     letter-spacing: -0.2px;
@@ -1273,10 +1275,10 @@ select.field__input {
 
   .page--home .section-copy,
   .page--home .combos .section-intro > p {
-    max-width: 1000px;
+    max-width: max(1000px, 78vw);
     margin-left: auto;
     margin-right: auto;
-    font-size: clamp(21px, 2.1875vw, 28px);
+    font-size: clamp(21px, 2.1875vw, 34px);
     line-height: 1.21;
     font-weight: 500;
     letter-spacing: -0.4px;
@@ -1286,7 +1288,7 @@ select.field__input {
   /* Block headings: Product Review / Shop Product */
   .page--home .reviews__title,
   .page--home .shop-block > h3 {
-    font-size: clamp(32px, 3.4375vw, 44px);
+    font-size: clamp(32px, 3.4375vw, 56px);
     line-height: 1.09;
     font-weight: 600;
     letter-spacing: -1px;
@@ -1307,7 +1309,7 @@ select.field__input {
   .page--home .keratin { padding: 40px 0; }
 
   .page--home .duo {
-    width: min(859px, 100% - 2 * var(--gutter));
+    width: min(max(859px, 67.1vw), 100% - 2 * var(--gutter));
     height: auto;
     aspect-ratio: 859 / 654;
     margin: 48px auto 0;
@@ -1357,7 +1359,7 @@ select.field__input {
   .page--home .product-list__item { gap: 16px; }
 
   .page--home .product-list dt {
-    font-size: clamp(22px, 2.1875vw, 28px);
+    font-size: clamp(22px, 2.1875vw, 34px);
     line-height: 1.21;
     letter-spacing: -0.4px;
   }
@@ -1371,7 +1373,7 @@ select.field__input {
   .page--home .keratin__side-image {
     display: block;
     width: 100%;
-    max-width: 401px;
+    max-width: max(401px, 31.3vw);
     aspect-ratio: 401 / 553;
     justify-self: end;
   }
@@ -1382,7 +1384,7 @@ select.field__input {
   .page--home .transformation__title {
     padding-top: 10px;
     padding-bottom: 10px;
-    font-size: clamp(28px, 2.8125vw, 36px);
+    font-size: clamp(28px, 2.8125vw, 46px);
     line-height: 1.11;
     letter-spacing: -0.7px;
   }
@@ -1412,7 +1414,7 @@ select.field__input {
   }
 
   .page--home .carousel__caption {
-    font-size: clamp(20px, 2.03vw, 26px);
+    font-size: clamp(20px, 2.03vw, 34px);
     line-height: 1.31;
     font-weight: 700;
     letter-spacing: -0.4px;
@@ -1530,7 +1532,7 @@ select.field__input {
   .page--home .tonic { padding: 40px 0 64px; }
 
   .page--home .spray__image {
-    width: min(487px, 60vw);
+    width: min(60vw, max(487px, 38.05vw));
     height: auto;
     aspect-ratio: 487 / 731;
     margin-top: 32px;
@@ -1540,7 +1542,7 @@ select.field__input {
   .page--home .tonic .section-copy { margin-top: 32px; }
 
   .page--home .tonic__image {
-    width: min(731px, 100% - 2 * var(--gutter));
+    width: min(max(731px, 57.1vw), 100% - 2 * var(--gutter));
     margin: 32px auto 0;
   }
 
@@ -1549,7 +1551,7 @@ select.field__input {
   .page--home .about__intro { gap: 16px; }
 
   .page--home .about__intro h2 {
-    font-size: clamp(40px, 4.375vw, 56px);
+    font-size: clamp(40px, 4.375vw, 72px);
     line-height: 1.07;
     font-weight: 600;
     letter-spacing: -1.5px;
@@ -1558,7 +1560,7 @@ select.field__input {
   .page--home .about__intro p,
   .page--home .about__roles,
   .page--home .about__text {
-    font-size: clamp(21px, 2.1875vw, 28px);
+    font-size: clamp(21px, 2.1875vw, 34px);
     line-height: 1.21;
     letter-spacing: -0.4px;
   }
