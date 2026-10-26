@@ -1212,3 +1212,364 @@ select.field__input {
 .success[data-state="pending"] .success__icon,
 .success[data-state="waiting"] .success__icon { background: #9e9e9e; }
 .success[data-state="failed"] .success__icon { background: #a81318; }
+
+/* ---------- Helpers shared with the tablet/desktop layout ---------- */
+.br-desktop { display: none; }
+.product-list__caps { text-transform: uppercase; }
+.keratin__side-image { display: none; }
+
+/* =====================================================================
+   Tablet and desktop (Figma "Macbook Air", 1280px wide).
+   Sizes scale down smoothly between 768px and 1280px.
+   ===================================================================== */
+@media (min-width: 768px) {
+  .page--home {
+    --gutter: clamp(24px, 3.75vw, 48px);
+    --header-height: 80px;
+    max-width: 1280px;
+  }
+
+  .br-desktop { display: inline; }
+  .br-mobile { display: none; }
+  .line { display: inline; }
+  .product-list__caps { text-transform: none; }
+
+  /* Header */
+  .page--home .site-header { height: 80px; }
+  .page--home .site-header::before { background: rgba(235, 214, 195, 0.3); }
+  .page--home .site-header__logo { top: 8px; }
+  .page--home .site-header__logo img { width: 136px; height: 64px; }
+  .page--home .site-header__cart { top: 24px; right: 37px; }
+
+  /* Titles and intro text */
+  .page--home .section-intro { gap: 16px; }
+
+  .page--home .section-title {
+    display: block;
+    padding: 0;
+    font-size: clamp(40px, 4.375vw, 56px);
+    line-height: 1.07;
+    font-weight: 600;
+    letter-spacing: -1.5px;
+    text-wrap: balance;
+  }
+
+  .page--home .section-title--stack span { display: block; }
+  .page--home .section-title--stack span span { display: inline; }
+
+  .page--home .accent,
+  .page--home .section-title--accent { color: var(--color-peach); }
+  .page--home .accent-olive { color: var(--color-olive); }
+
+  .page--home .section-intro > p {
+    max-width: 1000px;
+    margin: 0 auto;
+    font-size: clamp(17px, 1.5625vw, 20px);
+    line-height: 1.4;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    text-wrap: balance;
+  }
+
+  .page--home .section-copy,
+  .page--home .combos .section-intro > p {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: clamp(21px, 2.1875vw, 28px);
+    line-height: 1.21;
+    font-weight: 500;
+    letter-spacing: -0.4px;
+    text-wrap: balance;
+  }
+
+  /* Block headings: Product Review / Shop Product */
+  .page--home .reviews__title,
+  .page--home .shop-block > h3 {
+    font-size: clamp(32px, 3.4375vw, 44px);
+    line-height: 1.09;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+
+  /* Hero, main product, combos */
+  .page--home .hero { padding: 44px 0 60px; }
+  .page--home .hero__image { margin-top: 40px; aspect-ratio: 1184 / 789; }
+
+  .page--home .main-product { padding: 44px 0 44px; }
+  .page--home .main-product__poster { margin-top: 56px; aspect-ratio: 1184 / 888; }
+
+  .page--home .combos { padding: 40px 0 80px; }
+  .page--home .combos .section-intro { gap: 24px; }
+  .page--home .combos__image { margin-top: 48px; }
+
+  /* Keratin shampoo & mask */
+  .page--home .keratin { padding: 40px 0; }
+
+  .page--home .duo {
+    width: min(859px, 100% - 2 * var(--gutter));
+    height: auto;
+    aspect-ratio: 859 / 654;
+    margin: 48px auto 0;
+  }
+
+  .page--home .duo__image {
+    left: 18.51%; /* 159 / 859 */
+    width: 55.18%; /* 474 / 859 */
+    transform: none;
+  }
+
+  .page--home .duo__label { width: 21.3%; gap: 8px; }
+  .page--home .duo__label--left { top: 65%; left: 0; } /* 425 / 654 */
+  .page--home .duo__label--right { top: 33%; left: 78.7%; } /* 216 / 654, 676 / 859 */
+
+  .page--home .duo__brand,
+  .page--home .duo__size {
+    color: #000;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0.1px;
+    text-align: left;
+  }
+
+  .page--home .duo__name {
+    margin-top: -4px; /* brand and name sit 4px apart */
+    font-size: 17px;
+    line-height: 25px;
+  }
+
+  .page--home .keratin__details {
+    display: grid;
+    grid-template-columns: minmax(0, 580fr) minmax(0, 401fr);
+    justify-content: space-between;
+    column-gap: 48px;
+    align-items: start;
+    margin-top: 80px;
+    padding: 0 var(--gutter);
+  }
+
+  .page--home .product-list {
+    gap: 64px;
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .page--home .product-list__item { gap: 16px; }
+
+  .page--home .product-list dt {
+    font-size: clamp(22px, 2.1875vw, 28px);
+    line-height: 1.21;
+    letter-spacing: -0.4px;
+  }
+
+  .page--home .product-list dd {
+    font-size: 17px;
+    line-height: 25px;
+    letter-spacing: 0;
+  }
+
+  .page--home .keratin__side-image {
+    display: block;
+    width: 100%;
+    max-width: 401px;
+    aspect-ratio: 401 / 553;
+    justify-self: end;
+  }
+
+  /* Hair transformation: three photos side by side */
+  .page--home .transformation { margin-top: 80px; }
+
+  .page--home .transformation__title {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: clamp(28px, 2.8125vw, 36px);
+    line-height: 1.11;
+    letter-spacing: -0.7px;
+  }
+
+  .page--home .carousel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 22px;
+    overflow: visible;
+  }
+
+  .page--home .carousel__item { gap: 24px; }
+
+  .page--home .carousel__image {
+    height: auto;
+    aspect-ratio: 379 / 456;
+  }
+
+  .page--home .carousel__image > img {
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    object-fit: contain;
+  }
+
+  .page--home .carousel__caption {
+    font-size: clamp(20px, 2.03vw, 26px);
+    line-height: 1.31;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+
+  /* Reviews */
+  .page--home .reviews { margin-top: 80px; }
+  .page--home .reviews__list { gap: 16px; margin-top: 32px; padding-bottom: 0; margin-bottom: 0; }
+
+  .page--home .review-card {
+    flex: 0 0 529px;
+    max-width: calc(100vw - 2 * var(--gutter));
+    gap: 12px;
+    padding: 24px 16px;
+    box-shadow: none;
+    font-size: 17px;
+    line-height: 25px;
+    letter-spacing: 0;
+  }
+
+  .page--home .review-card__meta img[alt="TikTok"] { width: 24px; height: 24px; }
+  .page--home .review-card__meta img[alt$="stars"] { width: 120px; height: 24px; }
+
+  /* Shop: one row of cards that scrolls when there are more than fit */
+  .page--home .shop-block,
+  .page--home .reviews + .shop-block { margin-top: 80px; gap: 32px; }
+
+  .page--home .shop {
+    display: flex;
+    gap: 24px;
+    margin: 0 calc(-1 * var(--gutter));
+    padding: 0 var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .page--home .shop::-webkit-scrollbar { display: none; }
+
+  .page--home .shop-card,
+  .page--home .shop-card--alone {
+    flex: 0 0 286px;
+    width: auto;
+    min-height: 501px;
+    scroll-snap-align: start;
+  }
+
+  .page--home .shop-card__details { gap: 12px; }
+
+  .page--home .shop-card__name h4 {
+    font-size: 17px;
+    line-height: 25px;
+    letter-spacing: 0;
+  }
+
+  .page--home .shop-card__name p {
+    color: #000;
+    line-height: 25px;
+  }
+
+  .page--home .shop-card__price {
+    column-gap: 8px;
+    font-size: 17px;
+    line-height: 25px;
+    letter-spacing: 0;
+  }
+
+  .page--home .shop-card__buy {
+    padding: 16px 24px;
+    font-size: 17px;
+    line-height: 25px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .page--home .scroll-area:has(.shop) .scroll-hint { top: calc(286px / 2 - 16px); transform: none; }
+
+  /* Benefit cards */
+  .page--home .benefits {
+    gap: 16px;
+    margin-top: 80px;
+    margin-bottom: 0;
+    padding: 0 var(--gutter);
+    scroll-padding-inline: var(--gutter);
+  }
+
+  .page--home .benefit-card {
+    flex: 0 0 379px;
+    height: 378px;
+    border-radius: 16px;
+    box-shadow: none;
+  }
+
+  .page--home .benefit-card__text,
+  .page--home .benefit-card__text--auto {
+    height: auto;
+    min-height: 70px;
+    padding: 10px;
+    background: rgba(245, 235, 225, 0.71);
+    font-size: 17px;
+    line-height: 25px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .page--home .benefit-card__text br { display: none; }
+
+  /* The two hair tonic cards sit in the middle; auto margins keep both reachable if they overflow */
+  .page--home .tonic__benefits > :first-child { margin-left: auto; }
+  .page--home .tonic__benefits > :last-child { margin-right: auto; }
+
+  /* Keratin spray and hair tonic */
+  .page--home .spray,
+  .page--home .tonic { padding: 40px 0 64px; }
+
+  .page--home .spray__image {
+    width: min(487px, 60vw);
+    height: auto;
+    aspect-ratio: 487 / 731;
+    margin-top: 32px;
+  }
+
+  .page--home .spray .section-copy,
+  .page--home .tonic .section-copy { margin-top: 32px; }
+
+  .page--home .tonic__image {
+    width: min(731px, 100% - 2 * var(--gutter));
+    margin: 32px auto 0;
+  }
+
+  /* Chez Hamdan */
+  .page--home .about { padding: 78px 0 77px; }
+  .page--home .about__intro { gap: 16px; }
+
+  .page--home .about__intro h2 {
+    font-size: clamp(40px, 4.375vw, 56px);
+    line-height: 1.07;
+    font-weight: 600;
+    letter-spacing: -1.5px;
+  }
+
+  .page--home .about__intro p,
+  .page--home .about__roles,
+  .page--home .about__text {
+    font-size: clamp(21px, 2.1875vw, 28px);
+    line-height: 1.21;
+    letter-spacing: -0.4px;
+  }
+
+  .page--home .about__roles { margin-top: -8px; }
+  .page--home .about__roles li { padding: 0 24px; }
+
+  .page--home .about__image {
+    margin-top: 48px;
+    aspect-ratio: 1856 / 2304;
+  }
+
+  .page--home .about__text { gap: 34px; margin-top: 48px; }
+}

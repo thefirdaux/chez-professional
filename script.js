@@ -36,6 +36,8 @@
       var card = el('li', 'shop-card' + (alone ? ' shop-card--alone' : ''));
       var img = el('img', 'shop-card__image');
       img.src = 'assets/products/' + id + '.png';
+      img.srcset = 'assets/products/' + id + '.png 400w, assets/products/large/' + id + '.png 900w';
+      img.sizes = '(min-width: 768px) 286px, 45vw';
       img.alt = product.name + ', ' + product.size;
       img.loading = 'lazy';
 
@@ -187,7 +189,7 @@
 
 /* ---------- "See more" arrow on horizontal scrollers ---------- */
 (function () {
-  document.querySelectorAll('.carousel, .benefits, .reviews__list').forEach(function (scroller) {
+  document.querySelectorAll('.carousel, .benefits, .reviews__list, .shop').forEach(function (scroller) {
     // Wrap so the arrow can sit over the scroller's right edge
     var area = document.createElement('div');
     area.className = 'scroll-area';

@@ -9,16 +9,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=d8636791">
+  <link rel="stylesheet" href="styles.css?v=d9ce94c9">
 </head>
 <body>
-  <div class="page">
+  <div class="page page--home">
     <header class="site-header">
       <a class="site-header__logo" href="#top" aria-label="Chez Professional home">
-        <img src="assets/logo.png?v=ab0f591d" alt="Chez Professional" width="85" height="40">
+        <img src="assets/logo.png?v=ad0f70bf" alt="Chez Professional" width="85" height="40">
       </a>
       <button class="site-header__cart" type="button" aria-label="Cart" aria-haspopup="dialog" aria-controls="cart-sheet">
-        <img src="assets/icon-bag.svg?v=663fcdf9" alt="" width="32" height="32">
+        <picture>
+          <source media="(min-width: 768px)" srcset="assets/icon-bag-desktop.svg">
+          <img src="assets/icon-bag.svg?v=663fcdf9" alt="" width="32" height="32">
+        </picture>
         <span class="site-header__cart-count" data-cart-count hidden>0</span>
       </button>
     </header>
@@ -27,18 +30,18 @@
       <!-- Hero -->
       <section class="hero section--beige">
         <div class="section-intro">
-          <h1 class="section-title text-title1"><span>Professional Hair Care.</span> <span>Made for you.</span></h1>
-          <p class="text-body"><span class="line">Discover your haircare essentials,</span> <span class="line">from root care to keratin treatments,</span> <span class="line">designed to complement your daily routine.</span></p>
+          <h1 class="section-title text-title1"><span>Professional Hair Care.</span> <span class="accent">Made for you.</span></h1>
+          <p class="text-body"><span class="line">Discover your haircare essentials,</span> <span class="line">from root care to keratin treatments,</span><br class="br-desktop"> <span class="line">designed to complement your daily routine.</span></p>
         </div>
         <div class="crop section-image hero__image">
-          <img class="cover" src="assets/hero-banner.png?v=7d73bdc0" alt="Chez Professional keratin shampoo, keratin mask, keratin spray and hair tonic">
+          <img class="cover" src="assets/hero-banner.png?v=7d73bdc0" srcset="assets/hero-banner.png?v=7d73bdc0 900w, assets/hero-banner-1264.webp 1264w" sizes="(min-width: 768px) min(1184px, 100vw - 96px), calc(100vw - 32px)" alt="Chez Professional keratin shampoo, keratin mask, keratin spray and hair tonic">
         </div>
       </section>
 
       <!-- Main product -->
       <section class="main-product section--beige" id="keratin">
         <div class="section-intro">
-          <h2 class="section-title text-title1"><span>Salon-quality keratin.</span> <span>Right at home.</span></h2>
+          <h2 class="section-title section-title--accent text-title1"><span>Salon-quality keratin.</span> <span>Right at home.</span></h2>
           <p class="text-body">Enjoy salon-quality hair care at home with keratin treatments that nourish, smooth, and restore your hair for a softer, healthier-looking finish.</p>
         </div>
         <div class="crop section-image main-product__poster">
@@ -49,32 +52,33 @@
       <!-- Keratin Shampoo & Mask -->
       <section class="keratin section--beige" id="keratin-shampoo-mask">
         <div class="section-intro">
-          <h2 class="section-title text-title1"><span>Restore moisture.</span> <span>Strengthen every strand.</span></h2>
+          <h2 class="section-title section-title--stack text-title1"><span>Restore <span class="accent-olive">moisture</span>.</span> <span>Strengthen every strand.</span></h2>
         </div>
 
         <div class="duo">
           <div class="crop duo__image">
-            <img src="assets/keratin-shampoo-mask.png" alt="Keratin Treatment Shampoo and Keratin Treatment Mask, 280ml each" style="width:122.36%;height:133.03%;left:-7.38%;top:-14.98%">
+            <img src="assets/keratin-shampoo-mask.png" srcset="assets/keratin-shampoo-mask.png 600w, assets/keratin-shampoo-mask-1024.webp 1024w" sizes="(min-width: 768px) 580px, 217px" alt="Keratin Treatment Shampoo and Keratin Treatment Mask, 280ml each" style="width:122.36%;height:133.03%;left:-7.38%;top:-14.98%">
           </div>
           <div class="duo__label duo__label--left">
             <span class="duo__brand">CHEZ PROFESSIONAL</span>
-            <span class="duo__name">KERATIN<br>TREATMENT<br>SHAMPOO</span>
+            <span class="duo__name">KERATIN<br class="br-mobile"> TREATMENT<br>SHAMPOO</span>
             <span class="duo__size">280ml</span>
           </div>
           <div class="duo__label duo__label--right">
             <span class="duo__brand">CHEZ PROFESSIONAL</span>
-            <span class="duo__name">KERATIN<br>TREATMENT<br>MASK</span>
+            <span class="duo__name">KERATIN<br class="br-mobile"> TREATMENT<br>MASK</span>
             <span class="duo__size">280ml</span>
           </div>
         </div>
 
+        <div class="keratin__details">
         <dl class="product-list">
           <div class="product-list__item">
-            <dt class="text-callout-emphasized">KERATIN TREATMENT SHAMPOO</dt>
+            <dt class="text-callout-emphasized product-list__caps">Keratin Treatment Shampoo</dt>
             <dd class="text-subheadline">Designed to nourish and care for your hair, this formula helps boost hydration, improve hair structure, and reduce stiffness caused by seawater buildup.</dd>
           </div>
           <div class="product-list__item">
-            <dt class="text-callout-emphasized">KERATIN TREATMENT MASK</dt>
+            <dt class="text-callout-emphasized product-list__caps">Keratin Treatment Mask</dt>
             <dd class="text-subheadline">Deeply moisturizes dry, brittle hair for softer, healthier strands. Replenishes keratin protein to repair damage from bleaching, coloring, and heat styling.</dd>
           </div>
           <div class="product-list__item">
@@ -82,10 +86,14 @@
             <dd class="text-subheadline">SLS can strip away natural oils, leaving hair and scalp feeling dry, while parabens are preservatives used to prevent bacterial and fungal growth in hair-care products. Our formula is free from both, offering an alternative for those who prefer a gentler cleansing experience without added parabens.</dd>
           </div>
         </dl>
+        <div class="crop keratin__side-image">
+          <img src="assets/keratin-shampoo-mask.png" srcset="assets/keratin-shampoo-mask.png 600w, assets/keratin-shampoo-mask-1024.webp 1024w" sizes="491px" alt="" loading="lazy" style="width:122.36%;height:133.03%;left:-7.38%;top:-14.98%">
+        </div>
+        </div>
 
         <!-- Hair transformation -->
         <div class="transformation" id="transformation">
-          <h2 class="text-title3 transformation__title"><span class="line">Start your hair transformation now</span> <span class="line">with our professional hair care routines.</span></h2>
+          <h2 class="text-title3 transformation__title"><span class="line">Start your hair transformation now</span><br class="br-desktop"> <span class="line">with our professional hair care routines.</span></h2>
           <ul class="carousel" aria-label="Hair results">
             <li class="carousel__item">
               <div class="crop carousel__image">
@@ -144,14 +152,14 @@
       <!-- Keratin Spray -->
       <section class="spray section--beige" id="keratin-spray">
         <div class="section-intro">
-          <h2 class="section-title text-title1"><span>Smooth Hair.</span> <span>Lasting Protection.</span></h2>
+          <h2 class="section-title section-title--stack text-title1"><span>Smooth Hair.</span> <span class="accent">Lasting Protection.</span></h2>
         </div>
-        <img class="spray__image" src="assets/keratin-spray-hero.png" alt="Chez Professional Leave-in Keratin Spray" width="274" height="411">
+        <img class="spray__image" src="assets/keratin-spray-hero.png" srcset="assets/keratin-spray-hero.png 466w, assets/keratin-spray-hero-1024.webp 1024w" sizes="(min-width: 768px) 487px, 274px" alt="Chez Professional Leave-in Keratin Spray" width="274" height="411">
         <p class="section-copy text-body">Enhance hair manageability with lasting moisture, heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.</p>
         <ul class="benefits spray__benefits" aria-label="Keratin Spray benefits">
           <li class="benefit-card">
             <img class="benefit-card__image" src="assets/benefit-control.jpg" alt="Woman blow-drying and brushing her hair" loading="lazy">
-            <p class="benefit-card__text text-body"><span>Provides better control and<br>manageability for your hair</span></p>
+            <p class="benefit-card__text text-body"><span>Provides better control and<br> manageability for your hair</span></p>
           </li>
           <li class="benefit-card">
             <img class="benefit-card__image" src="assets/benefit-moisture.jpg" alt="Smooth, moisturized long hair" loading="lazy">
@@ -201,10 +209,10 @@
       <!-- Hair Tonic -->
       <section class="tonic section--beige" id="hair-tonic">
         <div class="section-intro">
-          <h2 class="section-title text-title1"><span>Scalp Treatment and</span> <span>Regenerate Hair Growth.</span></h2>
+          <h2 class="section-title section-title--stack text-title1"><span>Scalp Treatment and</span> <span>Regenerate Hair Growth.</span></h2>
         </div>
         <div class="crop section-image tonic__image">
-          <img class="cover" src="assets/hair-tonic-product.png" alt="Chez Professional Root Booster Hair Tonic">
+          <img class="cover" src="assets/hair-tonic-product.png" srcset="assets/hair-tonic-product.png 804w, assets/hair-tonic-product-1024.webp 1024w" sizes="(min-width: 768px) 731px, calc(100vw - 32px)" alt="Chez Professional Root Booster Hair Tonic">
         </div>
         <p class="section-copy text-body">A refreshing daily tonic designed to care for your scalp, help maintain moisture, and leave your hair feeling revitalised.</p>
         <ul class="benefits tonic__benefits" aria-label="Hair Tonic benefits">
@@ -263,7 +271,7 @@
           <p class="text-body">Pair your haircare essentials and enjoy exclusive savings with our specially curated combo deals</p>
         </div>
         <div class="crop section-image combos__image">
-          <img class="cover" src="assets/hero-banner.png?v=7d73bdc0" alt="Keratin shampoo, keratin mask, keratin spray and hair tonic together" loading="lazy">
+          <img class="cover" src="assets/hero-banner.png?v=7d73bdc0" srcset="assets/hero-banner.png?v=7d73bdc0 900w, assets/hero-banner-1264.webp 1264w" sizes="(min-width: 768px) min(1184px, 100vw - 96px), calc(100vw - 32px)" alt="Keratin shampoo, keratin mask, keratin spray and hair tonic together" loading="lazy">
         </div>
         <div class="shop-block">
           <h3 class="text-title3">Shop Product</h3>
@@ -281,7 +289,7 @@
             <li>Creative Director</li>
           </ul>
         </div>
-        <img class="about__image" src="assets/chez-hamdan.png?v=0f12bfce" alt="Chez Hamdan, professional hairstylist" width="418" height="519" loading="lazy">
+        <img class="about__image" src="assets/chez-hamdan.png?v=0f12bfce" srcset="assets/chez-hamdan.png?v=0f12bfce 418w, assets/chez-hamdan-1400.webp 1400w" sizes="(min-width: 768px) min(1184px, 100vw - 96px), calc(100vw - 32px)" alt="Chez Hamdan, professional hairstylist" width="418" height="519" loading="lazy">
         <div class="about__text">
           <p>Based in Kuala Lumpur Malaysia, Chez Hamdan is a professional hairstylist with a creative approach to hair design, personal style and individual expression.</p>
           <p>His professional identity brings together hairstyling, artistic vision and an appreciation for how the right hairstyle can complement a person’s character and confidence.</p>
@@ -339,6 +347,6 @@
 
   <script type="module" src="products.js?v=898d7f7e"></script>
   <script type="module" src="cart.js?v=935cc6ec"></script>
-  <script type="module" src="script.js?v=8f5b3b9e"></script>
+  <script type="module" src="script.js?v=66959362"></script>
 </body>
 </html>
