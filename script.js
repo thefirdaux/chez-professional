@@ -184,3 +184,41 @@
     });
   }
 })();
+
+/* ---------- "See more" arrow on horizontal scrollers ---------- */
+(function () {
+  document.querySelectorAll('.carousel, .benefits, .reviews__list').forEach(function (scroller) {
+    // Wrap so the arrow can sit over the scroller's right edge
+    var area = document.createElement('div');
+    area.className = 'scroll-area';
+    scroller.parentNode.insertBefore(area, scroller);
+    area.appendChild(scroller);
+
+    var hint = document.createElement('button');
+    hint.type = 'button';
+    hint.className = 'scroll-hint';
+    hint.setAttribute('aria-label', 'See more');
+    hint.innerHTML = '<img src="assets/icon-see-more.svg" alt="" width="32" height="32">';
+    area.appendChild(hint);
+
+    // Hidden once the row can't scroll any further (or never could)
+    function update() {
+      var atEnd = scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 2;
+      area.classList.toggle('is-at-end', atEnd);
+    }
+
+    hint.addEventListener('click', function () {
+      var item = scroller.firstElementChild;
+      var step = item ? item.getBoundingClientRect().width : scroller.clientWidth * 0.8;
+      scroller.scrollBy({ left: step, behavior: 'smooth' });
+    });
+
+    scroller.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    // Images can change the row's width as they load
+    scroller.querySelectorAll('img').forEach(function (img) {
+      if (!img.complete) img.addEventListener('load', update);
+    });
+    update();
+  });
+})();

@@ -1093,8 +1093,42 @@ select.field__input {
 .reviews { margin-top: 40px; }
 
 /* The card rows reserve room underneath for their shadows; keep the design's 40px gaps */
-.benefits + .reviews { margin-top: 32px; }
-.reviews + .shop-block { margin-top: 34px; }
+.benefits { margin-bottom: -8px; }
+.reviews__list { margin-bottom: -6px; }
+
+/* ---------- "See more" arrow over horizontal scrollers ---------- */
+.scroll-area { position: relative; }
+
+.scroll-hint {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: opacity 0.2s ease, visibility 0.2s;
+}
+
+.scroll-hint::before {
+  /* 44px tap target */
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
+.scroll-area.is-at-end .scroll-hint {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Centre the arrow on the photos, not photo + caption */
+.scroll-area:has(.carousel) .scroll-hint { top: calc(315px / 2 - 16px); transform: none; }
 
 .reviews__title { padding: 0 var(--gutter); }
 
