@@ -198,7 +198,7 @@
     hint.type = 'button';
     hint.className = 'scroll-hint';
     hint.setAttribute('aria-label', 'See more');
-    hint.innerHTML = '<img src="assets/icon-see-more.svg" alt="" width="32" height="32">';
+    hint.innerHTML = '<img src="assets/icon-see-more.svg?v=a443a171" alt="" width="32" height="32">';
     area.appendChild(hint);
 
     // Hidden once the row can't scroll any further (or never could)

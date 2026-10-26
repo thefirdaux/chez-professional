@@ -11,8 +11,9 @@ python3 -m http.server 5173
 
 Locally (and anywhere without the server functions) checkout runs in demo mode.
 
-When `styles.css` or a script changes, update the `?v=` value on its link in the HTML pages
-(e.g. `md5 -q styles.css | cut -c1-8`) so phones don't keep an old cached copy.
+When `styles.css`, a script, or an image is replaced under the same file name, update the
+`?v=` value where it is used (e.g. `md5 -q styles.css | cut -c1-8`) so phones don't keep an
+old cached copy. Cloudflare tells browsers to keep files for 4 hours.
 
 ## Hosting
 
