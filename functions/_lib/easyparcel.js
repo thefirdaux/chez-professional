@@ -76,6 +76,15 @@ function destinationOf(order) {
 
 const sen = (ringgit) => Math.round(Number(ringgit) * 100);
 
+/** "Best Global Logistics Technology (Malaysia) Sdn. Bhd." → "Best Global Logistics Technology" */
+export function shortCourierName(name) {
+  return String(name || '')
+    .replace(/\s*\((Malaysia|M)\)/gi, '')
+    .replace(/\s+(Sdn\.?\s*Bhd\.?|Berhad|Bhd\.?)(?=\s|$|\))/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 /* ---------- Saved settings (tokens, sign-in state) ---------- */
 const tokenKey = (env) => 'easyparcel_token_' + (isDemo(env) ? 'sandbox' : 'live');
 const stateKey = (env) => 'easyparcel_state_' + (isDemo(env) ? 'sandbox' : 'live');
@@ -241,7 +250,7 @@ export async function quote(env, order, weight) {
       const pricing = q.pricing || {};
       return {
         serviceId: String(courier.service_id || ''),
-        courier: courier.courier_name || '',
+        courier: shortCourierName(courier.courier_name),
         service: courier.service_name || '',
         detail: courier.is_pickup && courier.is_dropoff ? 'dropoff/pickup' : courier.is_pickup ? 'pickup' : courier.is_dropoff ? 'dropoff' : '',
         delivery: courier.delivery_duration ? String(courier.delivery_duration) : '',
