@@ -34,6 +34,6 @@ export async function onRequestGet({ request, env }) {
       demo: isDemo(env),
       shipFrom: [SHIP_FROM.address1, SHIP_FROM.address2, SHIP_FROM.postcode + ' ' + SHIP_FROM.city].join(', ')
     },
-    postage: { covered: shipping.covered, fallback: shipping.fallback, countries: countries.map((c) => c[1]) }
+    postage: { covered: shipping.covered, fallback: shipping.fallback, countries: countries.filter((c) => c[3]).map((c) => c[1]) }
   });
 }

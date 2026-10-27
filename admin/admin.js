@@ -594,7 +594,9 @@
       service('postage').facts([
         ['Delivers to', p.countries.join(', ')],
         ['Malaysia', covered],
-        ['Singapore and Brunei', 'Full courier rate; any import duty is paid by the buyer'],
+        ['Singapore and Brunei', p.countries.length > 1
+          ? 'Full courier rate; any import duty is paid by the buyer'
+          : 'Closed until CHIP card payments are approved (FPX and DuitNow only work with Malaysian banks)'],
         ['If EasyParcel can\u2019t be reached', 'Peninsular ' + rm(p.fallback.west) + ', Sabah/Sarawak/Labuan ' + rm(p.fallback.east) +
           (p.covered.MY ? ' (less ' + rm(p.covered.MY) + ')' : '') + '; abroad the buyer is asked to try again']
       ]);

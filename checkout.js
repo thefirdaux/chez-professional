@@ -39,7 +39,10 @@
     select.appendChild(option);
   }
 
-  CHEZ.countries.forEach(function (country) { addOption(countrySelect, country[0], country[1]); });
+  var openCountries = CHEZ.countries.filter(function (country) { return country[3]; });
+  openCountries.forEach(function (country) { addOption(countrySelect, country[0], country[1]); });
+  // With only Malaysia open there is nothing to choose
+  countrySelect.closest('.field').hidden = openCountries.length < 2;
 
   /* --- Address rules for each country --- */
   var COUNTRY = {

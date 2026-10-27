@@ -71,8 +71,10 @@ var shipping = {
   fallback: { west: 800, east: 1500 }
 };
 
-// Countries the shop delivers to: code, name, phone country code
-var countries = [['MY', 'Malaysia', '60'], ['SG', 'Singapore', '65'], ['BN', 'Brunei', '673']];
+// Countries the shop delivers to: code, name, phone country code, open for orders.
+// Singapore and Brunei stay closed until CHIP card payments are approved, because FPX and
+// DuitNow QR only work with Malaysian banks. Set the last value to true to open them.
+var countries = [['MY', 'Malaysia', '60', true], ['SG', 'Singapore', '65', false], ['BN', 'Brunei', '673', false]];
 
 // Brunei districts (Singapore has none)
 var districts = ['Brunei-Muara', 'Belait', 'Tutong', 'Temburong'];

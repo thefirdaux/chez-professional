@@ -66,8 +66,9 @@ export function priceOrder(input) {
 
 /** Checks the delivery address only (used to quote postage before the rest is filled in). */
 export function readDestination(c) {
-  const country = countries.some((x) => x[0] === c.country) ? c.country : (c.country ? null : 'MY');
-  if (!country) throw new InputError('We deliver to Malaysia, Singapore and Brunei only.');
+  const open = countries.filter((x) => x[3]);
+  const country = open.some((x) => x[0] === c.country) ? c.country : (c.country ? null : 'MY');
+  if (!country) throw new InputError('We deliver to ' + open.map((x) => x[1]).join(', ') + ' only.');
   const postcode = text(c.postcode, 12).toUpperCase().replace(/\s/g, '');
   let state = text(c.state, 40);
   if (country === 'MY') {
