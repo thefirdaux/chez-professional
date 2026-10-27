@@ -805,10 +805,11 @@
   });
 
   // Coming back from the EasyParcel sign-in
-  var connectResult = new URLSearchParams(window.location.search).get('easyparcel');
+  var connectParams = new URLSearchParams(window.location.search);
+  var connectResult = connectParams.get('easyparcel');
   if (connectResult) history.replaceState(null, '', window.location.pathname);
   load({
     connected: 'EasyParcel is connected.',
-    failed: 'EasyParcel could not be connected. Please try again.'
+    failed: 'EasyParcel could not be connected. ' + (connectParams.get('reason') || 'Please try again.')
   }[connectResult]);
 })();

@@ -7,17 +7,20 @@
 import { ensureSchema, isConfigured } from '../_lib/orders.js';
 import { easyParcelReady, finishConnect, EasyParcelError } from '../_lib/easyparcel.js';
 
-function backToAdmin(request, result) {
-  return new Response(null, {
-    status: 302,
-    headers: { Location: new URL('/admin/?easyparcel=' + result, request.url).toString(), 'Cache-Control': 'no-store' }
-  });
+function backToAdmin(request, result, reason) {
+  const url = new URL('/admin/', request.url);
+  url.searchParams.set('easyparcel', result);
+  if (reason) url.searchParams.set('reason', reason.slice(0, 200));
+  return new Response(null, { status: 302, headers: { Location: url.toString(), 'Cache-Control': 'no-store' } });
 }
 
 export async function onRequestGet({ request, env }) {
-  if (!isConfigured(env) || !easyParcelReady(env)) return backToAdmin(request, 'failed');
+  if (!isConfigured(env) || !easyParcelReady(env)) return backToAdmin(request, 'failed', 'EasyParcel is not set up on this site.');
   await ensureSchema(env.DB);
   const url = new URL(request.url);
+  // EasyParcel sends an error instead of a code if access was refused
+  const refused = url.searchParams.get('error_description') || url.searchParams.get('error');
+  if (refused && !url.searchParams.get('code')) return backToAdmin(request, 'failed', 'EasyParcel: ' + refused);
   try {
     await finishConnect(env, {
       code: url.searchParams.get('code'),
@@ -27,7 +30,7 @@ export async function onRequestGet({ request, env }) {
   } catch (error) {
     if (error instanceof EasyParcelError) {
       console.error('EasyParcel connect failed:', error.message);
-      return backToAdmin(request, 'failed');
+      return backToAdmin(request, 'failed', error.message);
     }
     throw error;
   }

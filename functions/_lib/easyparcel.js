@@ -43,7 +43,8 @@ const STATE_CODES = {
 const HS_CODE = '330590';
 
 export const MAX_WEIGHT = 30;
-const STATE_MAX_AGE_MS = 10 * 60 * 1000;
+// Signing in can need a verification code from the account owner, so allow some time
+const STATE_MAX_AGE_MS = 30 * 60 * 1000;
 
 export class EasyParcelError extends Error {}
 export class NotConnectedError extends EasyParcelError {
@@ -107,17 +108,30 @@ export async function authorizeUrl(env, redirectUri) {
   return API + '/oauth/login?' + params;
 }
 
-async function tokenRequest(env, params) {
-  const res = await fetch(API + '/oauth/token', {
+function postToken(env, params, asJson) {
+  return fetch(API + '/oauth/token', {
     method: 'POST',
     headers: {
       Authorization: 'Basic ' + btoa(env.EASYPARCEL_CLIENT_ID + ':' + env.EASYPARCEL_CLIENT_SECRET),
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': asJson ? 'application/json' : 'application/x-www-form-urlencoded',
       Accept: 'application/json'
     },
-    body: new URLSearchParams(params)
+    body: asJson ? JSON.stringify(params) : new URLSearchParams(params)
   });
-  const body = await res.json().catch(() => ({}));
+}
+
+async function tokenRequest(env, params) {
+  let res = await postToken(env, params, false);
+  let body = await res.json().catch(() => ({}));
+  // The docs don't say how the body is encoded; standard OAuth is a form, so try JSON only if that's refused
+  if (!res.ok && (res.status === 400 || res.status === 415 || res.status === 422)) {
+    const retry = await postToken(env, params, true);
+    const retryBody = await retry.json().catch(() => ({}));
+    if (retry.ok && retryBody.access_token) {
+      res = retry;
+      body = retryBody;
+    }
+  }
   if (!res.ok || !body.access_token) {
     const error = new EasyParcelError('EasyParcel sign-in failed: ' + (body.error_description || body.message || body.error || 'status ' + res.status) + '.');
     error.status = res.status;
