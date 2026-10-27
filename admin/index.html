@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=cb1b552d">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=1056d844">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=9d50453a">
-  <link rel="stylesheet" href="admin.css?v=9508beb7">
+  <link rel="stylesheet" href="admin.css?v=4e38a899">
 </head>
 <body>
   <!-- Sidebar (Figma "Sidebar" 414:110, in the shop's beige); a bar across the top on phones -->
@@ -27,6 +27,9 @@
       </button>
     </nav>
     <div class="sidebar__bottom">
+      <button type="button" class="sidebar__item" data-section="settings" aria-pressed="false">
+        <span class="sidebar__icon" style="--icon: url(/admin/icon-settings.svg)"></span>Settings
+      </button>
       <button type="button" class="sidebar__item" data-logout hidden>
         <span class="sidebar__icon" style="--icon: url(/admin/icon-log-out.svg)"></span>Log Out
       </button>
@@ -89,6 +92,46 @@
     <ul class="orders" data-orders></ul>
     </div>
 
+    <!-- Settings: the payment and shipping services the shop is connected to -->
+    <section class="settings" data-settings-section aria-label="Settings" hidden>
+      <div class="settings__grid">
+        <article class="service" data-service="chip">
+          <div class="service__head">
+            <div>
+              <h2 class="service__name">CHIP</h2>
+              <p class="service__role">Online payments</p>
+            </div>
+            <span class="badge" data-service-status>Checking…</span>
+          </div>
+          <dl class="service__facts" data-service-facts></dl>
+          <div class="service__actions">
+            <a class="button" href="https://portal.chip-in.asia" target="_blank" rel="noopener">Open CHIP</a>
+          </div>
+        </article>
+        <article class="service" data-service="easyparcel">
+          <div class="service__head">
+            <div>
+              <h2 class="service__name">EasyParcel</h2>
+              <p class="service__role">Couriers and airway bills</p>
+            </div>
+            <span class="badge" data-service-status>Checking…</span>
+          </div>
+          <dl class="service__facts" data-service-facts></dl>
+          <p class="service__note" data-service-note></p>
+          <div class="service__actions" data-service-actions></div>
+        </article>
+        <article class="service service--wide" data-service="postage">
+          <div class="service__head">
+            <div>
+              <h2 class="service__name">Postage</h2>
+              <p class="service__role">What buyers pay for delivery</p>
+            </div>
+          </div>
+          <dl class="service__facts" data-service-facts></dl>
+        </article>
+      </div>
+    </section>
+
     <section class="analytics" data-analytics-section aria-label="Analytics" hidden>
       <nav class="tabs" aria-label="Date range">
         <button type="button" data-days="7" aria-pressed="false">Last 7 days</button>
@@ -147,6 +190,6 @@
 
   <div class="tooltip" data-tooltip role="status" hidden></div>
 
-  <script src="admin.js?v=af74c825"></script>
+  <script src="admin.js?v=3e349105"></script>
 </body>
 </html>

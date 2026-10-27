@@ -487,36 +487,118 @@
     return new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 10);
   }
 
-  /* --- EasyParcel connection bar --- */
+  /* --- EasyParcel reminder on the orders page (details are in Settings) --- */
   var epBar = document.querySelector('[data-ep-bar]');
 
   function loadEasyParcelStatus() {
-    epBar.hidden = !easyparcel.enabled;
+    epBar.hidden = true;
     if (!easyparcel.enabled) return;
     shipApi({ action: 'status' }).then(function (data) {
+      if (data.connected) return;
       epBar.textContent = '';
-      var text = el('p', 'ep-bar__text');
-      if (data.connected) {
-        text.appendChild(el('strong', null, 'EasyParcel connected' + (data.demo ? ' (sandbox)' : '')));
-        if (data.balance != null) text.appendChild(document.createTextNode(' · Credit ' + rm(data.balance)));
-        epBar.appendChild(text);
-        var disconnect = button('Disconnect');
-        disconnect.addEventListener('click', function () {
-          if (!window.confirm('Disconnect EasyParcel? You can connect again any time.')) return;
-          shipApi({ action: 'disconnect' }).then(function () { loadEasyParcelStatus(); }, handleError);
+      epBar.appendChild(el('p', 'ep-bar__text', 'EasyParcel isn\u2019t connected, so couriers can\u2019t be booked yet.'));
+      var open = button('Open Settings', true);
+      open.addEventListener('click', function () { showSection('settings'); });
+      epBar.appendChild(open);
+      epBar.hidden = false;
+    }, function () { /* shown in Settings */ });
+  }
+
+  /* --- Settings --- */
+  var settingsSection = document.querySelector('[data-settings-section]');
+
+  function service(name) {
+    var card = settingsSection.querySelector('[data-service="' + name + '"]');
+    return {
+      card: card,
+      status: function (text, ok) {
+        var badge = card.querySelector('[data-service-status]');
+        badge.textContent = text;
+        badge.className = 'badge' + (ok ? ' badge--done' : ok === false ? ' badge--warn' : '');
+      },
+      facts: function (rows) {
+        var list = card.querySelector('[data-service-facts]');
+        list.textContent = '';
+        rows.forEach(function (row) {
+          if (row[1] == null || row[1] === '') return;
+          var item = el('div', 'service__fact');
+          item.appendChild(el('dt', null, row[0]));
+          item.appendChild(el('dd', null, row[1]));
+          list.appendChild(item);
         });
-        epBar.appendChild(disconnect);
-      } else {
-        text.textContent = 'Connect the EasyParcel account to book couriers from here.';
-        epBar.appendChild(text);
-        var connect = el('a', 'button button--primary', 'Connect EasyParcel');
-        connect.href = '/api/admin/easyparcel-connect';
-        epBar.appendChild(connect);
       }
-    }, function (error) {
-      epBar.textContent = '';
-      epBar.appendChild(el('p', 'ep-bar__text', error.message));
-    });
+    };
+  }
+
+  function loadSettings() {
+    request('/api/admin/settings', 'GET').then(function (data) {
+      var chip = service('chip');
+      chip.status(data.chip.testMode ? 'Test mode' : 'Connected', !data.chip.testMode);
+      chip.facts([
+        ['Mode', data.chip.testMode ? 'Test (no real money)' : 'Live'],
+        ['Brand', data.chip.brand],
+        ['Payment methods', data.chip.methods ? (data.chip.methods.join(', ') || 'None switched on') : 'Couldn\u2019t check right now']
+      ]);
+
+      var ep = service('easyparcel');
+      var note = ep.card.querySelector('[data-service-note]');
+      var actions = ep.card.querySelector('[data-service-actions]');
+      var shipFrom = ['Collect from', data.easyparcel.shipFrom];
+      actions.textContent = '';
+      var site = el('a', 'button', 'Open EasyParcel');
+      site.href = 'https://app.easyparcel.com/my/en/';
+      site.target = '_blank';
+      site.rel = 'noopener';
+      if (!data.easyparcel.configured) {
+        ep.status('Not set up', false);
+        ep.facts([shipFrom]);
+        note.textContent = 'Add the EasyParcel app\u2019s client ID and secret in Cloudflare to switch this on.';
+        actions.appendChild(site);
+        return;
+      }
+      ep.status('Checking…');
+      note.textContent = '';
+      shipApi({ action: 'status' }).then(function (status) {
+        actions.textContent = '';
+        if (status.connected) {
+          ep.status('Connected', true);
+          ep.facts([
+            ['Account', status.demo ? 'Sandbox (nothing is really shipped)' : 'Live'],
+            ['Credit', status.balance != null ? rm(status.balance) : ''],
+            shipFrom
+          ]);
+          note.textContent = 'Stays connected while the admin is opened at least once every 30 days.';
+          var disconnect = button('Disconnect');
+          disconnect.addEventListener('click', function () {
+            if (!window.confirm('Disconnect EasyParcel? Couriers can\u2019t be booked until it is connected again.')) return;
+            shipApi({ action: 'disconnect' }).then(loadSettings, handleError);
+          });
+          actions.appendChild(disconnect);
+        } else {
+          ep.status('Not connected', false);
+          ep.facts([shipFrom]);
+          note.textContent = 'Sign in to the shop\u2019s EasyParcel account to book couriers from the Orders page.';
+          var connect = el('a', 'button button--primary', 'Connect EasyParcel');
+          connect.href = '/api/admin/easyparcel-connect';
+          actions.appendChild(connect);
+        }
+        actions.appendChild(site);
+      }, function (error) {
+        ep.status('Error', false);
+        note.textContent = error.message;
+        actions.appendChild(site);
+      });
+
+      var p = data.postage;
+      var covered = p.covered.MY ? 'Courier rate less ' + rm(p.covered.MY) + ' (the shop pays that part)' : 'Courier rate';
+      service('postage').facts([
+        ['Delivers to', p.countries.join(', ')],
+        ['Malaysia', covered],
+        ['Singapore and Brunei', 'Full courier rate; any import duty is paid by the buyer'],
+        ['If EasyParcel can\u2019t be reached', 'Peninsular ' + rm(p.fallback.west) + ', Sabah/Sarawak/Labuan ' + rm(p.fallback.east) +
+          (p.covered.MY ? ' (less ' + rm(p.covered.MY) + ')' : '') + '; abroad the buyer is asked to try again']
+      ]);
+    }, handleError);
   }
 
   document.querySelectorAll('[data-view]').forEach(function (tab) {
@@ -566,21 +648,29 @@
   var statsDays = 30;
   var lastStats = null;
 
-  document.querySelectorAll('[data-section]').forEach(function (button) {
-    button.addEventListener('click', function () {
-      var analytics = button.dataset.section === 'analytics';
-      document.querySelectorAll('[data-section]').forEach(function (b) {
-        b.setAttribute('aria-pressed', String(b === button));
-      });
-      ordersSection.hidden = analytics;
-      analyticsSection.hidden = !analytics;
-      document.querySelector('[data-order-actions]').hidden = analytics;
-      document.querySelector('[data-page-title]').textContent = analytics ? 'Analytics' : 'Sales Monitor';
-      document.querySelector('[data-page-sub]').textContent = analytics
-        ? 'Visitors, sales and best-selling products.'
-        : 'Track your daily orders and fulfillment status.';
-      if (analytics) loadStats(); else load();
+  var SECTIONS = {
+    orders: { title: 'Sales Monitor', sub: 'Track your daily orders and fulfillment status.', load: load },
+    analytics: { title: 'Analytics', sub: 'Visitors, sales and best-selling products.', load: loadStats },
+    settings: { title: 'Settings', sub: 'The payment and shipping services the shop is connected to.', load: loadSettings }
+  };
+
+  function showSection(name) {
+    var section = SECTIONS[name];
+    document.querySelectorAll('[data-section]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.section === name));
     });
+    ordersSection.hidden = name !== 'orders';
+    analyticsSection.hidden = name !== 'analytics';
+    settingsSection.hidden = name !== 'settings';
+    showMessage('');
+    document.querySelector('[data-order-actions]').hidden = name !== 'orders';
+    document.querySelector('[data-page-title]').textContent = section.title;
+    document.querySelector('[data-page-sub]').textContent = section.sub;
+    section.load();
+  }
+
+  document.querySelectorAll('[data-section]').forEach(function (button) {
+    button.addEventListener('click', function () { showSection(button.dataset.section); });
   });
 
   document.querySelectorAll('[data-days]').forEach(function (button) {
@@ -841,8 +931,17 @@
   var connectParams = new URLSearchParams(window.location.search);
   var connectResult = connectParams.get('easyparcel');
   if (connectResult) history.replaceState(null, '', window.location.pathname);
-  load({
-    connected: 'EasyParcel is connected.',
-    failed: 'EasyParcel could not be connected. ' + (connectParams.get('reason') || 'Please try again.')
-  }[connectResult]);
+  load();
+  // Back from connecting EasyParcel: show the result on the Settings page
+  if (connectResult) {
+    var notice = {
+      connected: 'EasyParcel is connected.',
+      failed: 'EasyParcel could not be connected. ' + (connectParams.get('reason') || 'Please try again.')
+    }[connectResult];
+    setTimeout(function () {
+      if (app.hidden) return;
+      showSection('settings');
+      if (notice) showMessage(notice);
+    }, 600);
+  }
 })();

@@ -89,7 +89,12 @@ body:not(.is-signed-out) { background: var(--cream); }
 
 /* Phones: brand and Log Out on the first row, the sections underneath */
 @media (max-width: 767px) {
-  .sidebar__nav { order: 3; width: 100%; }
+  .sidebar { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .sidebar__bottom { display: contents; }
+  .sidebar__brand { grid-area: 1 / 1; }
+  .sidebar [data-logout] { grid-area: 1 / 2; }
+  .sidebar__nav { grid-area: 2 / 1; }
+  .sidebar [data-section="settings"] { grid-area: 2 / 2; }
   .sidebar__item { padding: 8px 10px; }
 }
 
@@ -552,4 +557,37 @@ a.button { display: inline-block; text-decoration: none; }
   border-radius: 16px;
   background: #fff;
   font-size: 14px;
+}
+
+/* ---------- Settings: connected services ---------- */
+.settings__grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
+
+.service {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.service__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.service__name { margin: 0; font-size: 20px; line-height: normal; font-weight: 700; }
+.service__role { margin-top: 2px; color: var(--muted); font-size: 14px; }
+.service__facts { display: flex; flex-direction: column; gap: 10px; margin: 0; font-size: 15px; }
+.service__fact { display: grid; grid-template-columns: minmax(110px, 38%) 1fr; gap: 12px; }
+.service__fact dt { color: var(--muted); }
+.service__fact dd { margin: 0; overflow-wrap: anywhere; }
+.service__note { color: var(--muted); font-size: 13px; line-height: 18px; }
+.service__note:empty { display: none; }
+.service__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; }
+
+.badge--warn { background: #fde8e6; color: #8a1c13; }
+
+@media (min-width: 900px) {
+  .settings__grid { grid-template-columns: 1fr 1fr; }
+  .service--wide { grid-column: 1 / -1; }
 }

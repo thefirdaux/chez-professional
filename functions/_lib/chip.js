@@ -24,6 +24,16 @@ export async function createPurchase(env, body) {
   return data;
 }
 
+/** Names of the payment methods switched on for the brand, e.g. ["FPX", "DuitNow QR", "Visa"]. */
+export async function paymentMethods(env) {
+  const query = new URLSearchParams({ brand_id: env.CHIP_BRAND_ID, currency: 'MYR', amount: '1000' });
+  const res = await fetch(API + '/payment_methods/?' + query, { headers: headers(env) });
+  if (!res.ok) throw new Error('CHIP payment methods failed: ' + res.status);
+  const data = await res.json();
+  const names = data.names || {};
+  return (data.available_payment_methods || []).map((code) => names[code] || code);
+}
+
 export async function getPurchase(env, id) {
   const res = await fetch(API + '/purchases/' + encodeURIComponent(id) + '/', { headers: headers(env) });
   if (!res.ok) throw new Error('CHIP get purchase failed: ' + res.status);

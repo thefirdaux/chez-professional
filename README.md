@@ -58,6 +58,9 @@ EasyParcel uses its Open API with OAuth. The Developer Hub application's Redirec
 you test on). In the admin, press **Connect EasyParcel** once and sign in to the client's
 EasyParcel account; the tokens are kept in D1 (`settings` table) and refreshed automatically.
 
+The admin's **Settings** page shows the CHIP setup (live or test, and the payment methods CHIP
+has switched on), the EasyParcel connection and credit, and the postage rules.
+
 Each paid order then has **Book courier**: it gets EasyParcel prices for the buyer's address,
 books the chosen courier (paid from the EasyParcel credit straight away) and shows the A6 AWB
 to print and the tracking link. Parcel weights and box sizes come from `parcels` in `products.js` (as the client packs each
