@@ -47,7 +47,8 @@ Postage: the buyer pays EasyParcel's cheapest courier rate for their address
 (`/api/shipping-quote` shows it at checkout; `/api/checkout` works it out again), less
 `shipping.covered` in `products.js` (RM4 in Malaysia, nothing abroad). The shop delivers to
 Malaysia, Singapore and Brunei (`countries`). If EasyParcel isn't connected or doesn't answer,
-the estimates in `shipping.fallback` are used instead.
+Malaysian addresses use the estimates in `shipping.fallback`; Singapore and Brunei buyers are
+asked to try again in a few minutes.
 
 Checkout stays in demo mode until `DB`, `CHIP_BRAND_ID` and `CHIP_SECRET_KEY` are all set.
 Changes to these settings take effect on the next deployment.

@@ -1,15 +1,22 @@
 /*
  * Postage for an order: EasyParcel's cheapest courier for the address, less the part the shop
  * covers (shipping.covered in products.js). If EasyParcel can't be reached or isn't connected,
- * the estimated rates in shipping.fallback are used so checkout keeps working.
+ * Malaysian addresses use the estimates in shipping.fallback; Singapore and Brunei can't be
+ * estimated, so postageFor throws PostageUnavailable and the buyer is asked to try again.
  */
 import { shipping, states } from '../../products.js';
 import * as easyparcel from './easyparcel.js';
 
 const NAMES = { MY: 'Malaysia', SG: 'Singapore', BN: 'Brunei' };
 
+export class PostageUnavailable extends Error {
+  constructor(country) {
+    super('We can\'t work out the shipping fee to ' + NAMES[country] + ' right now. Please try again in a few minutes.');
+  }
+}
+
 function fallbackCost(destination) {
-  if (destination.country !== 'MY') return shipping.fallback[destination.country];
+  if (destination.country !== 'MY') throw new PostageUnavailable(destination.country);
   const state = states.filter((s) => s[0] === destination.state)[0];
   return shipping.fallback[state && state[1] === 'east' ? 'east' : 'west'];
 }

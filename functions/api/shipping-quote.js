@@ -6,7 +6,7 @@
  */
 import { InputError, readDestination, MAX_QTY } from '../_lib/orders.js';
 import { products } from '../../products.js';
-import { postageFor } from '../_lib/postage.js';
+import { postageFor, PostageUnavailable } from '../_lib/postage.js';
 import { json } from '../_lib/http.js';
 
 export async function onRequestPost({ request, env }) {
@@ -39,6 +39,12 @@ export async function onRequestPost({ request, env }) {
     throw error;
   }
 
-  const postage = await postageFor(env, destination, items, subtotal);
+  let postage;
+  try {
+    postage = await postageFor(env, destination, items, subtotal);
+  } catch (error) {
+    if (error instanceof PostageUnavailable) return json({ error: error.message }, 503);
+    throw error;
+  }
   return json({ fee: postage.fee, cost: postage.cost, covered: postage.covered, label: postage.label, live: postage.live });
 }

@@ -162,16 +162,15 @@
     return { country: countrySelect.value, postcode: postcode, state: r.places ? stateSelect.value : '' };
   }
 
-  // Estimated postage when the order server can't be asked (demo mode)
+  // Estimated postage within Malaysia when the order server can't be asked; abroad there is no estimate
   function estimate(where) {
-    var cost;
-    if (where.country !== 'MY') cost = CHEZ.shipping.fallback[where.country];
-    else {
-      var state = CHEZ.states.filter(function (s) { return s[0] === where.state; })[0];
-      cost = CHEZ.shipping.fallback[state && state[1] === 'east' ? 'east' : 'west'];
+    if (where.country !== 'MY') {
+      return { error: 'We can\'t work out the shipping fee to ' + countrySelect.selectedOptions[0].textContent + ' right now. Please try again in a few minutes.' };
     }
-    var covered = Math.min(cost, CHEZ.shipping.covered[where.country] || 0);
-    return { fee: cost - covered, covered: covered, label: 'Estimated delivery to ' + (where.state || countrySelect.selectedOptions[0].textContent) };
+    var state = CHEZ.states.filter(function (s) { return s[0] === where.state; })[0];
+    var cost = CHEZ.shipping.fallback[state && state[1] === 'east' ? 'east' : 'west'];
+    var covered = Math.min(cost, CHEZ.shipping.covered.MY || 0);
+    return { fee: cost - covered, covered: covered, label: 'Estimated delivery to ' + where.state };
   }
 
   function updateQuote() {
@@ -194,7 +193,11 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ items: items, destination: where })
-        }).then(function (res) { return res.ok ? res.json() : Promise.reject(new Error(res.status)); });
+        }).then(function (res) {
+          if (res.ok) return res.json();
+          // The server says why (e.g. no shipping fee abroad right now); otherwise estimate below
+          return res.status === 503 ? res.json().then(function (body) { return { error: body.error }; }) : Promise.reject(new Error(res.status));
+        });
         asked.catch(function () { return estimate(where); }).then(function (result) {
           if (key === quoteKey) {
             quote = result;
@@ -220,14 +223,16 @@
     cart.renderList(form.querySelector('[data-cart-items]'));
 
     var subtotal = cart.subtotal();
-    var total = subtotal + (quote ? quote.fee : 0) + CHEZ.paymentFee.fee;
+    var priced = quote && !quote.error;
+    var total = subtotal + (priced ? quote.fee : 0) + CHEZ.paymentFee.fee;
     var waiting = !quote && destination();
     form.querySelector('[data-subtotal]').textContent = rm(subtotal);
-    form.querySelector('[data-shipping]').textContent = quote ? shippingText(quote.fee) : waiting ? 'Calculating…' : '—';
+    form.querySelector('[data-shipping]').textContent = priced ? shippingText(quote.fee) : waiting ? 'Calculating…' : '—';
     form.querySelector('[data-fee]').textContent = rm(CHEZ.paymentFee.fee);
     form.querySelector('[data-total]').textContent = rm(total);
-    form.querySelector('[data-shipping-info]').textContent = quote
-      ? quote.label + ': ' + shippingText(quote.fee) + (quote.covered ? ' (we cover ' + rm(quote.covered) + ' of the postage)' : '')
+    var abroad = countrySelect.value !== 'MY' ? ' Any import duty or tax is paid by you when the parcel arrives.' : '';
+    form.querySelector('[data-shipping-info]').textContent = quote && quote.error ? quote.error
+      : priced ? quote.label + ': ' + shippingText(quote.fee) + (quote.covered ? ' (we cover ' + rm(quote.covered) + ' of the postage)' : '') + '.' + abroad
       : waiting ? 'Working out the shipping fee…'
         : 'Enter your ' + (rules().places ? 'postcode and ' + rules().placeLabel.toLowerCase() : 'postal code') + ' to see the shipping fee.';
     payButton.textContent = (demo ? 'Place demo order · ' : 'Pay ') + rm(total);
@@ -322,6 +327,14 @@
       return;
     }
 
+    if (quote && quote.error) {
+      formError.textContent = quote.error;
+      formError.hidden = false;
+      quoteKey = ''; // ask again when the buyer next changes the address or presses Pay
+      updateQuote();
+      return;
+    }
+
     var details = collect();
     try {
       if (form.elements.remember.checked) localStorage.setItem(SAVED_KEY, JSON.stringify(details));
@@ -330,6 +343,11 @@
 
     var items = cart.items();
     var shipping = quote || estimate(destination());
+    if (shipping.error) {
+      formError.textContent = shipping.error;
+      formError.hidden = false;
+      return;
+    }
     var order = {
       number: 'DEMO-' + String(Date.now()).slice(-6),
       items: items.map(function (item) {

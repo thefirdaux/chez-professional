@@ -7,7 +7,7 @@
 import { priceOrder, InputError, newOrderId, ensureSchema, isConfigured, chipPhone } from '../_lib/orders.js';
 import { createPurchase } from '../_lib/chip.js';
 import { json } from '../_lib/http.js';
-import { postageFor } from '../_lib/postage.js';
+import { postageFor, PostageUnavailable } from '../_lib/postage.js';
 
 export async function onRequestPost({ request, env }) {
   if (!isConfigured(env)) return json({ error: 'Online payment is not available yet.' }, 503);
@@ -29,7 +29,13 @@ export async function onRequestPost({ request, env }) {
 
   await ensureSchema(env.DB);
   const c = order.customer;
-  const postage = await postageFor(env, c, order.items, order.subtotal);
+  let postage;
+  try {
+    postage = await postageFor(env, c, order.items, order.subtotal);
+  } catch (error) {
+    if (error instanceof PostageUnavailable) return json({ error: error.message }, 503);
+    throw error;
+  }
   order.total = order.subtotal + postage.fee + order.fee;
 
   const id = newOrderId();
