@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=cb1b552d">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=1056d844">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=9d50453a">
-  <link rel="stylesheet" href="admin.css?v=5a8cb2a5">
+  <link rel="stylesheet" href="admin.css?v=9508beb7">
 </head>
 <body>
   <!-- Sidebar (Figma "Sidebar" 414:110, in the shop's beige); a bar across the top on phones -->
@@ -34,7 +34,6 @@
   </aside>
 
   <main class="admin-main">
-  <h1 class="visually-hidden">Chez Professional admin</h1>
   <p class="message" data-message hidden></p>
 
   <section class="login-screen" data-login-screen hidden>
@@ -60,11 +59,28 @@
   </section>
 
   <div data-app hidden>
+    <!-- Page header (Figma "Main-Content" › Header) -->
+    <header class="page-head">
+      <div>
+        <h1 class="page-head__title" data-page-title>Sales Monitor</h1>
+        <p class="page-head__sub" data-page-sub>Track your daily orders and fulfillment status.</p>
+      </div>
+      <div class="page-head__actions" data-order-actions>
+        <label class="search">
+          <img src="/admin/icon-search.svg" alt="" width="16" height="16">
+          <input type="search" placeholder="Search orders..." aria-label="Search orders" data-search>
+        </label>
+        <button type="button" class="button" data-export>
+          <img src="/admin/icon-download.svg" alt="" width="16" height="16">Export
+        </button>
+      </div>
+    </header>
+
     <div data-orders-section>
     <nav class="tabs" aria-label="Order views">
-      <button type="button" data-view="paid" aria-pressed="true">To ship</button>
+      <button type="button" data-view="paid" aria-pressed="true">To Ship</button>
       <button type="button" data-view="shipped" aria-pressed="false">Shipped</button>
-      <button type="button" data-view="pending" aria-pressed="false">Awaiting payment</button>
+      <button type="button" data-view="pending" aria-pressed="false">Awaiting Payment</button>
       <button type="button" data-view="all" aria-pressed="false">All</button>
     </nav>
 
@@ -131,6 +147,6 @@
 
   <div class="tooltip" data-tooltip role="status" hidden></div>
 
-  <script src="admin.js?v=76eaca24"></script>
+  <script src="admin.js?v=af74c825"></script>
 </body>
 </html>

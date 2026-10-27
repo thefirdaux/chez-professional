@@ -104,38 +104,94 @@
     else showMessage(error.message);
   }
 
+  var searchInput = document.querySelector('[data-search]');
+
+  var STATUS = {
+    toShip: { title: 'Order to fulfill', chip: 'To Ship' },
+    shipped: { title: 'Shipped order', chip: 'Shipped', done: true },
+    pending: { title: 'Waiting for payment', chip: 'Awaiting Payment' },
+    failed: { title: 'Payment not completed', chip: 'Failed' }
+  };
+
+  function statusOf(order) {
+    if (order.status === 'paid') return order.shipped_at ? STATUS.shipped : STATUS.toShip;
+    return order.status === 'pending' ? STATUS.pending : STATUS.failed;
+  }
+
+  function itemCount(order) {
+    return order.items.reduce(function (sum, line) { return sum + line.qty; }, 0);
+  }
+
+  function itemText(line) {
+    return line.qty + ' x ' + line.name + ' (' + line.size + ')';
+  }
+
+  // Orders matching the search box (name, phone, email, address, product or order number)
+  function visibleOrders() {
+    var words = searchInput.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return orders;
+    return orders.filter(function (order) {
+      var text = [order.id, order.name, order.phone, order.email, addressLines(order).join(' ')]
+        .concat(order.items.map(itemText)).join(' ').toLowerCase();
+      return words.every(function (word) { return text.indexOf(word) !== -1; });
+    });
+  }
+
   function render() {
     list.textContent = '';
+    var shown = visibleOrders();
     if (orders.length === 0) showMessage('No orders here yet.');
+    else if (shown.length === 0) showMessage('No orders match "' + searchInput.value.trim() + '".');
+    else if (message.textContent.indexOf('No orders') === 0) showMessage('');
 
-    orders.forEach(function (order) {
+    shown.forEach(function (order) {
+      var status = statusOf(order);
       var item = el('li', 'order');
 
+      // Header: icon, title, item count · order number · date, status chips
       var head = el('div', 'order__head');
-      head.appendChild(el('strong', 'order__id', order.id));
-      head.appendChild(el('span', 'order__date', formatDate(order.created_at)));
-      if (order.is_test) head.appendChild(el('span', 'badge badge--test', 'Test'));
-      if (order.status !== 'paid') head.appendChild(el('span', 'badge', order.status));
-      if (order.shipped_at) head.appendChild(el('span', 'badge badge--done', 'Shipped'));
+      var heading = el('div', 'order__heading');
+      var tile = el('div', 'order__tile');
+      tile.appendChild(el('span'));
+      heading.appendChild(tile);
+      var titles = el('div');
+      titles.appendChild(el('p', 'order__title', status.title));
+      var count = itemCount(order);
+      titles.appendChild(el('p', 'order__sub', [count + (count === 1 ? ' item' : ' items'), order.id, formatDate(order.created_at)].join(' · ')));
+      heading.appendChild(titles);
+      head.appendChild(heading);
+      var chips = el('div', 'order__chips');
+      if (order.is_test) chips.appendChild(el('span', 'badge badge--test', 'Test'));
+      chips.appendChild(el('span', 'badge' + (status.done ? ' badge--done' : ''), status.chip));
+      head.appendChild(chips);
       item.appendChild(head);
 
-      var who = el('div', 'order__who');
-      who.appendChild(el('p', 'order__name', order.name));
-      who.appendChild(el('p', null, order.phone + ' · ' + order.email));
-      who.appendChild(el('p', null, addressLines(order).join(', ')));
-      item.appendChild(who);
-
-      var items = el('ul', 'order__items');
-      order.items.forEach(function (line) {
-        items.appendChild(el('li', null, line.qty + ' × ' + line.name + ' (' + line.size + ')'));
+      // Body: customer | products | amount and actions
+      var body = el('div', 'order__body');
+      var customer = el('div', 'order__customer');
+      customer.appendChild(el('p', 'order__name', order.name));
+      customer.appendChild(el('p', 'order__contact', order.email));
+      customer.appendChild(el('p', 'order__contact', order.phone));
+      var address = el('p', 'order__address');
+      var lines = [[order.address1, order.address2].filter(Boolean).join(', '),
+        [order.postcode, order.city, order.state].filter(Boolean).join(', '), COUNTRY_NAMES[order.country]].filter(Boolean);
+      lines.forEach(function (line, index) {
+        if (index) address.appendChild(el('br'));
+        address.appendChild(document.createTextNode(line));
       });
-      item.appendChild(items);
+      customer.appendChild(address);
+      body.appendChild(customer);
 
-      var foot = el('div', 'order__foot');
-      foot.appendChild(el('span', 'order__total', rm(order.total)));
+      var products = el('ul', 'order__items');
+      order.items.forEach(function (line) { products.appendChild(el('li', null, itemText(line))); });
+      body.appendChild(products);
+
+      var side = el('div', 'order__side');
+      side.appendChild(el('p', 'order__total', 'RM' + (order.total / 100).toFixed(2)));
+      var actions = el('div', 'order__actions');
+      var shipBox = el('div', 'ship');
       if (order.status === 'paid') {
-        var ship = el('button', 'button', order.shipped_at ? 'Mark not shipped' : 'Mark shipped');
-        ship.type = 'button';
+        var ship = button(order.shipped_at ? 'Mark Not Shipped' : 'Mark Shipped', !order.shipped_at);
         ship.addEventListener('click', function () {
           ship.disabled = true;
           api('POST', { id: order.id, action: order.shipped_at ? 'unshipped' : 'shipped' }).then(load, function (error) {
@@ -143,14 +199,69 @@
             handleError(error);
           });
         });
-        foot.appendChild(ship);
+        actions.appendChild(ship);
+
+        if (order.ep_paid_at && order.ep_awb_link) {
+          var awb = el('a', 'button button--primary', 'Print AWB');
+          awb.href = order.ep_awb_link;
+          awb.target = '_blank';
+          awb.rel = 'noopener';
+          actions.appendChild(awb);
+        } else if (!order.ep_order_no && easyparcel.enabled && !order.shipped_at) {
+          var book = button('Book Courier', true);
+          book.addEventListener('click', function () {
+            shipBox.hidden = false;
+            openBooking(order, shipBox);
+          });
+          actions.appendChild(book);
+        }
       }
-      item.appendChild(foot);
-      if (order.status === 'paid' && (easyparcel.enabled || order.ep_order_no)) item.appendChild(shippingBlock(order));
+      side.appendChild(actions);
+      body.appendChild(side);
+      item.appendChild(body);
+
+      // Courier details, or the booking form once Book Courier is pressed
+      if (order.status === 'paid') {
+        fillShipBox(order, shipBox);
+        item.appendChild(shipBox);
+      }
 
       list.appendChild(item);
     });
   }
+
+  searchInput.addEventListener('input', render);
+
+  /* --- Export the orders shown as a spreadsheet (CSV) --- */
+  function ringgit(sen) {
+    return typeof sen === 'number' ? (sen / 100).toFixed(2) : '';
+  }
+
+  function csvCell(value) {
+    var text = value == null ? '' : String(value);
+    if (/^[=+\-@]/.test(text)) text = "'" + text; // stop spreadsheets running it as a formula
+    return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+  }
+
+  document.querySelector('[data-export]').addEventListener('click', function () {
+    var rows = [['Order', 'Date', 'Status', 'Name', 'Phone', 'Email', 'Address', 'Postcode', 'City', 'State', 'Country',
+      'Items', 'Subtotal (RM)', 'Shipping (RM)', 'Fee (RM)', 'Total (RM)', 'Courier', 'AWB']];
+    visibleOrders().forEach(function (order) {
+      rows.push([order.id, formatDate(order.created_at), statusOf(order).chip + (order.is_test ? ' (test)' : ''),
+        order.name, order.phone, order.email, [order.address1, order.address2].filter(Boolean).join(', '),
+        order.postcode, order.city, order.state, order.country || 'MY', order.items.map(itemText).join('; '),
+        ringgit(order.subtotal), ringgit(order.shipping), ringgit(order.fee), ringgit(order.total),
+        order.ep_courier || '', order.ep_awb || '']);
+    });
+    var csv = '\ufeff' + rows.map(function (row) { return row.map(csvCell).join(','); }).join('\r\n');
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    link.download = 'chez-orders-' + view + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+  });
 
   // `notice` is shown once the list has loaded (ignored when load is used as a promise callback)
   function load(notice) {
@@ -190,8 +301,12 @@
     return node;
   }
 
-  function shippingBlock(order) {
-    var box = el('div', 'ship');
+  /** Courier details for a booked order (hidden when there is nothing to show yet). */
+  function fillShipBox(order, box) {
+    box.textContent = '';
+    box.hidden = !order.ep_order_no;
+    if (!order.ep_order_no) return;
+
     var note = el('p', 'ship__note');
     note.setAttribute('role', 'status');
     var actions = el('div', 'ship__actions');
@@ -201,46 +316,37 @@
       else note.textContent = error.message;
     }
 
-    if (order.ep_paid_at) {
-      box.appendChild(el('p', 'ship__title', (order.ep_courier || 'Courier') + (order.ep_awb ? ' · AWB ' + order.ep_awb : '')));
-      note.textContent = order.ep_status || (order.ep_awb ? '' : 'Booked. The AWB is not ready yet; press Get AWB in a few minutes.');
-      if (order.ep_awb_link) actions.appendChild(linkButton(order.ep_awb_link, 'Print AWB'));
-      if (order.ep_tracking_url) actions.appendChild(linkButton(order.ep_tracking_url, 'Tracking page'));
-      if (!order.ep_awb && easyparcel.enabled) {
-        var refreshAwb = button('Get AWB', true);
-        refreshAwb.addEventListener('click', function () {
-          refreshAwb.disabled = true;
-          shipApi({ id: order.id, action: 'refresh' }).then(function () { load(); }, function (error) {
-            refreshAwb.disabled = false;
-            fail(error);
-          });
+    box.appendChild(el('p', 'ship__title', (order.ep_courier || 'Courier') + (order.ep_awb ? ' · AWB ' + order.ep_awb : '')));
+    note.textContent = order.ep_status || (order.ep_awb ? '' : 'Booked. The AWB is not ready yet; press Get AWB in a few minutes.');
+    if (order.ep_tracking_url) actions.appendChild(linkButton(order.ep_tracking_url, 'Tracking page'));
+    if (!order.ep_awb && easyparcel.enabled) {
+      var refreshAwb = button('Get AWB', true);
+      refreshAwb.addEventListener('click', function () {
+        refreshAwb.disabled = true;
+        shipApi({ id: order.id, action: 'refresh' }).then(function () { load(); }, function (error) {
+          refreshAwb.disabled = false;
+          fail(error);
         });
-        actions.appendChild(refreshAwb);
-      }
-      if (order.ep_awb && easyparcel.enabled) {
-        var check = button('Check status');
-        check.addEventListener('click', function () {
-          check.disabled = true;
-          note.textContent = 'Checking…';
-          shipApi({ id: order.id, action: 'track' }).then(function (data) {
-            check.disabled = false;
-            note.textContent = data.status;
-          }, function (error) {
-            check.disabled = false;
-            fail(error);
-          });
-        });
-        actions.appendChild(check);
-      }
-    } else {
-      var book = button('Book courier', true);
-      book.addEventListener('click', function () { openBooking(order, box); });
-      actions.appendChild(book);
+      });
+      actions.appendChild(refreshAwb);
     }
-
+    if (order.ep_awb && easyparcel.enabled) {
+      var check = button('Check status');
+      check.addEventListener('click', function () {
+        check.disabled = true;
+        note.textContent = 'Checking…';
+        shipApi({ id: order.id, action: 'track' }).then(function (data) {
+          check.disabled = false;
+          note.textContent = data.status;
+        }, function (error) {
+          check.disabled = false;
+          fail(error);
+        });
+      });
+      actions.appendChild(check);
+    }
     if (actions.childNodes.length) box.appendChild(actions);
     box.appendChild(note);
-    return box;
   }
 
   function openBooking(order, box) {
@@ -355,7 +461,7 @@
     });
 
     cancel.addEventListener('click', function () {
-      box.replaceWith(shippingBlock(order));
+      fillShipBox(order, box);
     });
 
     confirmButton.addEventListener('click', function () {
@@ -468,6 +574,11 @@
       });
       ordersSection.hidden = analytics;
       analyticsSection.hidden = !analytics;
+      document.querySelector('[data-order-actions]').hidden = analytics;
+      document.querySelector('[data-page-title]').textContent = analytics ? 'Analytics' : 'Sales Monitor';
+      document.querySelector('[data-page-sub]').textContent = analytics
+        ? 'Visitors, sales and best-selling products.'
+        : 'Track your daily orders and fulfillment status.';
       if (analytics) loadStats(); else load();
     });
   });
