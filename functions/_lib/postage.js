@@ -23,7 +23,7 @@ export async function postageFor(env, destination, items, subtotal) {
   let rate = null;
   if (easyparcel.easyParcelReady(env) && env.DB) {
     try {
-      const rates = await easyparcel.quote(env, Object.assign({ subtotal }, destination), easyparcel.parcelWeight(items));
+      const rates = await easyparcel.quote(env, Object.assign({ subtotal }, destination), easyparcel.parcelWeight(items), easyparcel.parcelBox(items));
       rate = rates[0] || null;
       if (rate) cost = rate.price;
     } catch (error) {

@@ -12,7 +12,7 @@
  *                             allows test orders and keeps its tokens apart from the live ones
  * The app's Redirect URI must be <site>/api/easyparcel-callback.
  */
-import { weights, packagingWeight, parcelSize } from '../../products.js';
+import { parcels } from '../../products.js';
 import { nationalNumber } from './orders.js';
 
 const API = 'https://api.easyparcel.com';
@@ -61,8 +61,25 @@ export function isDemo(env) {
 
 /** Parcel weight in kg for an order's items, rounded up to 10 g. */
 export function parcelWeight(items) {
-  const total = items.reduce((sum, line) => sum + (weights[line.id] || 0) * line.qty, packagingWeight);
-  return Math.ceil(total * 100 - 1e-9) / 100;
+  const total = items.reduce((sum, line) => sum + (parcels[line.id] ? parcels[line.id].weight : 0) * line.qty, 0);
+  return Math.max(0.01, Math.ceil(total * 100 - 1e-9) / 100);
+}
+
+/**
+ * Box size in cm for an order: the longest and widest of the boxes, tall enough to hold
+ * all of them (one product ships in its own box as it is).
+ */
+export function parcelBox(items) {
+  const boxes = [];
+  items.forEach((line) => {
+    for (let i = 0; i < line.qty; i++) if (parcels[line.id]) boxes.push(parcels[line.id].box);
+  });
+  if (!boxes.length) return { length: 15, width: 10, height: 5 };
+  if (boxes.length === 1) return { length: boxes[0][0], width: boxes[0][1], height: boxes[0][2] };
+  const length = Math.max(...boxes.map((b) => b[0]));
+  const width = Math.max(...boxes.map((b) => b[1]));
+  const volume = boxes.reduce((sum, b) => sum + b[0] * b[1] * b[2], 0);
+  return { length, width, height: Math.ceil(volume / (length * width)) };
 }
 
 /** Receiver's country and state/district code (Singapore has no subdivision). */
@@ -237,19 +254,19 @@ function errorText(entry) {
   return messages.join(' ') || (entry.status === 'error' && entry.message ? String(entry.message) : '');
 }
 
-function size(weight) {
-  return { weight, length: parcelSize.length, width: parcelSize.width, height: parcelSize.height };
+function size(weight, box) {
+  return { weight, length: box.length, width: box.width, height: box.height };
 }
 
 /** Courier services for this order's address, cheapest first. */
-export async function quote(env, order, weight) {
+export async function quote(env, order, weight, box) {
   const to = destinationOf(order);
   const data = await call(env, 'shipment/quotations', {
     shipment: [Object.assign({
       sender: { postcode: SHIP_FROM.postcode, subdivision_code: SHIP_FROM.state, country: 'MY' },
       receiver: { postcode: order.postcode, subdivision_code: to.subdivision, country: to.country },
       parcel_value: order.subtotal / 100
-    }, size(weight))]
+    }, size(weight, box))]
   });
   const result = Array.isArray(data.data) ? data.data[0] : null;
   if (!result || result.status !== 'success') {
@@ -285,7 +302,7 @@ function shipmentResult(shipment) {
 }
 
 /** Books the courier. EasyParcel takes the payment from the account's credit straight away. */
-export async function book(env, order, { serviceId, weight, collectDate }) {
+export async function book(env, order, { serviceId, weight, box, collectDate }) {
   const value = order.subtotal / 100;
   const to = destinationOf(order);
   const item = { content: 'Hair care products', currency_code: 'MYR', value, quantity: 1 };
@@ -295,7 +312,7 @@ export async function book(env, order, { serviceId, weight, collectDate }) {
       reference: order.id,
       service_id: serviceId,
       collection_date: collectDate,
-      item: [Object.assign(item, size(weight))],
+      item: [Object.assign(item, size(weight, box))],
       sender: {
         name: SHIP_FROM.name, phone_number_country_code: 'MY', phone_number: SHIP_FROM.phone,
         address_1: SHIP_FROM.address1, address_2: SHIP_FROM.address2, postcode: SHIP_FROM.postcode,
@@ -307,7 +324,7 @@ export async function book(env, order, { serviceId, weight, collectDate }) {
         city: order.city, subdivision_code: to.subdivision, country_code: to.country
       },
       feature: { email_tracking: true }
-    }, size(weight))]
+    }, size(weight, box))]
   });
   const result = Array.isArray(data.data) ? data.data[0] : null;
   const shipment = result && Array.isArray(result.shipments) ? result.shipments[0] : null;

@@ -76,14 +76,17 @@ var countries = [['MY', 'Malaysia', '60'], ['SG', 'Singapore', '65'], ['BN', 'Br
 // Brunei districts (Singapore has none)
 var districts = ['Brunei-Muara', 'Belait', 'Tutong', 'Temburong'];
 
-// Parcel weight in kg for each product, used to book couriers through EasyParcel.
-// ESTIMATES until the client weighs them; the admin can still change the weight before booking.
-var weights = {
-  'shampoo-1': 0.35, 'shampoo-3': 1.05, 'mask-1': 0.35, 'mask-3': 1.05, 'shampoo-mask-combo': 0.7,
-  'spray-1': 0.2, 'spray-3': 0.6, 'tonic-1': 0.2, 'tonic-3': 0.6, 'spray-tonic-combo': 0.4
+// Each product as the client packs it, used to price and book couriers through EasyParcel:
+// weight in kg (packaging included) and box size in cm, length x width x height.
+// The admin can still change the weight before booking.
+var SINGLE = { weight: 0.5, box: [15, 10, 5] };
+var COMBO = { weight: 1, box: [15, 10, 10] };
+var BUNDLE = { weight: 1.5, box: [15, 15, 10] };
+var parcels = {
+  'shampoo-1': SINGLE, 'mask-1': SINGLE, 'spray-1': SINGLE, 'tonic-1': SINGLE,
+  'shampoo-mask-combo': COMBO, 'spray-tonic-combo': COMBO,
+  'shampoo-3': BUNDLE, 'mask-3': BUNDLE, 'spray-3': BUNDLE, 'tonic-3': BUNDLE
 };
-var packagingWeight = 0.1; // box and padding, added once per parcel
-var parcelSize = { length: 20, width: 15, height: 10 }; // box size in cm, also an estimate
 
 // Payment processing fee in sen, listed as its own line on every order.
 // RM1.00 matches CHIP's FPX charge.
@@ -105,8 +108,8 @@ function formatRM(sen) {
   return 'RM ' + (sen / 100).toFixed(2);
 }
 
-export { products, shops, shipping, paymentFee, states, countries, districts, config, formatRM, weights, packagingWeight, parcelSize };
+export { products, shops, shipping, paymentFee, states, countries, districts, config, formatRM, parcels };
 
 if (typeof window !== 'undefined') {
-  window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, countries: countries, districts: districts, config: config, formatRM: formatRM, weights: weights, packagingWeight: packagingWeight };
+  window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, countries: countries, districts: districts, config: config, formatRM: formatRM };
 }

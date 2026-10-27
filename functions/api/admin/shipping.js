@@ -51,9 +51,10 @@ async function handle(env, body) {
   if (order.is_test && !easyparcel.isDemo(env)) return json({ error: 'This is a test order, so it cannot be booked with a real courier.' }, 400);
 
   if (body.action === 'quote') {
-    const weight = readWeight(body.weight, easyparcel.parcelWeight(JSON.parse(order.items)));
+    const items = JSON.parse(order.items);
+    const weight = readWeight(body.weight, easyparcel.parcelWeight(items));
     if (!weight) return json({ error: 'Please enter a weight between 0.01 and ' + easyparcel.MAX_WEIGHT + ' kg.' }, 400);
-    return json({ weight, rates: await easyparcel.quote(env, order, weight), demo: easyparcel.isDemo(env) });
+    return json({ weight, rates: await easyparcel.quote(env, order, weight, easyparcel.parcelBox(items)), demo: easyparcel.isDemo(env) });
   }
 
   if (body.action === 'book') {
@@ -73,7 +74,7 @@ async function handle(env, body) {
 
     let shipment;
     try {
-      shipment = await easyparcel.book(env, order, { serviceId: body.serviceId, weight, collectDate });
+      shipment = await easyparcel.book(env, order, { serviceId: body.serviceId, weight, box: easyparcel.parcelBox(JSON.parse(order.items)), collectDate });
     } catch (error) {
       // EasyParcel refused it, so nothing was booked and it can be tried again straight away
       if (error instanceof easyparcel.EasyParcelError) await env.DB.prepare('UPDATE orders SET ep_lock = NULL WHERE id = ?').bind(order.id).run();
