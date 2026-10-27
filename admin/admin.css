@@ -1,6 +1,8 @@
 :root {
   --brown: #a65d3f;
   --beige: #f5ebe1;
+  --cream: #fef9f4; /* signed-in page background, beside the beige sidebar */
+  --card-line: #efe4d8;
   --line: #d9d9d9;
   --muted: #757575;
 }
@@ -32,8 +34,9 @@ p { margin: 0; }
 }
 
 .is-signed-out .sidebar { display: none; }
+body:not(.is-signed-out) { background: var(--cream); }
 
-/* ---------- Sidebar (Figma "Sidebar"): a dark bar across the top on phones ---------- */
+/* ---------- Sidebar (Figma "Sidebar"): a bar across the top on phones ---------- */
 .sidebar {
   display: flex;
   flex-wrap: wrap;
@@ -41,8 +44,8 @@ p { margin: 0; }
   gap: 8px 16px;
   margin: -16px -16px 16px;
   padding: 12px 16px;
-  background: #1c1c1e;
-  color: #fff;
+  background: var(--beige);
+  color: #000;
 }
 
 .sidebar__brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
@@ -60,7 +63,7 @@ p { margin: 0; }
   border: 0;
   border-radius: 10px;
   background: transparent;
-  color: #8e8e93;
+  color: #5f5f63;
   font: inherit;
   font-size: 15px;
   line-height: normal;
@@ -68,11 +71,11 @@ p { margin: 0; }
   cursor: pointer;
 }
 
-.sidebar__item:hover { color: #fff; }
-.sidebar__item[aria-pressed="true"] { background: #3a3a3c; color: #fff; font-weight: 600; }
-.sidebar__item:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.sidebar__item:hover { color: #000; background: rgba(255, 255, 255, 0.5); }
+.sidebar__item[aria-pressed="true"] { background: #fff; color: #000; font-weight: 600; }
+.sidebar__item:focus-visible { outline: 2px solid var(--brown); outline-offset: 2px; }
 
-/* The Figma icons, coloured with the text so they turn white when active */
+/* The Figma icons, coloured with the text so they darken when active */
 .sidebar__icon {
   flex: none;
   width: 20px;
@@ -267,6 +270,7 @@ p { margin: 0; }
 .order {
   margin-top: 12px;
   padding: 14px;
+  border: 1px solid var(--card-line);
   border-radius: 12px;
   background: #fff;
 }
@@ -303,6 +307,7 @@ p { margin: 0; }
 
 .kpi {
   padding: 14px 16px;
+  border: 1px solid var(--card-line);
   border-radius: 12px;
   background: #fff;
 }
@@ -320,6 +325,7 @@ p { margin: 0; }
 .card {
   min-width: 0;
   padding: 16px;
+  border: 1px solid var(--card-line);
   border-radius: 12px;
   background: #fff;
 }
@@ -434,6 +440,7 @@ a.button { display: inline-block; text-decoration: none; }
   gap: 8px 12px;
   margin-top: 12px;
   padding: 10px 14px;
+  border: 1px solid var(--card-line);
   border-radius: 12px;
   background: #fff;
   font-size: 14px;
