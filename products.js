@@ -68,6 +68,14 @@ var shipping = {
   east: { label: 'Sabah, Sarawak & Labuan', fee: 400 }
 };
 
+// Parcel weight in kg for each product, used to book couriers through EasyParcel.
+// ESTIMATES until the client weighs them; the admin can still change the weight before booking.
+var weights = {
+  'shampoo-1': 0.35, 'shampoo-3': 1.05, 'mask-1': 0.35, 'mask-3': 1.05, 'shampoo-mask-combo': 0.7,
+  'spray-1': 0.2, 'spray-3': 0.6, 'tonic-1': 0.2, 'tonic-3': 0.6, 'spray-tonic-combo': 0.4
+};
+var packagingWeight = 0.1; // box and padding, added once per parcel
+
 // Payment processing fee in sen, listed as its own line on every order.
 // RM1.00 matches CHIP's FPX charge.
 var paymentFee = { label: 'Payment processing fee', fee: 100 };
@@ -88,7 +96,7 @@ function formatRM(sen) {
   return 'RM ' + (sen / 100).toFixed(2);
 }
 
-export { products, shops, shipping, paymentFee, states, config, formatRM };
+export { products, shops, shipping, paymentFee, states, config, formatRM, weights, packagingWeight };
 
 if (typeof window !== 'undefined') {
   window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, config: config, formatRM: formatRM };

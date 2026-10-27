@@ -12,6 +12,7 @@
 
   var view = 'paid';
   var orders = [];
+  var easyparcel = { enabled: false, demo: false };
   var list = document.querySelector('[data-orders]');
   var message = document.querySelector('[data-message]');
   var printButton = document.querySelector('[data-print]');
@@ -173,24 +174,218 @@
         foot.appendChild(ship);
       }
       item.appendChild(foot);
+      if (order.status === 'paid' && (easyparcel.enabled || order.ep_order_no)) item.appendChild(shippingBlock(order));
 
       list.appendChild(item);
     });
     updateToolbar();
   }
 
-  function load() {
+  // `notice` is shown once the list has loaded (ignored when load is used as a promise callback)
+  function load(notice) {
     showMessage('Loading…');
     api('GET').then(function (data) {
       showApp();
-      showMessage('');
+      showMessage(typeof notice === 'string' ? notice : '');
       orders = data.orders;
+      easyparcel = data.easyparcel || easyparcel;
       render();
     }, function (error) {
       orders = [];
       render();
       handleError(error);
     });
+  }
+
+  /* --- EasyParcel courier booking --- */
+  var DETAIL = { pickup: 'Pickup', dropoff: 'Drop-off', 'dropoff/pickup': 'Pickup or drop-off' };
+
+  function shipApi(body) {
+    return request('/api/admin/shipping', 'POST', body);
+  }
+
+  function button(text, primary) {
+    var node = el('button', 'button' + (primary ? ' button--primary' : ''), text);
+    node.type = 'button';
+    return node;
+  }
+
+  function linkButton(href, text) {
+    var node = el('a', 'button', text);
+    node.href = href;
+    node.target = '_blank';
+    node.rel = 'noopener';
+    return node;
+  }
+
+  function shippingBlock(order) {
+    var box = el('div', 'ship');
+    var note = el('p', 'ship__note');
+    note.setAttribute('role', 'status');
+    var actions = el('div', 'ship__actions');
+
+    function fail(error) {
+      if (error.status === 401) showLogin();
+      else note.textContent = error.message;
+    }
+
+    if (order.ep_paid_at) {
+      box.appendChild(el('p', 'ship__title', (order.ep_courier || 'Courier') + (order.ep_awb ? ' · AWB ' + order.ep_awb : '')));
+      note.textContent = order.ep_status || (order.ep_awb ? '' : 'Paid. The AWB is not ready yet; print it from EasyParcel → My Shipments.');
+      if (order.ep_awb_link) actions.appendChild(linkButton(order.ep_awb_link, 'Print AWB'));
+      if (order.ep_tracking_url) actions.appendChild(linkButton(order.ep_tracking_url, 'Tracking page'));
+      if (order.ep_awb && easyparcel.enabled) {
+        var check = button('Check status');
+        check.addEventListener('click', function () {
+          check.disabled = true;
+          note.textContent = 'Checking…';
+          shipApi({ id: order.id, action: 'track' }).then(function (data) {
+            check.disabled = false;
+            note.textContent = data.status;
+          }, function (error) {
+            check.disabled = false;
+            fail(error);
+          });
+        });
+        actions.appendChild(check);
+      }
+    } else if (order.ep_order_no) {
+      box.appendChild(el('p', 'ship__title', (order.ep_courier || 'Courier') + ' booked, not paid yet'));
+      note.textContent = 'EasyParcel order ' + order.ep_order_no + '. If your credit ran out, top up in EasyParcel and press Pay.';
+      var pay = button('Pay ' + (order.ep_price ? rm(order.ep_price) : 'now'), true);
+      pay.addEventListener('click', function () {
+        pay.disabled = true;
+        shipApi({ id: order.id, action: 'pay' }).then(function () {
+          load('Paid. You can print the AWB now.');
+        }, function (error) {
+          pay.disabled = false;
+          fail(error);
+        });
+      });
+      actions.appendChild(pay);
+    } else {
+      var book = button('Book courier', true);
+      book.addEventListener('click', function () { openBooking(order, box); });
+      actions.appendChild(book);
+    }
+
+    if (actions.childNodes.length) box.appendChild(actions);
+    box.appendChild(note);
+    return box;
+  }
+
+  function openBooking(order, box) {
+    box.textContent = '';
+    var rates = [];
+    var form = el('form', 'ship__form');
+    if (easyparcel.demo) form.appendChild(el('p', 'ship__demo', 'EasyParcel demo: nothing is really shipped or charged.'));
+
+    var weightRow = el('div', 'ship__weight');
+    var weightId = 'weight-' + order.id;
+    var weightLabel = el('label', null, 'Parcel weight (kg)');
+    weightLabel.htmlFor = weightId;
+    var weight = el('input');
+    weight.id = weightId;
+    weight.type = 'number';
+    weight.step = '0.01';
+    weight.min = '0.01';
+    weight.max = '30';
+    weight.inputMode = 'decimal';
+    var refresh = el('button', 'button', 'Update prices');
+    refresh.type = 'submit';
+    weightRow.appendChild(weightLabel);
+    weightRow.appendChild(weight);
+    weightRow.appendChild(refresh);
+    form.appendChild(weightRow);
+
+    var choices = el('fieldset', 'ship__rates');
+    choices.appendChild(el('legend', 'visually-hidden', 'Courier'));
+    form.appendChild(choices);
+
+    var note = el('p', 'ship__note');
+    note.setAttribute('role', 'status');
+    form.appendChild(note);
+
+    var actions = el('div', 'ship__actions');
+    var confirmButton = button('Book & pay', true);
+    var cancel = button('Cancel');
+    actions.appendChild(confirmButton);
+    actions.appendChild(cancel);
+    form.appendChild(actions);
+    box.appendChild(form);
+
+    function chosen() {
+      var radio = choices.querySelector('input:checked');
+      return radio ? rates[Number(radio.value)] : null;
+    }
+
+    function updateConfirm() {
+      var rate = chosen();
+      confirmButton.disabled = !rate;
+      confirmButton.textContent = rate ? 'Book & pay ' + rm(rate.price) : 'Book & pay';
+    }
+
+    function getRates() {
+      note.textContent = 'Getting courier prices…';
+      confirmButton.disabled = true;
+      refresh.disabled = true;
+      shipApi({ id: order.id, action: 'quote', weight: weight.value }).then(function (data) {
+        refresh.disabled = false;
+        weight.value = data.weight;
+        rates = data.rates;
+        choices.querySelectorAll('.ship__rate').forEach(function (node) { node.remove(); });
+        rates.forEach(function (rate, index) {
+          var option = el('label', 'ship__rate');
+          var radio = el('input');
+          radio.type = 'radio';
+          radio.name = 'rate-' + order.id;
+          radio.value = String(index);
+          radio.checked = index === 0;
+          radio.addEventListener('change', updateConfirm);
+          var text = el('span', 'ship__rate-text');
+          text.appendChild(el('strong', null, rate.courier));
+          text.appendChild(el('span', null, [rate.service, DETAIL[rate.detail], rate.delivery].filter(Boolean).join(' · ')));
+          option.appendChild(radio);
+          option.appendChild(text);
+          option.appendChild(el('span', 'ship__price', rm(rate.price)));
+          choices.appendChild(option);
+        });
+        note.textContent = rates.length ? '' : 'No couriers are available for this address and weight.';
+        updateConfirm();
+      }, function (error) {
+        refresh.disabled = false;
+        if (error.status === 401) showLogin();
+        else note.textContent = error.message;
+      });
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      getRates();
+    });
+
+    cancel.addEventListener('click', function () {
+      box.replaceWith(shippingBlock(order));
+    });
+
+    confirmButton.addEventListener('click', function () {
+      var rate = chosen();
+      if (!rate) return;
+      if (!window.confirm('Book ' + rate.courier + ' for ' + rm(rate.price) + '? This is paid from your EasyParcel credit.')) return;
+      confirmButton.disabled = true;
+      cancel.disabled = true;
+      note.textContent = 'Booking…';
+      shipApi({ id: order.id, action: 'book', serviceId: rate.serviceId, weight: weight.value, collectDate: rate.pickupDate }).then(function () {
+        load('Courier booked for ' + order.id + '. Print the AWB and stick it on the parcel.');
+      }, function (error) {
+        if (error.status === 401) return showLogin();
+        // The shipment may have been created even though payment failed, so show the latest state
+        load(order.id + ': ' + error.message);
+      });
+    });
+
+    getRates();
+    weight.focus();
   }
 
   /* --- A5 labels --- */

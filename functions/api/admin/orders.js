@@ -6,6 +6,7 @@
 import { ensureSchema, isConfigured } from '../../_lib/orders.js';
 import { requireAdmin } from '../../_lib/access.js';
 import { json } from '../../_lib/http.js';
+import { easyParcelReady, isDemo } from '../../_lib/easyparcel.js';
 
 const VIEWS = {
   paid: "status = 'paid' AND shipped_at IS NULL",
@@ -30,6 +31,7 @@ export async function onRequestGet({ request, env }) {
   const where = VIEWS[view] || VIEWS.paid;
   const { results } = await env.DB.prepare(`SELECT * FROM orders WHERE ${where} ORDER BY created_at DESC LIMIT 200`).all();
   return json({
+    easyparcel: { enabled: easyParcelReady(env), demo: isDemo(env) },
     orders: results.map((order) => Object.assign({}, order, { items: JSON.parse(order.items) }))
   });
 }

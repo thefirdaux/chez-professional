@@ -86,6 +86,13 @@ export function newOrderId(now = new Date()) {
 
 let schemaReady = null;
 
+const LATER_COLUMNS = [
+  'fee INTEGER NOT NULL DEFAULT 0',
+  // EasyParcel shipment (see _lib/easyparcel.js)
+  'ep_order_no TEXT', 'ep_courier TEXT', 'ep_price INTEGER', 'ep_paid_at TEXT',
+  'ep_awb TEXT', 'ep_awb_link TEXT', 'ep_tracking_url TEXT', 'ep_status TEXT', 'ep_lock INTEGER'
+];
+
 /** Creates the orders table on first use, so no separate migration step is needed. */
 export function ensureSchema(db) {
   if (!schemaReady) {
@@ -118,12 +125,14 @@ export function ensureSchema(db) {
         visitor TEXT NOT NULL
       )`),
       db.prepare('CREATE INDEX IF NOT EXISTS page_views_day ON page_views (day)')
-    ]).then(() =>
-      // Tables created before the payment fee existed get the column here
-      db.prepare('ALTER TABLE orders ADD COLUMN fee INTEGER NOT NULL DEFAULT 0').run().catch((error) => {
-        if (!/duplicate column/i.test(String(error && error.message))) throw error;
-      })
-    ).catch((error) => {
+    ]).then(async () => {
+      // Columns added after the table was first created
+      for (const column of LATER_COLUMNS) {
+        await db.prepare('ALTER TABLE orders ADD COLUMN ' + column).run().catch((error) => {
+          if (!/duplicate column/i.test(String(error && error.message))) throw error;
+        });
+      }
+    }).catch((error) => {
       schemaReady = null;
       throw error;
     });

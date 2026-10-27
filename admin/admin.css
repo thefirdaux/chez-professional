@@ -373,3 +373,43 @@ details.card summary { cursor: pointer; }
 .table__empty { color: var(--muted); }
 
 .analytics__note { margin-top: 16px; color: var(--muted); font-size: 13px; line-height: 18px; }
+
+/* ---------- EasyParcel courier booking ---------- */
+a.button { display: inline-block; text-decoration: none; }
+
+.ship { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.ship__title { font-weight: 600; }
+.ship__note { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 18px; }
+.ship__note:empty { display: none; }
+.ship__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.ship__form { display: flex; flex-direction: column; gap: 10px; }
+.ship__demo { padding: 6px 10px; border-radius: 8px; background: #fff4d6; font-size: 13px; }
+
+.ship__weight { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ship__weight input {
+  width: 96px;
+  padding: 7px 10px;
+  border: 1px solid #000;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 16px; /* no zoom on iPhone */
+}
+
+.ship__rates { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
+
+.ship__rate {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ship__rate:has(input:checked) { border-color: var(--brown); background: #fbf6f2; }
+.ship__rate input { width: 18px; height: 18px; margin: 0; accent-color: var(--brown); }
+.ship__rate-text { display: flex; flex-direction: column; min-width: 0; font-size: 14px; line-height: 18px; }
+.ship__rate-text span { color: var(--muted); font-size: 13px; }
+.ship__price { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }

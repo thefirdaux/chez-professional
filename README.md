@@ -36,9 +36,17 @@ Settings in the Pages project (Settings → Variables and secrets / Bindings), p
 | `CHIP_TEST_MODE` | Text | `1` while using CHIP test keys; remove for live |
 | `ADMIN_PASSWORD` | Secret | admin sign-in password, at least 12 characters |
 | `ADMIN_USERNAME` | Text | admin sign-in username (not case-sensitive); if unset, only the password is checked |
+| `EASYPARCEL_API_KEY` | Secret | EasyParcel → Integrations → API (Individual API); turns on courier booking in the admin |
+| `EASYPARCEL_DEMO` | Text | `1` to use EasyParcel's demo server (Preview); remove for live |
 
 At checkout the city and state fill in from the postcode, using `assets/postcodes.json`
 (built from the `malaysia-postcodes` package, ISC licence). A city the buyer types is never overwritten.
 
 Checkout stays in demo mode until `DB`, `CHIP_BRAND_ID` and `CHIP_SECRET_KEY` are all set.
 Changes to these settings take effect on the next deployment.
+
+In the admin, each paid order has **Book courier**: it gets EasyParcel prices for the buyer's
+address, books the chosen courier, pays from the client's EasyParcel credit and shows the AWB
+to print and the tracking link. Parcel weights come from `weights` in `products.js` (estimates
+until the client weighs the products) and can be changed before booking. Test orders can only be
+booked while `EASYPARCEL_DEMO` is on, so a test payment never spends real credit.
