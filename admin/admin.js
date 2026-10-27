@@ -189,6 +189,7 @@
       showMessage(typeof notice === 'string' ? notice : '');
       orders = data.orders;
       easyparcel = data.easyparcel || easyparcel;
+      loadEasyParcelStatus();
       render();
     }, function (error) {
       orders = [];
@@ -231,9 +232,20 @@
 
     if (order.ep_paid_at) {
       box.appendChild(el('p', 'ship__title', (order.ep_courier || 'Courier') + (order.ep_awb ? ' · AWB ' + order.ep_awb : '')));
-      note.textContent = order.ep_status || (order.ep_awb ? '' : 'Paid. The AWB is not ready yet; print it from EasyParcel → My Shipments.');
+      note.textContent = order.ep_status || (order.ep_awb ? '' : 'Booked. The AWB is not ready yet; press Get AWB in a few minutes.');
       if (order.ep_awb_link) actions.appendChild(linkButton(order.ep_awb_link, 'Print AWB'));
       if (order.ep_tracking_url) actions.appendChild(linkButton(order.ep_tracking_url, 'Tracking page'));
+      if (!order.ep_awb && easyparcel.enabled) {
+        var refreshAwb = button('Get AWB', true);
+        refreshAwb.addEventListener('click', function () {
+          refreshAwb.disabled = true;
+          shipApi({ id: order.id, action: 'refresh' }).then(function () { load(); }, function (error) {
+            refreshAwb.disabled = false;
+            fail(error);
+          });
+        });
+        actions.appendChild(refreshAwb);
+      }
       if (order.ep_awb && easyparcel.enabled) {
         var check = button('Check status');
         check.addEventListener('click', function () {
@@ -249,20 +261,6 @@
         });
         actions.appendChild(check);
       }
-    } else if (order.ep_order_no) {
-      box.appendChild(el('p', 'ship__title', (order.ep_courier || 'Courier') + ' booked, not paid yet'));
-      note.textContent = 'EasyParcel order ' + order.ep_order_no + '. If your credit ran out, top up in EasyParcel and press Pay.';
-      var pay = button('Pay ' + (order.ep_price ? rm(order.ep_price) : 'now'), true);
-      pay.addEventListener('click', function () {
-        pay.disabled = true;
-        shipApi({ id: order.id, action: 'pay' }).then(function () {
-          load('Paid. You can print the AWB now.');
-        }, function (error) {
-          pay.disabled = false;
-          fail(error);
-        });
-      });
-      actions.appendChild(pay);
     } else {
       var book = button('Book courier', true);
       book.addEventListener('click', function () { openBooking(order, box); });
@@ -297,6 +295,18 @@
     weightRow.appendChild(weight);
     weightRow.appendChild(refresh);
     form.appendChild(weightRow);
+
+    var dateRow = el('div', 'ship__weight');
+    var dateId = 'date-' + order.id;
+    var dateLabel = el('label', null, 'Pickup / drop-off date');
+    dateLabel.htmlFor = dateId;
+    var date = el('input');
+    date.id = dateId;
+    date.type = 'date';
+    date.value = date.min = malaysiaToday();
+    dateRow.appendChild(dateLabel);
+    dateRow.appendChild(date);
+    form.appendChild(dateRow);
 
     var choices = el('fieldset', 'ship__rates');
     choices.appendChild(el('legend', 'visually-hidden', 'Courier'));
@@ -371,21 +381,56 @@
     confirmButton.addEventListener('click', function () {
       var rate = chosen();
       if (!rate) return;
-      if (!window.confirm('Book ' + rate.courier + ' for ' + rm(rate.price) + '? This is paid from your EasyParcel credit.')) return;
+      if (!window.confirm('Book ' + rate.courier + ' for ' + rm(rate.price) + '? It is paid from your EasyParcel credit straight away.')) return;
       confirmButton.disabled = true;
       cancel.disabled = true;
       note.textContent = 'Booking…';
-      shipApi({ id: order.id, action: 'book', serviceId: rate.serviceId, weight: weight.value, collectDate: rate.pickupDate }).then(function () {
+      shipApi({ id: order.id, action: 'book', serviceId: rate.serviceId, weight: weight.value, collectDate: date.value }).then(function () {
         load('Courier booked for ' + order.id + '. Print the AWB and stick it on the parcel.');
       }, function (error) {
         if (error.status === 401) return showLogin();
-        // The shipment may have been created even though payment failed, so show the latest state
         load(order.id + ': ' + error.message);
       });
     });
 
     getRates();
     weight.focus();
+  }
+
+  function malaysiaToday() {
+    return new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 10);
+  }
+
+  /* --- EasyParcel connection bar --- */
+  var epBar = document.querySelector('[data-ep-bar]');
+
+  function loadEasyParcelStatus() {
+    epBar.hidden = !easyparcel.enabled;
+    if (!easyparcel.enabled) return;
+    shipApi({ action: 'status' }).then(function (data) {
+      epBar.textContent = '';
+      var text = el('p', 'ep-bar__text');
+      if (data.connected) {
+        text.appendChild(el('strong', null, 'EasyParcel connected' + (data.demo ? ' (sandbox)' : '')));
+        if (data.balance != null) text.appendChild(document.createTextNode(' · Credit ' + rm(data.balance)));
+        epBar.appendChild(text);
+        var disconnect = button('Disconnect');
+        disconnect.addEventListener('click', function () {
+          if (!window.confirm('Disconnect EasyParcel? You can connect again any time.')) return;
+          shipApi({ action: 'disconnect' }).then(function () { loadEasyParcelStatus(); }, handleError);
+        });
+        epBar.appendChild(disconnect);
+      } else {
+        text.textContent = 'Connect the EasyParcel account to book couriers from here.';
+        epBar.appendChild(text);
+        var connect = el('a', 'button button--primary', 'Connect EasyParcel');
+        connect.href = '/api/admin/easyparcel-connect';
+        epBar.appendChild(connect);
+      }
+    }, function (error) {
+      epBar.textContent = '';
+      epBar.appendChild(el('p', 'ep-bar__text', error.message));
+    });
   }
 
   /* --- A5 labels --- */
@@ -751,5 +796,11 @@
     resizeTimer = setTimeout(function () { if (lastStats && !analyticsSection.hidden) renderStats(lastStats); }, 150);
   });
 
-  load();
+  // Coming back from the EasyParcel sign-in
+  var connectResult = new URLSearchParams(window.location.search).get('easyparcel');
+  if (connectResult) history.replaceState(null, '', window.location.pathname);
+  load({
+    connected: 'EasyParcel is connected.',
+    failed: 'EasyParcel could not be connected. Please try again.'
+  }[connectResult]);
 })();

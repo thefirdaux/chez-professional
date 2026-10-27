@@ -75,6 +75,7 @@ var weights = {
   'spray-1': 0.2, 'spray-3': 0.6, 'tonic-1': 0.2, 'tonic-3': 0.6, 'spray-tonic-combo': 0.4
 };
 var packagingWeight = 0.1; // box and padding, added once per parcel
+var parcelSize = { length: 20, width: 15, height: 10 }; // box size in cm, also an estimate
 
 // Payment processing fee in sen, listed as its own line on every order.
 // RM1.00 matches CHIP's FPX charge.
@@ -96,7 +97,7 @@ function formatRM(sen) {
   return 'RM ' + (sen / 100).toFixed(2);
 }
 
-export { products, shops, shipping, paymentFee, states, config, formatRM, weights, packagingWeight };
+export { products, shops, shipping, paymentFee, states, config, formatRM, weights, packagingWeight, parcelSize };
 
 if (typeof window !== 'undefined') {
   window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, config: config, formatRM: formatRM };

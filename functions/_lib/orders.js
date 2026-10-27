@@ -124,7 +124,8 @@ export function ensureSchema(db) {
         device TEXT NOT NULL,
         visitor TEXT NOT NULL
       )`),
-      db.prepare('CREATE INDEX IF NOT EXISTS page_views_day ON page_views (day)')
+      db.prepare('CREATE INDEX IF NOT EXISTS page_views_day ON page_views (day)'),
+      db.prepare('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at TEXT NOT NULL)')
     ]).then(async () => {
       // Columns added after the table was first created
       for (const column of LATER_COLUMNS) {

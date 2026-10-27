@@ -36,8 +36,9 @@ Settings in the Pages project (Settings → Variables and secrets / Bindings), p
 | `CHIP_TEST_MODE` | Text | `1` while using CHIP test keys; remove for live |
 | `ADMIN_PASSWORD` | Secret | admin sign-in password, at least 12 characters |
 | `ADMIN_USERNAME` | Text | admin sign-in username (not case-sensitive); if unset, only the password is checked |
-| `EASYPARCEL_API_KEY` | Secret | EasyParcel → Integrations → API (Individual API); turns on courier booking in the admin |
-| `EASYPARCEL_DEMO` | Text | `1` to use EasyParcel's demo server (Preview); remove for live |
+| `EASYPARCEL_CLIENT_ID` | Text | EasyParcel Developer Hub (api.easyparcel.com) → your application |
+| `EASYPARCEL_CLIENT_SECRET` | Secret | same application; with the client ID it turns on courier booking in the admin |
+| `EASYPARCEL_DEMO` | Text | `1` where the admin connects an EasyParcel **sandbox** (Preview); remove for live |
 
 At checkout the city and state fill in from the postcode, using `assets/postcodes.json`
 (built from the `malaysia-postcodes` package, ISC licence). A city the buyer types is never overwritten.
@@ -45,8 +46,13 @@ At checkout the city and state fill in from the postcode, using `assets/postcode
 Checkout stays in demo mode until `DB`, `CHIP_BRAND_ID` and `CHIP_SECRET_KEY` are all set.
 Changes to these settings take effect on the next deployment.
 
-In the admin, each paid order has **Book courier**: it gets EasyParcel prices for the buyer's
-address, books the chosen courier, pays from the client's EasyParcel credit and shows the AWB
-to print and the tracking link. Parcel weights come from `weights` in `products.js` (estimates
+EasyParcel uses its Open API with OAuth. The Developer Hub application's Redirect URI must be
+`<site>/api/easyparcel-callback` (add one for www.chezprofessional.com and one for each preview
+you test on). In the admin, press **Connect EasyParcel** once and sign in to the client's
+EasyParcel account; the tokens are kept in D1 (`settings` table) and refreshed automatically.
+
+Each paid order then has **Book courier**: it gets EasyParcel prices for the buyer's address,
+books the chosen courier (paid from the EasyParcel credit straight away) and shows the A5 AWB
+to print and the tracking link. Parcel weights and box size come from `weights` and `parcelSize` in `products.js` (estimates
 until the client weighs the products) and can be changed before booking. Test orders can only be
 booked while `EASYPARCEL_DEMO` is on, so a test payment never spends real credit.

@@ -413,3 +413,16 @@ a.button { display: inline-block; text-decoration: none; }
 .ship__rate-text { display: flex; flex-direction: column; min-width: 0; font-size: 14px; line-height: 18px; }
 .ship__rate-text span { color: var(--muted); font-size: 13px; }
 .ship__price { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.ep-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 14px;
+}

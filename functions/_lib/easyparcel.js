@@ -1,43 +1,51 @@
 /*
- * EasyParcel Individual API (v1.4): courier prices, booking, payment (AWB) and tracking.
- * https://developers.easyparcel.com/?pg=DocAPI&c=Malaysia&type=Individual
+ * EasyParcel Open API (2026-09): courier prices, booking (paid from EasyParcel credit), AWB and tracking.
+ * https://easyparcel.github.io/OpenAPI/
  *
- * Settings (Cloudflare Pages → Settings → Variables and secrets):
- *   EASYPARCEL_API_KEY  Secret, from EasyParcel → Integrations → API (Individual API)
- *   EASYPARCEL_DEMO     Text "1" to use EasyParcel's demo server, where nothing is really shipped
+ * The shop connects once with OAuth: the admin presses "Connect EasyParcel", signs in to the
+ * client's EasyParcel account, and the tokens are kept in D1 (table settings) and refreshed here.
  *
- * Shipments are paid from the client's EasyParcel credit, never from the buyer's payment.
+ * Settings (Cloudflare Pages → Settings → Variables and secrets), from the EasyParcel Developer Hub app:
+ *   EASYPARCEL_CLIENT_ID      Text
+ *   EASYPARCEL_CLIENT_SECRET  Secret
+ *   EASYPARCEL_DEMO           Text "1" where the connection is an EasyParcel sandbox (Preview):
+ *                             allows test orders and keeps its tokens apart from the live ones
+ * The app's Redirect URI must be <site>/api/easyparcel-callback.
  */
-import { weights, packagingWeight } from '../../products.js';
+import { weights, packagingWeight, parcelSize } from '../../products.js';
 
-const LIVE_URL = 'https://connect.easyparcel.my/';
-const DEMO_URL = 'https://demo.connect.easyparcel.my/';
+const API = 'https://api.easyparcel.com';
+const OPEN_API = API + '/open_api/2026-09/';
 
 // Where couriers collect parcels (same sender as the A5 labels in admin/admin.js)
 export const SHIP_FROM = {
   name: 'Chez Professional',
-  contact: '01159500464',
-  addr1: 'No. 2, Lorong 3/27C, Seksyen 5',
-  addr2: 'Wangsa Maju',
+  phone: '1159500464', // 011-5950 0464 without the leading 0, as the API wants
+  address1: 'No. 2, Lorong 3/27C, Seksyen 5',
+  address2: 'Wangsa Maju',
   city: 'Kuala Lumpur',
-  state: 'kul',
-  code: '53300'
+  state: 'MY-14',
+  postcode: '53300'
 };
 
-// Checkout state names (products.js) → EasyParcel state codes (API appendix III)
+// Checkout state names (products.js) → ISO 3166-2 codes used by the API
 const STATE_CODES = {
-  'Johor': 'jhr', 'Kedah': 'kdh', 'Kelantan': 'ktn', 'Melaka': 'mlk', 'Negeri Sembilan': 'nsn',
-  'Pahang': 'phg', 'Perak': 'prk', 'Perlis': 'pls', 'Pulau Pinang': 'png', 'Selangor': 'sgr',
-  'Terengganu': 'trg', 'W.P. Kuala Lumpur': 'kul', 'W.P. Putrajaya': 'pjy', 'Sabah': 'sbh',
-  'Sarawak': 'srw', 'W.P. Labuan': 'lbn'
+  'Johor': 'MY-01', 'Kedah': 'MY-02', 'Kelantan': 'MY-03', 'Melaka': 'MY-04', 'Negeri Sembilan': 'MY-05',
+  'Pahang': 'MY-06', 'Pulau Pinang': 'MY-07', 'Perak': 'MY-08', 'Perlis': 'MY-09', 'Selangor': 'MY-10',
+  'Terengganu': 'MY-11', 'Sabah': 'MY-12', 'Sarawak': 'MY-13', 'W.P. Kuala Lumpur': 'MY-14',
+  'W.P. Labuan': 'MY-15', 'W.P. Putrajaya': 'MY-16'
 };
 
 export const MAX_WEIGHT = 30;
+const STATE_MAX_AGE_MS = 10 * 60 * 1000;
 
 export class EasyParcelError extends Error {}
+export class NotConnectedError extends EasyParcelError {
+  constructor() { super('EasyParcel is not connected. Press "Connect EasyParcel" first.'); }
+}
 
 export function easyParcelReady(env) {
-  return Boolean(env.EASYPARCEL_API_KEY);
+  return Boolean(env.EASYPARCEL_CLIENT_ID && env.EASYPARCEL_CLIENT_SECRET);
 }
 
 export function isDemo(env) {
@@ -50,52 +58,9 @@ export function parcelWeight(items) {
   return Math.ceil(total * 100 - 1e-9) / 100;
 }
 
-/** "+60123456789" / "60123456789" / "0123456789" → "0123456789" */
-export function localPhone(phone) {
-  return String(phone || '').replace(/^\+/, '').replace(/^60/, '0');
-}
-
-/** Splits an address into at most 4 lines of 35 characters (the API's limit), breaking between words. */
-export function addressLines(...parts) {
-  const words = parts.filter(Boolean).join(', ').split(/\s+/).filter(Boolean);
-  const lines = [''];
-  for (const word of words) {
-    const current = lines[lines.length - 1];
-    if (!current) lines[lines.length - 1] = word.slice(0, 35);
-    else if ((current + ' ' + word).length <= 35) lines[lines.length - 1] = current + ' ' + word;
-    else lines.push(word.slice(0, 35));
-  }
-  if (lines.length > 4) lines.splice(3, lines.length - 3, lines.slice(3).join(' ').slice(0, 35));
-  return lines;
-}
-
-// PHP-style form fields, e.g. bulk[0][weight]=1.2
-function formBody(data) {
-  const params = new URLSearchParams();
-  (function add(name, value) {
-    if (value === undefined || value === null) return;
-    if (typeof value === 'object') {
-      for (const key of Object.keys(value)) add(name ? `${name}[${key}]` : key, value[key]);
-    } else {
-      params.append(name, typeof value === 'boolean' ? (value ? '1' : '0') : String(value));
-    }
-  })('', data);
-  return params;
-}
-
-async function call(env, action, data) {
-  const res = await fetch((isDemo(env) ? DEMO_URL : LIVE_URL) + '?ac=' + action, {
-    method: 'POST',
-    body: formBody(Object.assign({ api: env.EASYPARCEL_API_KEY }, data))
-  });
-  let body;
-  try {
-    body = await res.json();
-  } catch (e) {
-    throw new EasyParcelError('EasyParcel did not answer properly (' + res.status + '). Please try again.');
-  }
-  if (body.api_status !== 'Success') throw new EasyParcelError('EasyParcel: ' + (body.error_remark || 'request refused.'));
-  return Array.isArray(body.result) ? body.result[0] : null;
+/** "+60123456789" / "60123456789" / "0123456789" → "123456789" (the API takes the country separately) */
+export function nationalPhone(phone) {
+  return String(phone || '').replace(/^\+/, '').replace(/^60/, '').replace(/^0/, '');
 }
 
 function stateCode(state) {
@@ -106,84 +71,232 @@ function stateCode(state) {
 
 const sen = (ringgit) => Math.round(Number(ringgit) * 100);
 
+/* ---------- Saved settings (tokens, sign-in state) ---------- */
+const tokenKey = (env) => 'easyparcel_token_' + (isDemo(env) ? 'sandbox' : 'live');
+const stateKey = (env) => 'easyparcel_state_' + (isDemo(env) ? 'sandbox' : 'live');
+
+async function getSetting(db, key) {
+  const row = await db.prepare('SELECT value FROM settings WHERE key = ?').bind(key).first();
+  return row ? JSON.parse(row.value) : null;
+}
+
+function putSetting(db, key, value) {
+  return db.prepare('INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at')
+    .bind(key, JSON.stringify(value), new Date().toISOString())
+    .run();
+}
+
+function deleteSetting(db, key) {
+  return db.prepare('DELETE FROM settings WHERE key = ?').bind(key).run();
+}
+
+/* ---------- OAuth ---------- */
+function randomToken() {
+  return Array.from(crypto.getRandomValues(new Uint8Array(24)), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** EasyParcel sign-in page; `state` is remembered so only a sign-in started from the admin is accepted. */
+export async function authorizeUrl(env, redirectUri) {
+  const state = randomToken();
+  await putSetting(env.DB, stateKey(env), { state, at: Date.now() });
+  const params = new URLSearchParams({ client_id: env.EASYPARCEL_CLIENT_ID, redirect_uri: redirectUri, response_type: 'code', state });
+  return API + '/oauth/login?' + params;
+}
+
+async function tokenRequest(env, params) {
+  const res = await fetch(API + '/oauth/token', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic ' + btoa(env.EASYPARCEL_CLIENT_ID + ':' + env.EASYPARCEL_CLIENT_SECRET),
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json'
+    },
+    body: new URLSearchParams(params)
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok || !body.access_token) {
+    const error = new EasyParcelError('EasyParcel sign-in failed: ' + (body.error_description || body.message || body.error || 'status ' + res.status) + '.');
+    error.status = res.status;
+    throw error;
+  }
+  return {
+    access: body.access_token,
+    refresh: body.refresh_token || params.refresh_token,
+    expiresAt: Date.now() + (Number(body.expires_in) || 3600) * 1000
+  };
+}
+
+/** Finishes the sign-in: checks the state, swaps the code for tokens and saves them. */
+export async function finishConnect(env, { code, state, redirectUri }) {
+  const saved = await getSetting(env.DB, stateKey(env));
+  await deleteSetting(env.DB, stateKey(env));
+  if (!saved || !state || saved.state !== state || Date.now() - saved.at > STATE_MAX_AGE_MS) {
+    throw new EasyParcelError('This EasyParcel sign-in link has expired. Please press "Connect EasyParcel" again.');
+  }
+  if (!code) throw new EasyParcelError('EasyParcel did not allow the connection.');
+  const token = await tokenRequest(env, { grant_type: 'authorization_code', code, redirect_uri: redirectUri, state });
+  await putSetting(env.DB, tokenKey(env), Object.assign(token, { redirectUri, connectedAt: new Date().toISOString() }));
+}
+
+export async function disconnect(env) {
+  await deleteSetting(env.DB, tokenKey(env));
+}
+
+async function accessToken(env) {
+  const saved = await getSetting(env.DB, tokenKey(env));
+  if (!saved) throw new NotConnectedError();
+  if (saved.expiresAt - 60 * 1000 > Date.now()) return saved.access;
+  let token;
+  try {
+    token = await tokenRequest(env, { grant_type: 'refresh_token', refresh_token: saved.refresh, redirect_uri: saved.redirectUri });
+  } catch (error) {
+    // A refused refresh token (expired after about a year, or access removed) needs a new sign-in
+    if (error.status === 400 || error.status === 401) {
+      await disconnect(env);
+      throw new NotConnectedError();
+    }
+    throw error;
+  }
+  await putSetting(env.DB, tokenKey(env), Object.assign({}, saved, token));
+  return token.access;
+}
+
+/* ---------- API calls ---------- */
+async function call(env, path, body) {
+  const token = await accessToken(env);
+  const res = await fetch(OPEN_API + path, {
+    method: body ? 'POST' : 'GET',
+    headers: Object.assign({ Authorization: 'Bearer ' + token, Accept: 'application/json' }, body ? { 'Content-Type': 'application/json' } : {}),
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (res.status === 401) {
+    await disconnect(env);
+    throw new NotConnectedError();
+  }
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data) {
+    throw new EasyParcelError('EasyParcel: ' + ((data && (errorText(data) || data.message)) || 'request failed (' + res.status + ').'));
+  }
+  return data;
+}
+
+/** Joins the error messages of a failed batch entry. */
+function errorText(entry) {
+  if (!entry) return '';
+  const errors = Array.isArray(entry.errors) ? entry.errors : entry.errors ? [entry.errors] : [];
+  const messages = [];
+  errors.forEach(function collect(error) {
+    if (typeof error === 'string') messages.push(error);
+    else if (Array.isArray(error)) error.forEach(collect);
+    else if (error && typeof error === 'object') {
+      if (error.message) messages.push(String(error.message));
+      else Object.values(error).forEach(collect);
+    }
+  });
+  return messages.join(' ') || (entry.status === 'error' && entry.message ? String(entry.message) : '');
+}
+
+function size(weight) {
+  return { weight, length: parcelSize.length, width: parcelSize.width, height: parcelSize.height };
+}
+
 /** Courier services for this order's address, cheapest first. */
 export async function quote(env, order, weight) {
-  const result = await call(env, 'EPRateCheckingBulk', {
-    bulk: [{
-      pick_code: SHIP_FROM.code, pick_state: SHIP_FROM.state, pick_country: 'MY',
-      send_code: order.postcode, send_state: stateCode(order.state), send_country: 'MY',
-      weight
-    }],
-    exclude_fields: ['rates.*.dropoff_point', 'rates.*.pickup_point', 'pgeon_point']
+  const data = await call(env, 'shipment/quotations', {
+    shipment: [Object.assign({
+      sender: { postcode: SHIP_FROM.postcode, subdivision_code: SHIP_FROM.state, country: 'MY' },
+      receiver: { postcode: order.postcode, subdivision_code: stateCode(order.state), country: 'MY' },
+      parcel_value: order.subtotal / 100
+    }, size(weight))]
   });
-  if (!result || result.status !== 'Success') {
-    throw new EasyParcelError('EasyParcel: ' + ((result && result.remarks) || 'no couriers found for this address.'));
+  const result = Array.isArray(data.data) ? data.data[0] : null;
+  if (!result || result.status !== 'success') {
+    throw new EasyParcelError('EasyParcel: ' + (errorText(result) || 'no couriers found for this address.'));
   }
-  return (result.rates || [])
-    // Pgeon point-to-point services need a chosen point, which this admin doesn't offer
-    .filter((rate) => rate.service_id && Number.isFinite(sen(rate.price)) && !/pgeon/i.test(rate.courier_name + ' ' + rate.service_name))
-    .map((rate) => ({
-      serviceId: String(rate.service_id),
-      courier: rate.courier_name || '',
-      service: rate.service_name || '',
-      detail: rate.service_detail || '',
-      delivery: rate.delivery || '',
-      pickupDate: rate.pickup_date || '',
-      price: sen(rate.price)
-    }))
+  return (result.quotations || [])
+    .map((q) => {
+      const courier = q.courier || {};
+      const pricing = q.pricing || {};
+      return {
+        serviceId: String(courier.service_id || ''),
+        courier: courier.courier_name || '',
+        service: courier.service_name || '',
+        detail: courier.is_pickup && courier.is_dropoff ? 'dropoff/pickup' : courier.is_pickup ? 'pickup' : courier.is_dropoff ? 'dropoff' : '',
+        delivery: courier.delivery_duration ? String(courier.delivery_duration) : '',
+        price: sen(pricing.total_amount)
+      };
+    })
+    .filter((rate) => rate.serviceId && Number.isFinite(rate.price))
     .sort((a, b) => a.price - b.price);
 }
 
-/** Creates the shipment in EasyParcel (not paid yet). */
-export async function submit(env, order, { serviceId, weight, collectDate }) {
-  const from = addressLines(SHIP_FROM.addr1, SHIP_FROM.addr2);
-  const to = addressLines(order.address1, order.address2);
-  const result = await call(env, 'EPSubmitOrderBulk', {
-    bulk: [{
-      weight,
-      content: 'Hair care products',
-      value: (order.subtotal / 100).toFixed(2),
-      service_id: serviceId,
-      pick_name: SHIP_FROM.name, pick_contact: SHIP_FROM.contact,
-      pick_addr1: from[0], pick_addr2: from[1], pick_addr3: from[2], pick_addr4: from[3],
-      pick_city: SHIP_FROM.city, pick_state: SHIP_FROM.state, pick_code: SHIP_FROM.code, pick_country: 'MY',
-      send_name: String(order.name).slice(0, 35), send_contact: localPhone(order.phone),
-      send_addr1: to[0], send_addr2: to[1], send_addr3: to[2], send_addr4: to[3],
-      send_city: String(order.city).slice(0, 35), send_state: stateCode(order.state), send_code: order.postcode, send_country: 'MY',
-      collect_date: collectDate,
-      sms: false,
-      send_email: order.email,
-      REQ_ID: order.id,
-      reference: order.id
-    }]
-  });
-  if (!result || result.status !== 'Success' || !result.order_number) {
-    throw new EasyParcelError('EasyParcel: ' + ((result && result.remarks) || 'could not create the shipment.'));
-  }
-  return { orderNo: String(result.order_number), courier: result.courier || '', price: sen(result.price) };
+function shipmentResult(shipment) {
+  const formats = shipment.awb_urls_by_format || {};
+  return {
+    shipmentNo: String(shipment.shipment_number || ''),
+    awb: shipment.awb_number ? String(shipment.awb_number) : '',
+    // The client prints on an A5 printer, so prefer the A5 airway bill
+    awbLink: formats.A5 || shipment.awb_url || formats.A6 || formats.A4 || '',
+    trackingUrl: shipment.tracking_url || ''
+  };
 }
 
-/** Pays for a created shipment from EasyParcel credit. The AWB can come a little later for some couriers. */
-export async function pay(env, orderNo) {
-  const result = await call(env, 'EPPayOrderBulk', { bulk: [{ order_no: orderNo }] });
-  const message = (result && result.messagenow) || '';
-  const parcel = result && Array.isArray(result.parcel) ? result.parcel[0] : null;
-  if (/insufficient/i.test(message)) {
-    throw new EasyParcelError('Not enough EasyParcel credit. Top up in EasyParcel, then press Pay again.');
+/** Books the courier. EasyParcel takes the payment from the account's credit straight away. */
+export async function book(env, order, { serviceId, weight, collectDate }) {
+  const value = order.subtotal / 100;
+  const data = await call(env, 'shipment/submit_orders', {
+    shipment: [Object.assign({
+      reference: order.id,
+      service_id: serviceId,
+      collection_date: collectDate,
+      item: [Object.assign({ content: 'Hair care products', currency_code: 'MYR', value, quantity: 1 }, size(weight))],
+      sender: {
+        name: SHIP_FROM.name, phone_number_country_code: 'MY', phone_number: SHIP_FROM.phone,
+        address_1: SHIP_FROM.address1, address_2: SHIP_FROM.address2, postcode: SHIP_FROM.postcode,
+        city: SHIP_FROM.city, subdivision_code: SHIP_FROM.state, country_code: 'MY'
+      },
+      receiver: {
+        name: order.name, phone_number_country_code: 'MY', phone_number: nationalPhone(order.phone), email: order.email,
+        address_1: order.address1, address_2: order.address2 || undefined, postcode: order.postcode,
+        city: order.city, subdivision_code: stateCode(order.state), country_code: 'MY'
+      },
+      feature: { email_tracking: true }
+    }, size(weight))]
+  });
+  const result = Array.isArray(data.data) ? data.data[0] : null;
+  const shipment = result && Array.isArray(result.shipments) ? result.shipments[0] : null;
+  if (!shipment || shipment.status === 'error' || result.status === 'error') {
+    const message = errorText(shipment) || errorText(result) || 'could not book the courier.';
+    throw new EasyParcelError(/credit|balance|insufficient/i.test(message)
+      ? 'Not enough EasyParcel credit. Top up in EasyParcel, then book again.'
+      : 'EasyParcel: ' + message);
   }
-  if (!parcel && !/paid/i.test(message)) {
-    throw new EasyParcelError('EasyParcel: ' + (message || 'payment did not go through.'));
-  }
-  return {
-    awb: (parcel && parcel.awb) || '',
-    awbLink: (parcel && parcel.awb_id_link) || '',
-    trackingUrl: (parcel && parcel.tracking_url) || ''
-  };
+  const pricing = result.pricing_breakdown || {};
+  return Object.assign(shipmentResult(shipment), {
+    courier: typeof shipment.courier === 'string' ? shipment.courier : (shipment.courier && shipment.courier.courier_name) || '',
+    price: sen(pricing.total_paid_amount != null ? pricing.total_paid_amount : pricing.total_order_amount)
+  });
+}
+
+/** Fetches the AWB and links again, for couriers that issue the AWB a little after booking. */
+export async function details(env, shipmentNo) {
+  const data = await call(env, 'shipment/details', { shipment_number: shipmentNo });
+  const result = Array.isArray(data.data) ? data.data[0] : data.data;
+  if (!result) throw new EasyParcelError('EasyParcel could not find shipment ' + shipmentNo + '.');
+  return shipmentResult(Object.assign({ shipment_number: result.shipment_number }, result.shipment_details || result));
 }
 
 /** Latest courier status for an AWB number. */
 export async function track(env, awb) {
-  const result = await call(env, 'EPTrackingBulk', { bulk: [{ awb_no: awb }] });
-  const status = result && result.latest_status ? String(result.latest_status) : 'No update from the courier yet';
-  return result && result.latest_update ? status + ' (' + result.latest_update + ')' : status;
+  const data = await call(env, 'shipment/tracking_status', { awb_numbers: [awb] });
+  const result = data.data && Array.isArray(data.data.results) ? data.data.results[0] : null;
+  if (!result || result.status === 'not_found' || !result.latest_tracking_status) return 'No update from the courier yet';
+  return result.latest_tracking_status + (result.latest_event_date ? ' (' + result.latest_event_date + ')' : '');
+}
+
+/** Credit left in the connected EasyParcel account, in sen. */
+export async function balance(env) {
+  const data = await call(env, 'wallet');
+  const wallet = data.data && Array.isArray(data.data.wallet) ? data.data.wallet[0] : null;
+  return wallet ? sen(wallet.balance) : null;
 }
