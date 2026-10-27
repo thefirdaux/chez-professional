@@ -18,7 +18,7 @@ import { nationalNumber } from './orders.js';
 const API = 'https://api.easyparcel.com';
 const OPEN_API = API + '/open_api/2026-09/';
 
-// Where couriers collect parcels (same sender as the A5 labels in admin/admin.js)
+// Where couriers collect parcels: the shop
 export const SHIP_FROM = {
   name: 'Chez Professional',
   phone: '1159500464', // 011-5950 0464 without the leading 0, as the API wants
@@ -295,8 +295,8 @@ function shipmentResult(shipment) {
   return {
     shipmentNo: String(shipment.shipment_number || ''),
     awb: shipment.awb_number ? String(shipment.awb_number) : '',
-    // The client prints on an A5 printer, so prefer the A5 airway bill
-    awbLink: formats.A5 || shipment.awb_url || formats.A6 || formats.A4 || '',
+    // The client prints on an A6 label printer, so prefer the A6 airway bill
+    awbLink: formats.A6 || formats.A5 || shipment.awb_url || formats.A4 || '',
     trackingUrl: shipment.tracking_url || ''
   };
 }

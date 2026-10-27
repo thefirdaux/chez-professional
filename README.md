@@ -59,7 +59,7 @@ you test on). In the admin, press **Connect EasyParcel** once and sign in to the
 EasyParcel account; the tokens are kept in D1 (`settings` table) and refreshed automatically.
 
 Each paid order then has **Book courier**: it gets EasyParcel prices for the buyer's address,
-books the chosen courier (paid from the EasyParcel credit straight away) and shows the A5 AWB
+books the chosen courier (paid from the EasyParcel credit straight away) and shows the A6 AWB
 to print and the tracking link. Parcel weights and box sizes come from `parcels` in `products.js` (as the client packs each
 product) and the weight can be changed before booking. Test orders can only be
 booked while `EASYPARCEL_DEMO` is on, so a test payment never spends real credit.

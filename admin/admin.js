@@ -1,23 +1,15 @@
 /*
- * Admin: list paid orders, mark them shipped and print A5 shipping labels.
+ * Admin: list paid orders, book couriers through EasyParcel (the AWB is the shipping label)
+ * and mark orders shipped.
  * Data comes from /api/admin/orders, which only answers once the admin has signed in.
  */
 (function () {
-  // Sender details printed on every label
-  var SENDER = {
-    name: 'Chez Professional',
-    phone: '011-59500464',
-    address: ['No. 2, Lorong 3/27C, Seksyen 5', 'Wangsa Maju', '53300 Kuala Lumpur']
-  };
-
   var view = 'paid';
   var orders = [];
   var easyparcel = { enabled: false, demo: false };
-  var COUNTRY_NAMES = { SG: 'Singapore', BN: 'Brunei' }; // Malaysia is left off labels
+  var COUNTRY_NAMES = { SG: 'Singapore', BN: 'Brunei' }; // Malaysia is left off addresses
   var list = document.querySelector('[data-orders]');
   var message = document.querySelector('[data-message]');
-  var printButton = document.querySelector('[data-print]');
-  var selectAll = document.querySelector('[data-select-all]');
   var app = document.querySelector('[data-app]');
   var loginScreen = document.querySelector('[data-login-screen]');
   var loginForm = document.querySelector('[data-login]');
@@ -48,19 +40,6 @@
   function showMessage(text) {
     message.textContent = text;
     message.hidden = !text;
-  }
-
-  function selectedOrders() {
-    return orders.filter(function (order) {
-      var box = list.querySelector('input[data-id="' + order.id + '"]');
-      return box && box.checked;
-    });
-  }
-
-  function updateToolbar() {
-    var count = selectedOrders().length;
-    printButton.disabled = count === 0;
-    printButton.textContent = count ? 'Print ' + count + ' A5 label' + (count === 1 ? '' : 's') : 'Print A5 labels';
   }
 
   function request(url, method, body) {
@@ -127,24 +106,16 @@
 
   function render() {
     list.textContent = '';
-    selectAll.checked = false;
     if (orders.length === 0) showMessage('No orders here yet.');
 
     orders.forEach(function (order) {
       var item = el('li', 'order');
 
       var head = el('div', 'order__head');
-      var check = el('input');
-      check.type = 'checkbox';
-      check.dataset.id = order.id;
-      check.setAttribute('aria-label', 'Select order ' + order.id);
-      check.addEventListener('change', updateToolbar);
-      head.appendChild(check);
       head.appendChild(el('strong', 'order__id', order.id));
       head.appendChild(el('span', 'order__date', formatDate(order.created_at)));
       if (order.is_test) head.appendChild(el('span', 'badge badge--test', 'Test'));
       if (order.status !== 'paid') head.appendChild(el('span', 'badge', order.status));
-      if (order.printed_at) head.appendChild(el('span', 'badge', 'Label printed'));
       if (order.shipped_at) head.appendChild(el('span', 'badge badge--done', 'Shipped'));
       item.appendChild(head);
 
@@ -179,7 +150,6 @@
 
       list.appendChild(item);
     });
-    updateToolbar();
   }
 
   // `notice` is shown once the list has loaded (ignored when load is used as a promise callback)
@@ -442,56 +412,6 @@
       epBar.appendChild(el('p', 'ep-bar__text', error.message));
     });
   }
-
-  /* --- A5 labels --- */
-  function buildLabels(selected) {
-    var labels = document.querySelector('[data-labels]');
-    labels.textContent = '';
-    selected.forEach(function (order) {
-      var label = el('section', 'label');
-
-      var to = el('div', 'label__block label__to');
-      to.appendChild(el('p', 'label__heading', 'TO'));
-      to.appendChild(el('p', 'label__name', order.name));
-      to.appendChild(el('p', 'label__phone', order.phone));
-      addressLines(order).forEach(function (line) { to.appendChild(el('p', null, line)); });
-      label.appendChild(to);
-
-      var from = el('div', 'label__block label__from');
-      from.appendChild(el('p', 'label__heading', 'FROM'));
-      from.appendChild(el('p', 'label__name', SENDER.name));
-      if (SENDER.phone) from.appendChild(el('p', null, SENDER.phone));
-      SENDER.address.forEach(function (line) { from.appendChild(el('p', null, line)); });
-      label.appendChild(from);
-
-      var meta = el('div', 'label__block label__meta');
-      meta.appendChild(el('p', 'label__heading', 'ORDER ' + order.id + ' · ' + formatDate(order.paid_at || order.created_at)));
-      var items = el('ul');
-      order.items.forEach(function (line) {
-        items.appendChild(el('li', null, line.qty + ' × ' + line.name + ' (' + line.size + ')'));
-      });
-      meta.appendChild(items);
-      label.appendChild(meta);
-
-      labels.appendChild(label);
-    });
-  }
-
-  printButton.addEventListener('click', function () {
-    var selected = selectedOrders();
-    if (!selected.length) return;
-    buildLabels(selected);
-    window.print();
-    // Record that these labels were printed
-    Promise.all(selected.map(function (order) {
-      return api('POST', { id: order.id, action: 'printed' });
-    })).then(load, handleError);
-  });
-
-  selectAll.addEventListener('change', function () {
-    list.querySelectorAll('input[type="checkbox"]').forEach(function (box) { box.checked = selectAll.checked; });
-    updateToolbar();
-  });
 
   document.querySelectorAll('[data-view]').forEach(function (tab) {
     tab.addEventListener('click', function () {
