@@ -9,18 +9,32 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=cb1b552d">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=1056d844">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=9d50453a">
-  <link rel="stylesheet" href="admin.css?v=e2388ab9">
+  <link rel="stylesheet" href="admin.css?v=bba07267">
 </head>
 <body>
-  <header class="admin-header">
-    <h1 class="visually-hidden">Chez Professional admin</h1>
-    <nav class="sections" aria-label="Admin sections" data-sections hidden>
-      <button type="button" data-section="orders" aria-pressed="true">Orders</button>
-      <button type="button" data-section="analytics" aria-pressed="false">Analytics</button>
+  <!-- Sidebar (Figma "Sidebar" 414:110); a bar across the top on phones -->
+  <aside class="sidebar" data-sections hidden>
+    <div class="sidebar__brand">
+      <img src="/admin/logo-white.png" alt="" width="68" height="32">
+      <p>Chez Professional</p>
+    </div>
+    <nav class="sidebar__nav" aria-label="Admin sections">
+      <button type="button" class="sidebar__item" data-section="orders" aria-pressed="true">
+        <span class="sidebar__icon" style="--icon: url(/admin/icon-orders.svg)"></span>Orders
+      </button>
+      <button type="button" class="sidebar__item" data-section="analytics" aria-pressed="false">
+        <span class="sidebar__icon" style="--icon: url(/admin/icon-analytics.svg)"></span>Analytics
+      </button>
     </nav>
-    <button type="button" class="button" data-logout hidden>Log out</button>
-  </header>
+    <div class="sidebar__bottom">
+      <button type="button" class="sidebar__item" data-logout hidden>
+        <span class="sidebar__icon" style="--icon: url(/admin/icon-log-out.svg)"></span>Log Out
+      </button>
+    </div>
+  </aside>
 
+  <main class="admin-main">
+  <h1 class="visually-hidden">Chez Professional admin</h1>
   <p class="message" data-message hidden></p>
 
   <section class="login-screen" data-login-screen hidden>
@@ -112,6 +126,8 @@
       </div>
     </section>
   </div>
+
+  </main>
 
   <div class="tooltip" data-tooltip role="status" hidden></div>
 
