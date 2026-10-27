@@ -361,7 +361,9 @@
           radio.addEventListener('change', updateConfirm);
           var text = el('span', 'ship__rate-text');
           text.appendChild(el('strong', null, rate.courier));
-          text.appendChild(el('span', null, [rate.service, DETAIL[rate.detail], rate.delivery].filter(Boolean).join(' · ')));
+          // Most service names already say "(Pick Up)" or "(Drop-Off)"
+          var detail = /pick|drop/i.test(rate.service) ? '' : DETAIL[rate.detail];
+          text.appendChild(el('span', null, [rate.service, detail, rate.delivery].filter(Boolean).join(' · ')));
           option.appendChild(radio);
           option.appendChild(text);
           option.appendChild(el('span', 'ship__price', rm(rate.price)));

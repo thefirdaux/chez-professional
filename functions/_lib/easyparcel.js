@@ -76,6 +76,17 @@ function destinationOf(order) {
 
 const sen = (ringgit) => Math.round(Number(ringgit) * 100);
 
+/** delivery_duration can be text or { type: 'days', value: '3' } */
+function durationText(value) {
+  if (!value) return '';
+  if (typeof value === 'object') {
+    if (value.value == null) return '';
+    const unit = String(value.type || 'days');
+    return value.value + ' ' + (String(value.value) === '1' ? unit.replace(/s$/, '') : unit);
+  }
+  return String(value);
+}
+
 /** "Best Global Logistics Technology (Malaysia) Sdn. Bhd." → "Best Global Logistics Technology" */
 export function shortCourierName(name) {
   return String(name || '')
@@ -253,12 +264,13 @@ export async function quote(env, order, weight) {
         courier: shortCourierName(courier.courier_name),
         service: courier.service_name || '',
         detail: courier.is_pickup && courier.is_dropoff ? 'dropoff/pickup' : courier.is_pickup ? 'pickup' : courier.is_dropoff ? 'dropoff' : '',
-        delivery: courier.delivery_duration ? String(courier.delivery_duration) : '',
+        delivery: durationText(courier.delivery_duration),
         price: sen(pricing.total_amount)
       };
     })
     .filter((rate) => rate.serviceId && Number.isFinite(rate.price))
-    .sort((a, b) => a.price - b.price);
+    // Cheapest first; at the same price, a courier who collects beats a drop-off
+    .sort((a, b) => a.price - b.price || (a.detail === 'dropoff') - (b.detail === 'dropoff'));
 }
 
 function shipmentResult(shipment) {
