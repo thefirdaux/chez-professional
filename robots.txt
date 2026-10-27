@@ -1,0 +1,7 @@
+# Search engines may list the shop. The admin and order server stay out
+# (checkout and thank-you pages carry their own noindex tag).
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://www.chezprofessional.com/sitemap.xml
