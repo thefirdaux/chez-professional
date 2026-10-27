@@ -230,7 +230,9 @@
     form.querySelector('[data-shipping]').textContent = priced ? shippingText(quote.fee) : waiting ? 'Calculating…' : '—';
     form.querySelector('[data-fee]').textContent = rm(CHEZ.paymentFee.fee);
     form.querySelector('[data-total]').textContent = rm(total);
-    var abroad = countrySelect.value !== 'MY' ? ' Any import duty or tax is paid by you when the parcel arrives.' : '';
+    var abroad = countrySelect.value !== 'MY'
+      ? ' Any import duty or tax is paid by you when the parcel arrives. Prices are in Malaysian Ringgit (RM); your card issuer converts the amount to your currency.'
+      : '';
     form.querySelector('[data-shipping-info]').textContent = quote && quote.error ? quote.error
       : priced ? quote.label + ': ' + shippingText(quote.fee) + (quote.covered ? ' (we cover ' + rm(quote.covered) + ' of the postage)' : '') + '.' + abroad
       : waiting ? 'Working out the shipping fee…'
