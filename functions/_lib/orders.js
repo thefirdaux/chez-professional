@@ -2,7 +2,7 @@
  * Order rules shared by the checkout, callback and admin endpoints.
  * Prices and shipping always come from products.js, never from the browser.
  */
-import { products, shipping, paymentFee, states } from '../../products.js';
+import { products, paymentFee, states, countries, districts } from '../../products.js';
 
 export const MAX_QTY = 20;
 const MAX_LINES = 20;
@@ -14,13 +14,27 @@ function text(value, max) {
 }
 
 export function normalizePhone(value) {
-  return text(value, 30).replace(/[\s-]/g, '');
+  return text(value, 30).replace(/[\s()-]/g, '');
+}
+
+// Mobile numbers per country, after the country code (and Malaysia's leading 0) is removed
+const PHONES = {
+  MY: { code: '60', pattern: /^1\d{8,9}$/, error: 'Please enter a valid Malaysian mobile number.' },
+  SG: { code: '65', pattern: /^[3689]\d{7}$/, error: 'Please enter a valid Singapore phone number (8 digits).' },
+  BN: { code: '673', pattern: /^[2-8]\d{6}$/, error: 'Please enter a valid Brunei phone number (7 digits).' }
+};
+
+/** The number without its country code, e.g. "+60 12-345 6789" → "123456789". */
+export function nationalNumber(phone, country = 'MY') {
+  const code = PHONES[country] ? PHONES[country].code : '60';
+  let digits = normalizePhone(phone).replace(/^\+/, '');
+  if (digits.startsWith(code) && digits.length > code.length + 6) digits = digits.slice(code.length);
+  return country === 'MY' ? digits.replace(/^0/, '') : digits;
 }
 
 // CHIP wants "<country code> <number>", e.g. "+60 123456789"
-export function chipPhone(phone) {
-  const digits = phone.replace(/^\+?60/, '').replace(/^0/, '');
-  return '+60 ' + digits;
+export function chipPhone(phone, country = 'MY') {
+  return '+' + (PHONES[country] ? PHONES[country].code : '60') + ' ' + nationalNumber(phone, country);
 }
 
 /** Validates the checkout request and prices it from the official catalogue. */
@@ -37,25 +51,7 @@ export function priceOrder(input) {
     merged.set(id, Math.min(MAX_QTY, (merged.get(id) || 0) + qty));
   }
 
-  const c = (input && input.customer) || {};
-  const customer = {
-    name: text(c.name, 80),
-    phone: normalizePhone(c.phone),
-    email: text(c.email, 120),
-    address1: text(c.address1, 120),
-    address2: text(c.address2, 120),
-    postcode: text(c.postcode, 5),
-    city: text(c.city, 60),
-    state: text(c.state, 40)
-  };
-  if (customer.name.length < 2) throw new InputError('Please enter your full name.');
-  if (!/^(\+?60|0)1\d{8,9}$/.test(customer.phone)) throw new InputError('Please enter a valid Malaysian mobile number.');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) throw new InputError('Please enter a valid email.');
-  if (!customer.address1) throw new InputError('Please enter your address.');
-  if (!/^\d{5}$/.test(customer.postcode)) throw new InputError('Please enter a 5-digit postcode.');
-  if (!customer.city) throw new InputError('Please enter your city.');
-  const state = states.filter((s) => s[0] === customer.state)[0];
-  if (!state) throw new InputError('Please select your state.');
+  const customer = readCustomer((input && input.customer) || {});
 
   const items = [];
   let subtotal = 0;
@@ -64,13 +60,48 @@ export function priceOrder(input) {
     items.push({ id, name: p.name, size: p.size, qty, price: p.price });
     subtotal += p.price * qty;
   }
-  const ship = shipping[state[1]];
-  return {
-    items, customer, subtotal,
-    shipping: ship.fee, shippingLabel: ship.label,
-    fee: paymentFee.fee, feeLabel: paymentFee.label,
-    total: subtotal + ship.fee + paymentFee.fee
-  };
+  // Postage is added by the caller (see _lib/postage.js), because it comes from EasyParcel
+  return { items, customer, subtotal, fee: paymentFee.fee, feeLabel: paymentFee.label };
+}
+
+/** Checks the delivery address only (used to quote postage before the rest is filled in). */
+export function readDestination(c) {
+  const country = countries.some((x) => x[0] === c.country) ? c.country : (c.country ? null : 'MY');
+  if (!country) throw new InputError('We deliver to Malaysia, Singapore and Brunei only.');
+  const postcode = text(c.postcode, 12).toUpperCase().replace(/\s/g, '');
+  let state = text(c.state, 40);
+  if (country === 'MY') {
+    if (!/^\d{5}$/.test(postcode)) throw new InputError('Please enter a 5-digit postcode.');
+    if (!states.some((s) => s[0] === state)) throw new InputError('Please select your state.');
+  } else if (country === 'SG') {
+    if (!/^\d{6}$/.test(postcode)) throw new InputError('Please enter a 6-digit postal code.');
+    state = '';
+  } else {
+    if (!/^[A-Z]{2}\d{4}$/.test(postcode)) throw new InputError('Please enter a postcode like BS8811.');
+    if (!districts.includes(state)) throw new InputError('Please select your district.');
+  }
+  return { country, postcode, state };
+}
+
+function readCustomer(c) {
+  const destination = readDestination(c);
+  const customer = Object.assign({
+    name: text(c.name, 80),
+    phone: normalizePhone(c.phone),
+    email: text(c.email, 120),
+    address1: text(c.address1, 120),
+    address2: text(c.address2, 120),
+    city: text(c.city, 60) || (destination.country === 'SG' ? 'Singapore' : '')
+  }, destination);
+  if (customer.name.length < 2) throw new InputError('Please enter your full name.');
+  const phone = PHONES[customer.country];
+  if (!phone.pattern.test(nationalNumber(customer.phone, customer.country))) throw new InputError(phone.error);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) throw new InputError('Please enter a valid email.');
+  if (!customer.address1) throw new InputError('Please enter your address.');
+  if (!customer.city) throw new InputError('Please enter your city.');
+  // Numbers outside Malaysia are kept with their country code, so they can be dialled as shown
+  if (customer.country !== 'MY') customer.phone = '+' + phone.code + nationalNumber(customer.phone, customer.country);
+  return customer;
 }
 
 /** Order numbers like CP261021-7K3Q: date plus 4 random characters. */
@@ -88,6 +119,7 @@ let schemaReady = null;
 
 const LATER_COLUMNS = [
   'fee INTEGER NOT NULL DEFAULT 0',
+  'country TEXT', 'ship_cost INTEGER', 'ship_service TEXT', 'ship_courier TEXT',
   // EasyParcel shipment (see _lib/easyparcel.js)
   'ep_order_no TEXT', 'ep_courier TEXT', 'ep_price INTEGER', 'ep_paid_at TEXT',
   'ep_awb TEXT', 'ep_awb_link TEXT', 'ep_tracking_url TEXT', 'ep_status TEXT', 'ep_lock INTEGER'

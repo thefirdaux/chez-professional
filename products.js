@@ -62,11 +62,19 @@ var shops = {
   combos: ['shampoo-mask-combo', 'spray-tonic-combo']
 };
 
-// Shipping in sen. The client charges one flat rate for the whole of Malaysia.
+// Postage in sen. The buyer pays EasyParcel's cheapest courier rate for their address, less
+// `covered` (what the shop pays towards it). `fallback` is the estimated postage used only when
+// EasyParcel can't be reached, so checkout keeps working.
 var shipping = {
-  west: { label: 'Peninsular Malaysia', fee: 400 },
-  east: { label: 'Sabah, Sarawak & Labuan', fee: 400 }
+  covered: { MY: 400, SG: 0, BN: 0 },
+  fallback: { west: 800, east: 1500, SG: 3000, BN: 3000 }
 };
+
+// Countries the shop delivers to: code, name, phone country code
+var countries = [['MY', 'Malaysia', '60'], ['SG', 'Singapore', '65'], ['BN', 'Brunei', '673']];
+
+// Brunei districts (Singapore has none)
+var districts = ['Brunei-Muara', 'Belait', 'Tutong', 'Temburong'];
 
 // Parcel weight in kg for each product, used to book couriers through EasyParcel.
 // ESTIMATES until the client weighs them; the admin can still change the weight before booking.
@@ -97,8 +105,8 @@ function formatRM(sen) {
   return 'RM ' + (sen / 100).toFixed(2);
 }
 
-export { products, shops, shipping, paymentFee, states, config, formatRM, weights, packagingWeight, parcelSize };
+export { products, shops, shipping, paymentFee, states, countries, districts, config, formatRM, weights, packagingWeight, parcelSize };
 
 if (typeof window !== 'undefined') {
-  window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, config: config, formatRM: formatRM };
+  window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, countries: countries, districts: districts, config: config, formatRM: formatRM, weights: weights, packagingWeight: packagingWeight };
 }

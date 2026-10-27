@@ -53,7 +53,7 @@
           <label class="field">
             <span class="field__label">Phone number</span>
             <input class="field__input" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="012-345 6789" required maxlength="20">
-            <span class="field__error">Please enter a valid Malaysian mobile number.</span>
+            <span class="field__error" data-phone-error>Please enter a valid Malaysian mobile number.</span>
           </label>
           <label class="field">
             <span class="field__label">Email</span>
@@ -64,6 +64,10 @@
 
         <section class="checkout__section checkout__section--address">
           <h2 class="text-headline">Shipping address</h2>
+          <label class="field">
+            <span class="field__label">Country</span>
+            <select class="field__input" name="country" autocomplete="country" data-country-select></select>
+          </label>
           <label class="field">
             <span class="field__label">Address</span>
             <input class="field__input" name="address1" autocomplete="address-line1" placeholder="House number, street" required maxlength="120">
@@ -76,8 +80,8 @@
           <div class="field-row">
             <label class="field">
               <span class="field__label">Postcode</span>
-              <input class="field__input" name="postcode" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required>
-              <span class="field__error">5 digits.</span>
+              <input class="field__input" name="postcode" autocomplete="postal-code" inputmode="numeric" maxlength="5" required>
+              <span class="field__error" data-postcode-error>5 digits.</span>
             </label>
             <label class="field">
               <span class="field__label">City</span>
@@ -85,12 +89,12 @@
               <span class="field__error">Please enter your city.</span>
             </label>
           </div>
-          <label class="field">
-            <span class="field__label">State</span>
+          <label class="field" data-state-field>
+            <span class="field__label" data-state-label>State</span>
             <select class="field__input" name="state" autocomplete="address-level1" required data-state-select>
               <option value="">Select state</option>
             </select>
-            <span class="field__error">Please select your state.</span>
+            <span class="field__error" data-state-error>Please select your state.</span>
           </label>
           <label class="checkbox">
             <input type="checkbox" name="remember" checked>
@@ -100,7 +104,7 @@
 
         <section class="checkout__section checkout__section--shipping">
           <h2 class="text-headline">Shipping</h2>
-          <p class="checkout__shipping text-subheadline" data-shipping-info>Select your state to see the shipping fee.</p>
+          <p class="checkout__shipping text-subheadline" data-shipping-info>Enter your postcode and state to see the shipping fee.</p>
         </section>
         </div>
 
@@ -125,9 +129,9 @@
     </main>
   </div>
 
-  <script type="module" src="products.js?v=6a4e95c5"></script>
+  <script type="module" src="products.js?v=b9f64fb4"></script>
   <script type="module" src="cart.js?v=935cc6ec"></script>
-  <script type="module" src="checkout.js?v=918cfe4d"></script>
+  <script type="module" src="checkout.js?v=ccddc8da"></script>
   <script src="assets/track.js?v=8b8cd4fc" defer></script>
 </body>
 </html>

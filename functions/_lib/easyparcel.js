@@ -13,6 +13,7 @@
  * The app's Redirect URI must be <site>/api/easyparcel-callback.
  */
 import { weights, packagingWeight, parcelSize } from '../../products.js';
+import { nationalNumber } from './orders.js';
 
 const API = 'https://api.easyparcel.com';
 const OPEN_API = API + '/open_api/2026-09/';
@@ -33,8 +34,13 @@ const STATE_CODES = {
   'Johor': 'MY-01', 'Kedah': 'MY-02', 'Kelantan': 'MY-03', 'Melaka': 'MY-04', 'Negeri Sembilan': 'MY-05',
   'Pahang': 'MY-06', 'Pulau Pinang': 'MY-07', 'Perak': 'MY-08', 'Perlis': 'MY-09', 'Selangor': 'MY-10',
   'Terengganu': 'MY-11', 'Sabah': 'MY-12', 'Sarawak': 'MY-13', 'W.P. Kuala Lumpur': 'MY-14',
-  'W.P. Labuan': 'MY-15', 'W.P. Putrajaya': 'MY-16'
+  'W.P. Labuan': 'MY-15', 'W.P. Putrajaya': 'MY-16',
+  // Brunei districts
+  'Brunei-Muara': 'BN-BM', 'Belait': 'BN-BE', 'Tutong': 'BN-TU', 'Temburong': 'BN-TE'
 };
+
+// Customs code for hair care products, needed for parcels leaving Malaysia
+const HS_CODE = '330590';
 
 export const MAX_WEIGHT = 30;
 const STATE_MAX_AGE_MS = 10 * 60 * 1000;
@@ -58,15 +64,13 @@ export function parcelWeight(items) {
   return Math.ceil(total * 100 - 1e-9) / 100;
 }
 
-/** "+60123456789" / "60123456789" / "0123456789" → "123456789" (the API takes the country separately) */
-export function nationalPhone(phone) {
-  return String(phone || '').replace(/^\+/, '').replace(/^60/, '').replace(/^0/, '');
-}
-
-function stateCode(state) {
-  const code = STATE_CODES[state];
-  if (!code) throw new EasyParcelError('Unknown state "' + state + '".');
-  return code;
+/** Receiver's country and state/district code (Singapore has no subdivision). */
+function destinationOf(order) {
+  const country = order.country || 'MY';
+  if (country === 'SG') return { country, subdivision: undefined };
+  const code = STATE_CODES[order.state];
+  if (!code) throw new EasyParcelError('Unknown state "' + order.state + '".');
+  return { country, subdivision: code };
 }
 
 const sen = (ringgit) => Math.round(Number(ringgit) * 100);
@@ -150,7 +154,10 @@ async function accessToken(env) {
   try {
     token = await tokenRequest(env, { grant_type: 'refresh_token', refresh_token: saved.refresh, redirect_uri: saved.redirectUri });
   } catch (error) {
-    // A refused refresh token (expired after about a year, or access removed) needs a new sign-in
+    // Another request may have refreshed it a moment ago (refresh tokens can only be used once)
+    const latest = await getSetting(env.DB, tokenKey(env));
+    if (latest && latest.access !== saved.access && latest.expiresAt - 60 * 1000 > Date.now()) return latest.access;
+    // A refused refresh token (expired, unused for 30 days, or access removed) needs a new sign-in
     if (error.status === 400 || error.status === 401) {
       await disconnect(env);
       throw new NotConnectedError();
@@ -202,10 +209,11 @@ function size(weight) {
 
 /** Courier services for this order's address, cheapest first. */
 export async function quote(env, order, weight) {
+  const to = destinationOf(order);
   const data = await call(env, 'shipment/quotations', {
     shipment: [Object.assign({
       sender: { postcode: SHIP_FROM.postcode, subdivision_code: SHIP_FROM.state, country: 'MY' },
-      receiver: { postcode: order.postcode, subdivision_code: stateCode(order.state), country: 'MY' },
+      receiver: { postcode: order.postcode, subdivision_code: to.subdivision, country: to.country },
       parcel_value: order.subtotal / 100
     }, size(weight))]
   });
@@ -244,21 +252,24 @@ function shipmentResult(shipment) {
 /** Books the courier. EasyParcel takes the payment from the account's credit straight away. */
 export async function book(env, order, { serviceId, weight, collectDate }) {
   const value = order.subtotal / 100;
+  const to = destinationOf(order);
+  const item = { content: 'Hair care products', currency_code: 'MYR', value, quantity: 1 };
+  if (to.country !== 'MY') item.hs_code = HS_CODE;
   const data = await call(env, 'shipment/submit_orders', {
     shipment: [Object.assign({
       reference: order.id,
       service_id: serviceId,
       collection_date: collectDate,
-      item: [Object.assign({ content: 'Hair care products', currency_code: 'MYR', value, quantity: 1 }, size(weight))],
+      item: [Object.assign(item, size(weight))],
       sender: {
         name: SHIP_FROM.name, phone_number_country_code: 'MY', phone_number: SHIP_FROM.phone,
         address_1: SHIP_FROM.address1, address_2: SHIP_FROM.address2, postcode: SHIP_FROM.postcode,
         city: SHIP_FROM.city, subdivision_code: SHIP_FROM.state, country_code: 'MY'
       },
       receiver: {
-        name: order.name, phone_number_country_code: 'MY', phone_number: nationalPhone(order.phone), email: order.email,
+        name: order.name, phone_number_country_code: to.country, phone_number: nationalNumber(order.phone, to.country), email: order.email,
         address_1: order.address1, address_2: order.address2 || undefined, postcode: order.postcode,
-        city: order.city, subdivision_code: stateCode(order.state), country_code: 'MY'
+        city: order.city, subdivision_code: to.subdivision, country_code: to.country
       },
       feature: { email_tracking: true }
     }, size(weight))]

@@ -13,6 +13,7 @@
   var view = 'paid';
   var orders = [];
   var easyparcel = { enabled: false, demo: false };
+  var COUNTRY_NAMES = { SG: 'Singapore', BN: 'Brunei' }; // Malaysia is left off labels
   var list = document.querySelector('[data-orders]');
   var message = document.querySelector('[data-message]');
   var printButton = document.querySelector('[data-print]');
@@ -41,7 +42,7 @@
   }
 
   function addressLines(order) {
-    return [order.address1, order.address2, order.postcode + ' ' + order.city, order.state].filter(Boolean);
+    return [order.address1, order.address2, order.postcode + ' ' + order.city, order.state, COUNTRY_NAMES[order.country]].filter(Boolean);
   }
 
   function showMessage(text) {
@@ -316,6 +317,12 @@
     note.setAttribute('role', 'status');
     form.appendChild(note);
 
+    // What the buyer paid for postage, and the courier priced at checkout
+    if (order.ship_cost != null) {
+      form.insertBefore(el('p', 'ship__note', 'At checkout: ' + (order.ship_courier || 'estimated postage') + ' ' + rm(order.ship_cost) +
+        ' · buyer paid ' + (order.shipping ? rm(order.shipping) : 'nothing') + ' for postage'), weightRow);
+    }
+
     var actions = el('div', 'ship__actions');
     var confirmButton = button('Book & pay', true);
     var cancel = button('Cancel');
@@ -350,7 +357,7 @@
           radio.type = 'radio';
           radio.name = 'rate-' + order.id;
           radio.value = String(index);
-          radio.checked = index === 0;
+          radio.checked = order.ship_service ? rate.serviceId === order.ship_service : index === 0;
           radio.addEventListener('change', updateConfirm);
           var text = el('span', 'ship__rate-text');
           text.appendChild(el('strong', null, rate.courier));
@@ -360,6 +367,7 @@
           option.appendChild(el('span', 'ship__price', rm(rate.price)));
           choices.appendChild(option);
         });
+        if (rates.length && !choices.querySelector('input:checked')) choices.querySelector('input').checked = true;
         note.textContent = rates.length ? '' : 'No couriers are available for this address and weight.';
         updateConfirm();
       }, function (error) {

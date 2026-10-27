@@ -43,6 +43,12 @@ Settings in the Pages project (Settings → Variables and secrets / Bindings), p
 At checkout the city and state fill in from the postcode, using `assets/postcodes.json`
 (built from the `malaysia-postcodes` package, ISC licence). A city the buyer types is never overwritten.
 
+Postage: the buyer pays EasyParcel's cheapest courier rate for their address
+(`/api/shipping-quote` shows it at checkout; `/api/checkout` works it out again), less
+`shipping.covered` in `products.js` (RM4 in Malaysia, nothing abroad). The shop delivers to
+Malaysia, Singapore and Brunei (`countries`). If EasyParcel isn't connected or doesn't answer,
+the estimates in `shipping.fallback` are used instead.
+
 Checkout stays in demo mode until `DB`, `CHIP_BRAND_ID` and `CHIP_SECRET_KEY` are all set.
 Changes to these settings take effect on the next deployment.
 
