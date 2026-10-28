@@ -15,6 +15,17 @@ When `styles.css`, a script, or an image is replaced under the same file name, u
 `?v=` value where it is used (e.g. `md5 -q styles.css | cut -c1-8`) so phones don't keep an
 old cached copy. Cloudflare tells browsers to keep files for 4 hours.
 
+## Category pages
+
+`index.html` is the landing page with everything on it. `keratin-treatment.html`,
+`keratin-spray.html`, `hair-tonic.html` and `combo-deals.html` repeat one of its sections each,
+so Google (and shared links) get one address per product line; the footer links to them and
+`sitemap.xml` lists them. They are generated, so edit `index.html` and then run:
+
+```bash
+python3 tools/build-pages.py
+```
+
 ## Hosting
 
 Cloudflare Pages project `chez-professional`, connected to this repo: pushing to `main`
