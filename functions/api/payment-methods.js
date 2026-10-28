@@ -10,9 +10,11 @@ import { paymentMethods } from '../_lib/chip.js';
 
 const MAX_AGE = 3600;
 // Change the version when the reply's shape changes, so the old cached copy isn't served
-const CACHE_PATH = '/api/payment-methods?v=2';
+const CACHE_PATH = '/api/payment-methods?v=3';
 // Card schemes CHIP lists without a logo; it hosts these under a fixed name
 const CARDS = ['visa', 'mastercard', 'maestro'];
+// Methods the shop doesn't want in the footer, even if CHIP switches them on
+const HIDDEN = /apple|google|crypto/i;
 
 /** One entry per logo: CHIP lists some methods twice (e.g. FPX for personal and business banking). */
 function forFooter(methods) {
@@ -21,6 +23,7 @@ function forFooter(methods) {
   const seen = new Set();
   const key = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
   for (const method of methods) {
+    if (HIDDEN.test(method.code) || HIDDEN.test(method.name)) continue;
     let logos = method.logos;
     if (!logos.length && CARDS.includes(method.code)) logos = ['https://gate.chip-in.asia/static/images/icon-' + method.code + '.svg'];
     const name = method.name.charAt(0).toUpperCase() + method.name.slice(1);
