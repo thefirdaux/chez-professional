@@ -185,6 +185,61 @@
       cartSheet.open(cartButton);
     });
   }
+
+  /* --- Combo deals popup: once a day, a few seconds after the page opens --- */
+  (function () {
+    var promo = document.getElementById('combo-promo');
+    var deals = promo && promo.querySelector('[data-promo-deals]');
+    if (!promo || !deals || typeof promo.showModal !== 'function') return;
+    var KEY = 'chez-promo-seen';
+    var DAY = 24 * 60 * 60 * 1000;
+
+    // Prices come from products.js, so the popup always matches the shop
+    (CHEZ.shops.combos || []).forEach(function (id) {
+      var p = products[id];
+      if (!p) return;
+      var li = el('li', 'promo__deal');
+      li.appendChild(el('span', 'promo__deal-name', p.name.replace(/\s*\(Combo\)$/, '')));
+      var price = el('span', 'promo__deal-price', rm(p.price));
+      if (p.was) {
+        price.insertBefore(el('s', '', rm(p.was)), price.firstChild);
+        price.appendChild(el('span', 'promo__deal-save', 'Save ' + rm(p.was - p.price)));
+      }
+      li.appendChild(price);
+      deals.appendChild(li);
+    });
+
+    function seenRecently() {
+      try { return Date.now() - Number(localStorage.getItem(KEY) || 0) < DAY; } catch (e) { return false; }
+    }
+    function remember() {
+      try { localStorage.setItem(KEY, String(Date.now())); } catch (e) { /* private mode */ }
+    }
+
+    function close() {
+      if (!promo.open || promo.classList.contains('is-closing')) return;
+      promo.classList.add('is-closing');
+      var done = function () { promo.classList.remove('is-closing'); promo.close(); };
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) done();
+      else setTimeout(done, 200);
+    }
+
+    promo.addEventListener('cancel', function (event) { event.preventDefault(); close(); });
+    promo.addEventListener('click', function (event) { if (event.target === promo) close(); });
+    promo.querySelector('.promo__close').addEventListener('click', close);
+    promo.querySelector('[data-promo-cta]').addEventListener('click', function () {
+      // The link scrolls to the combo deals once the popup is gone
+      promo.close();
+    });
+
+    if (seenRecently() || location.hash) return;
+    setTimeout(function () {
+      // Wait for the buyer if a product or cart sheet is already open
+      if (document.querySelector('dialog[open]')) return;
+      remember();
+      promo.showModal();
+    }, 3000);
+  })();
 })();
 
 /* ---------- "See more" arrow on horizontal scrollers ---------- */

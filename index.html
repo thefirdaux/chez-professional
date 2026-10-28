@@ -49,7 +49,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=3520b211">
+  <link rel="stylesheet" href="styles.css?v=65cc263e">
 </head>
 <body>
   <div class="page page--home">
@@ -382,6 +382,21 @@
     </footer>
   </div>
 
+  <!-- Combo deals popup: shown once a day, a few seconds after the page opens (script.js) -->
+  <dialog class="promo" id="combo-promo" aria-labelledby="promo-title">
+    <div class="promo__panel">
+      <button class="promo__close" type="button" aria-label="Close">&times;</button>
+      <img class="promo__image" src="assets/hero-banner.png?v=7d73bdc0" srcset="assets/hero-banner.png?v=7d73bdc0 900w, assets/hero-banner-1264.webp 1264w" sizes="(min-width: 768px) 440px, calc(100vw - 32px)" alt="Chez Professional keratin shampoo, keratin mask, keratin spray and hair tonic" width="900" height="604">
+      <div class="promo__body">
+        <p class="promo__badge">Combo Deals</p>
+        <h2 class="promo__title" id="promo-title">More Care. More Savings.</h2>
+        <!-- Filled in from products.js so prices always match the shop -->
+        <ul class="promo__deals" data-promo-deals></ul>
+        <a class="promo__cta" href="#combos" data-promo-cta>Shop Combo</a>
+      </div>
+    </div>
+  </dialog>
+
   <!-- Product bottom sheet: filled in by script.js from the tapped card -->
   <dialog class="sheet" id="product-sheet" aria-labelledby="sheet-title">
     <div class="sheet__panel" tabindex="-1" autofocus>
@@ -430,7 +445,7 @@
 
   <script type="module" src="products.js?v=8c251175"></script>
   <script type="module" src="cart.js?v=935cc6ec"></script>
-  <script type="module" src="script.js?v=66959362"></script>
+  <script type="module" src="script.js?v=836ed9f9"></script>
   <script src="assets/track.js?v=8b8cd4fc" defer></script>
   <script src="assets/footer.js?v=4839e892" defer></script>
 </body>
