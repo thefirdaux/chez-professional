@@ -6,6 +6,7 @@
 (function () {
   var view = 'paid';
   var orders = [];
+  var selected = {}; // order id → true, for booking couriers and printing AWBs in one go
   var easyparcel = { enabled: false, demo: false };
   var COUNTRY_NAMES = { SG: 'Singapore', BN: 'Brunei' }; // Malaysia is left off addresses
   var list = document.querySelector('[data-orders]');
@@ -151,6 +152,20 @@
       // Header: icon, title, item count · order number · date, status chips
       var head = el('div', 'order__head');
       var heading = el('div', 'order__heading');
+      if (isSelectable(order)) {
+        var pick = el('input', 'order__check');
+        pick.type = 'checkbox';
+        pick.checked = Boolean(selected[order.id]);
+        pick.setAttribute('aria-label', 'Select order ' + order.id);
+        pick.addEventListener('change', function () {
+          if (pick.checked) selected[order.id] = true;
+          else delete selected[order.id];
+          item.classList.toggle('order--selected', pick.checked);
+          renderBulk();
+        });
+        item.classList.toggle('order--selected', pick.checked);
+        heading.appendChild(pick);
+      }
       var tile = el('div', 'order__tile');
       tile.appendChild(el('span'));
       heading.appendChild(tile);
@@ -228,6 +243,7 @@
 
       list.appendChild(item);
     });
+    renderBulk();
   }
 
   searchInput.addEventListener('input', render);
@@ -271,6 +287,12 @@
       showMessage(typeof notice === 'string' ? notice : '');
       orders = data.orders;
       easyparcel = data.easyparcel || easyparcel;
+      // Forget ticks on orders that have left this list (shipped, or another tab)
+      var kept = {};
+      orders.forEach(function (order) {
+        if (selected[order.id] && isSelectable(order)) kept[order.id] = true;
+      });
+      selected = kept;
       loadEasyParcelStatus();
       render();
     }, function (error) {
@@ -486,6 +508,430 @@
   function malaysiaToday() {
     return new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 10);
   }
+
+  /* --- Several orders at once: book one courier for all, print every AWB in one PDF, mark shipped --- */
+  var bulkBar = document.querySelector('[data-bulk]');
+  var bulkAll = document.querySelector('[data-bulk-all]');
+  var bulkCount = document.querySelector('[data-bulk-count]');
+  var bulkBook = document.querySelector('[data-bulk-book]');
+  var bulkPrint = document.querySelector('[data-bulk-print]');
+  var bulkShipped = document.querySelector('[data-bulk-shipped]');
+  var bulkDialog = document.querySelector('[data-bulk-dialog]');
+  var bulkBusy = false;
+
+  // Paid orders still waiting to be shipped can be ticked
+  function isSelectable(order) {
+    return order.status === 'paid' && !order.shipped_at;
+  }
+
+  function canBook(order) {
+    return easyparcel.enabled && !order.ep_order_no && (!order.is_test || easyparcel.demo);
+  }
+
+  // Booked, with an AWB link already or one EasyParcel can be asked for
+  function canPrint(order) {
+    return Boolean(order.ep_awb_link || (easyparcel.enabled && order.ep_order_no && order.ep_order_no !== 'booked'));
+  }
+
+  function selectableShown() {
+    return view === 'paid' ? visibleOrders().filter(isSelectable) : [];
+  }
+
+  function selectedShown() {
+    return selectableShown().filter(function (order) { return selected[order.id]; });
+  }
+
+  function plural(count, word) {
+    return count + ' ' + word + (count === 1 ? '' : 's');
+  }
+
+  function renderBulk() {
+    var shown = selectableShown();
+    var picked = selectedShown();
+    bulkBar.hidden = shown.length < 2;
+    bulkAll.checked = shown.length > 0 && picked.length === shown.length;
+    bulkAll.indeterminate = picked.length > 0 && picked.length < shown.length;
+    bulkCount.textContent = picked.length ? picked.length + ' of ' + shown.length + ' selected' : 'Select all (' + shown.length + ')';
+
+    var toBook = picked.filter(canBook).length;
+    var toPrint = picked.filter(canPrint).length;
+    bulkBook.hidden = !easyparcel.enabled;
+    bulkBook.disabled = bulkBusy || !toBook;
+    bulkBook.textContent = 'Book Courier' + (toBook ? ' (' + toBook + ')' : '');
+    bulkPrint.disabled = bulkBusy || !toPrint;
+    bulkPrint.textContent = 'Print AWB' + (toPrint ? ' (' + toPrint + ')' : '');
+    bulkShipped.disabled = bulkBusy || !picked.length;
+    bulkShipped.textContent = 'Mark Shipped' + (picked.length ? ' (' + picked.length + ')' : '');
+  }
+
+  bulkAll.addEventListener('change', function () {
+    var tick = bulkAll.checked;
+    selectableShown().forEach(function (order) {
+      if (tick) selected[order.id] = true;
+      else delete selected[order.id];
+    });
+    render();
+  });
+
+  // Runs task(item) for each item, `limit` at a time, in the list's order of starting
+  function eachLimited(items, limit, task) {
+    var next = 0;
+    function worker() {
+      if (next >= items.length) return Promise.resolve();
+      var item = items[next++];
+      return task(item).then(worker);
+    }
+    var workers = [];
+    for (var i = 0; i < Math.min(limit, items.length); i++) workers.push(worker());
+    return Promise.all(workers);
+  }
+
+  function orderLabel(order) {
+    return order.id + ' (' + order.name + ', ' + (COUNTRY_NAMES[order.country] || order.state) + ')';
+  }
+
+  function fillIssues(listNode, rows) {
+    listNode.textContent = '';
+    rows.forEach(function (row) { listNode.appendChild(el('li', null, row)); });
+    listNode.hidden = !rows.length;
+  }
+
+  bulkDialog.addEventListener('cancel', function (event) {
+    if (bulkBusy) event.preventDefault(); // don't close halfway through booking
+  });
+
+  bulkBook.addEventListener('click', function () {
+    var targets = selectedShown().filter(canBook);
+    if (targets.length) openBulkBooking(targets);
+  });
+
+  function openBulkBooking(targets) {
+    var quotes = {};
+    var options = [];
+    var balance = null;
+    bulkDialog.textContent = '';
+
+    var form = el('form', 'bulk-dialog__body');
+    form.method = 'dialog';
+    var title = el('h2', 'bulk-dialog__title', 'Book courier for ' + plural(targets.length, 'order'));
+    form.appendChild(title);
+    var intro = el('p', 'ship__note', 'One courier for all of them, at each order\u2019s usual parcel weight. To change a weight, book that order on its own.');
+    form.appendChild(intro);
+    if (easyparcel.demo) form.appendChild(el('p', 'ship__demo', 'EasyParcel demo: nothing is really shipped or charged.'));
+
+    var dateRow = el('div', 'ship__weight');
+    var dateLabel = el('label', null, 'Pickup / drop-off date');
+    dateLabel.htmlFor = 'bulk-date';
+    var date = el('input');
+    date.id = 'bulk-date';
+    date.type = 'date';
+    date.value = date.min = malaysiaToday();
+    dateRow.appendChild(dateLabel);
+    dateRow.appendChild(date);
+    form.appendChild(dateRow);
+
+    var choices = el('fieldset', 'ship__rates');
+    choices.appendChild(el('legend', 'visually-hidden', 'Courier'));
+    form.appendChild(choices);
+
+    var issues = el('ul', 'bulk-dialog__issues');
+    issues.hidden = true;
+    form.appendChild(issues);
+
+    var note = el('p', 'ship__note');
+    note.setAttribute('role', 'status');
+    form.appendChild(note);
+
+    var actions = el('div', 'ship__actions');
+    var confirmButton = button('Book & pay', true);
+    confirmButton.disabled = true;
+    var cancel = button('Cancel');
+    actions.appendChild(confirmButton);
+    actions.appendChild(cancel);
+    form.appendChild(actions);
+    bulkDialog.appendChild(form);
+    bulkDialog.showModal();
+
+    cancel.addEventListener('click', function () { bulkDialog.close(); });
+
+    function chosen() {
+      var radio = choices.querySelector('input:checked');
+      return radio ? options[Number(radio.value)] : null;
+    }
+
+    function update() {
+      var option = chosen();
+      var rows = [];
+      targets.forEach(function (order) {
+        var quote = quotes[order.id];
+        if (quote && quote.error) rows.push(orderLabel(order) + ': ' + quote.error);
+        else if (option && !(order.id in option.prices)) rows.push(orderLabel(order) + ': ' + option.courier + ' doesn\u2019t deliver there. Book it on its own.');
+      });
+      fillIssues(issues, rows.length ? ['Not included:'].concat(rows) : []);
+
+      note.textContent = balance != null ? 'EasyParcel credit: ' + rm(balance) : '';
+      confirmButton.disabled = !option;
+      confirmButton.textContent = 'Book & pay';
+      if (!option) return;
+      var count = Object.keys(option.prices).length;
+      confirmButton.textContent = 'Book ' + plural(count, 'order') + ' & pay ' + rm(option.total);
+      if (balance != null && option.total > balance) {
+        note.textContent = 'Not enough EasyParcel credit (' + rm(balance) + ') for ' + rm(option.total) + '. Top up in EasyParcel first, or tick fewer orders.';
+        confirmButton.disabled = true;
+      }
+    }
+
+    function showOptions() {
+      var byService = {};
+      targets.forEach(function (order) {
+        var quote = quotes[order.id];
+        if (!quote || !quote.rates) return;
+        quote.rates.forEach(function (rate) {
+          var option = byService[rate.serviceId];
+          if (!option) {
+            option = byService[rate.serviceId] = { serviceId: rate.serviceId, courier: rate.courier, service: rate.service, detail: rate.detail, delivery: rate.delivery, total: 0, prices: {} };
+            options.push(option);
+          }
+          option.prices[order.id] = rate.price;
+          option.total += rate.price;
+        });
+      });
+      // Couriers that reach the most orders first, then the cheapest
+      options.sort(function (a, b) {
+        return Object.keys(b.prices).length - Object.keys(a.prices).length || a.total - b.total;
+      });
+
+      options.forEach(function (option, index) {
+        var count = Object.keys(option.prices).length;
+        var row = el('label', 'ship__rate');
+        var radio = el('input');
+        radio.type = 'radio';
+        radio.name = 'bulk-rate';
+        radio.value = String(index);
+        radio.checked = index === 0;
+        radio.addEventListener('change', update);
+        var text = el('span', 'ship__rate-text');
+        text.appendChild(el('strong', null, option.courier));
+        var detail = /pick|drop/i.test(option.service) ? '' : DETAIL[option.detail];
+        text.appendChild(el('span', null, [option.service, detail, option.delivery].filter(Boolean).join(' · ')));
+        text.appendChild(el('span', null, count === targets.length ? 'All ' + plural(count, 'order') : count + ' of ' + targets.length + ' orders'));
+        row.appendChild(radio);
+        row.appendChild(text);
+        row.appendChild(el('span', 'ship__price', rm(option.total)));
+        choices.appendChild(row);
+      });
+      update();
+      if (!options.length) note.textContent = 'No courier can take these orders.';
+    }
+
+    var priced = 0;
+    note.textContent = 'Getting courier prices… 0 of ' + targets.length;
+    var signedOut = false;
+    var credit = shipApi({ action: 'status' }).then(function (data) {
+      if (data.connected) balance = data.balance;
+    }, function () { /* credit is checked again by EasyParcel when booking */ });
+    var prices = eachLimited(targets, 3, function (order) {
+      if (signedOut) return Promise.resolve();
+      return shipApi({ id: order.id, action: 'quote' }).then(function (data) {
+        quotes[order.id] = { weight: data.weight, rates: data.rates };
+      }, function (error) {
+        if (error.status === 401) signedOut = true;
+        quotes[order.id] = { error: error.message };
+      }).then(function () {
+        priced++;
+        if (!options.length) note.textContent = 'Getting courier prices… ' + priced + ' of ' + targets.length;
+      });
+    });
+    Promise.all([credit, prices]).then(function () {
+      if (signedOut) {
+        bulkDialog.close();
+        return showLogin();
+      }
+      showOptions();
+    });
+
+    confirmButton.addEventListener('click', function () {
+      var option = chosen();
+      if (!option) return;
+      var ids = targets.filter(function (order) { return order.id in option.prices; });
+      if (!window.confirm('Book ' + option.courier + ' for ' + plural(ids.length, 'order') + ', ' + rm(option.total) + ' in total? It is paid from your EasyParcel credit straight away.')) return;
+
+      bulkBusy = true;
+      renderBulk();
+      confirmButton.disabled = true;
+      cancel.disabled = true;
+      choices.disabled = true;
+      date.disabled = true;
+      var booked = [];
+      var failed = [];
+      var stop = '';
+      var index = 0;
+
+      function bookNext() {
+        if (index >= ids.length) return Promise.resolve();
+        var order = ids[index++];
+        if (stop) {
+          failed.push(orderLabel(order) + ': not booked (' + stop + ')');
+          return bookNext();
+        }
+        note.textContent = 'Booking ' + index + ' of ' + ids.length + '…';
+        return shipApi({ id: order.id, action: 'book', serviceId: option.serviceId, weight: quotes[order.id].weight, collectDate: date.value }).then(function () {
+          booked.push(order.id);
+        }, function (error) {
+          if (error.status === 401) stop = 'signed out';
+          // Without credit the rest would be refused too
+          else if (/credit/i.test(error.message)) stop = 'not enough EasyParcel credit';
+          failed.push(orderLabel(order) + ': ' + error.message);
+        }).then(bookNext);
+      }
+
+      bookNext().then(function () {
+        bulkBusy = false;
+        // Keep the booked orders ticked, ready for Print AWB
+        selected = {};
+        booked.forEach(function (id) { selected[id] = true; });
+        title.textContent = booked.length ? 'Couriers booked' : 'Nothing booked';
+        intro.hidden = true;
+        choices.hidden = true;
+        dateRow.hidden = true;
+        confirmButton.remove();
+        cancel.disabled = false;
+        cancel.textContent = 'Done';
+        note.textContent = plural(booked.length, 'order') + ' booked with ' + option.courier + '.' +
+          (booked.length ? ' Press Print AWB to print all the labels.' : '');
+        fillIssues(issues, failed.length ? ['Not booked:'].concat(failed) : []);
+        bulkDialog.addEventListener('close', function () {
+          if (stop === 'signed out') return showLogin();
+          load(booked.length ? plural(booked.length, 'courier') + ' booked. The booked orders are still ticked: press Print AWB to print all their labels.' : '');
+        }, { once: true });
+      });
+    });
+  }
+
+  /* Print AWB: one PDF with every selected order's A6 label, opened in a new tab to print */
+  var pdfLib = null;
+
+  function loadPdfLib() {
+    if (!pdfLib) {
+      pdfLib = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = '/admin/vendor/pdf-lib-1.17.1.min.js';
+        script.onload = function () { resolve(window.PDFLib); };
+        script.onerror = function () {
+          pdfLib = null;
+          reject(new Error('Couldn\u2019t load the PDF tool. Check the internet connection and try again.'));
+        };
+        document.head.appendChild(script);
+      });
+    }
+    return pdfLib;
+  }
+
+  function awbLink(order) {
+    if (order.ep_awb_link) return Promise.resolve(order.ep_awb_link);
+    // Some couriers issue the AWB a little after booking
+    return shipApi({ id: order.id, action: 'refresh' }).then(function (data) {
+      if (!data.awbLink) throw new Error('the AWB isn\u2019t ready yet, try again in a few minutes');
+      order.ep_awb_link = data.awbLink;
+      return data.awbLink;
+    });
+  }
+
+  function fetchPdf(url) {
+    return fetch(url, { credentials: 'omit', cache: 'no-store' }).then(function (res) {
+      if (!res.ok) throw new Error('EasyParcel didn\u2019t send the AWB (' + res.status + ')');
+      return res.arrayBuffer();
+    });
+  }
+
+  bulkPrint.addEventListener('click', function () {
+    var targets = selectedShown().filter(canPrint);
+    if (!targets.length) return;
+    // Open the tab now, while it still counts as a click (pop-up blockers)
+    var tab = window.open('', '_blank');
+    if (tab) tab.document.write('<title>AWB</title><p style="font:16px -apple-system,sans-serif;padding:24px">Preparing ' + plural(targets.length, 'AWB') + '…</p>');
+
+    bulkBusy = true;
+    renderBulk();
+    showMessage('Preparing ' + plural(targets.length, 'AWB') + '…');
+    var files = [];
+    var skipped = [];
+    eachLimited(targets, 3, function (order) {
+      return awbLink(order).then(fetchPdf).then(function (bytes) {
+        files.push({ order: order, bytes: bytes });
+      }, function (error) {
+        if (error.status === 401) throw error;
+        skipped.push(order.id + ': ' + error.message);
+      });
+    }).then(function () {
+      if (!files.length) throw new Error('No AWB could be printed. ' + skipped.join('; '));
+      return loadPdfLib();
+    }).then(function (PDFLib) {
+      // Same order as the list on screen
+      files.sort(function (a, b) { return targets.indexOf(a.order) - targets.indexOf(b.order); });
+      return PDFLib.PDFDocument.create().then(function (merged) {
+        return files.reduce(function (chain, file) {
+          return chain.then(function () {
+            return PDFLib.PDFDocument.load(file.bytes, { ignoreEncryption: true }).then(function (doc) {
+              return merged.copyPages(doc, doc.getPageIndices());
+            }).then(function (pages) {
+              pages.forEach(function (page) { merged.addPage(page); });
+            }, function () {
+              skipped.push(file.order.id + ': the AWB file couldn\u2019t be read');
+            });
+          });
+        }, Promise.resolve()).then(function () {
+          if (!merged.getPageCount()) throw new Error('No AWB could be printed. ' + skipped.join('; '));
+          return merged.save();
+        });
+      });
+    }).then(function (bytes) {
+      var url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+      var printed = targets.length - skipped.length;
+      if (tab && !tab.closed) tab.location.href = url;
+      else {
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'AWB-' + malaysiaToday() + '.pdf';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+      setTimeout(function () { URL.revokeObjectURL(url); }, 60 * 1000);
+      bulkBusy = false;
+      render();
+      showMessage(plural(printed, 'AWB') + ' opened in a new tab: print from there on the A6 label printer.' +
+        (skipped.length ? ' Not included: ' + skipped.join('; ') + '.' : ''));
+    }).catch(function (error) {
+      if (tab) tab.close();
+      bulkBusy = false;
+      renderBulk();
+      handleError(error);
+    });
+  });
+
+  bulkShipped.addEventListener('click', function () {
+    var targets = selectedShown();
+    if (!targets.length) return;
+    var unbooked = targets.filter(function (order) { return !order.ep_order_no; }).length;
+    if (!window.confirm('Mark ' + plural(targets.length, 'order') + ' as shipped?' +
+      (unbooked && easyparcel.enabled ? ' ' + unbooked + ' of them ' + (unbooked === 1 ? 'has' : 'have') + ' no courier booked.' : ''))) return;
+    bulkBusy = true;
+    renderBulk();
+    var failed = [];
+    eachLimited(targets, 3, function (order) {
+      return api('POST', { id: order.id, action: 'shipped' }).then(null, function (error) {
+        if (error.status === 401) throw error;
+        failed.push(order.id);
+      });
+    }).then(function () {
+      bulkBusy = false;
+      load(plural(targets.length - failed.length, 'order') + ' marked as shipped.' + (failed.length ? ' Not changed: ' + failed.join(', ') + '.' : ''));
+    }, function (error) {
+      bulkBusy = false;
+      handleError(error);
+    });
+  });
 
   /* --- EasyParcel reminder on the orders page (details are in Settings) --- */
   var epBar = document.querySelector('[data-ep-bar]');

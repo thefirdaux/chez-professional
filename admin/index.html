@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=cb1b552d">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=1056d844">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=9d50453a">
-  <link rel="stylesheet" href="admin.css?v=4e38a899">
+  <link rel="stylesheet" href="admin.css?v=41c14867">
 </head>
 <body>
   <!-- Sidebar (Figma "Sidebar" 414:110, in the shop's beige); a bar across the top on phones -->
@@ -88,6 +88,17 @@
     </nav>
 
     <div class="ep-bar" data-ep-bar hidden></div>
+
+    <!-- Tick several orders to book one courier for all, print their AWBs together or mark them shipped -->
+    <div class="bulk" data-bulk hidden>
+      <label class="bulk__all"><input type="checkbox" data-bulk-all><span data-bulk-count>Select all</span></label>
+      <div class="bulk__actions">
+        <button type="button" class="button button--primary" data-bulk-book>Book Courier</button>
+        <button type="button" class="button button--primary" data-bulk-print>Print AWB</button>
+        <button type="button" class="button" data-bulk-shipped>Mark Shipped</button>
+      </div>
+    </div>
+    <dialog class="bulk-dialog" data-bulk-dialog aria-label="Book couriers"></dialog>
 
     <ul class="orders" data-orders></ul>
     </div>
@@ -190,6 +201,6 @@
 
   <div class="tooltip" data-tooltip role="status" hidden></div>
 
-  <script src="admin.js?v=8ab21121"></script>
+  <script src="admin.js?v=f5d4f09b"></script>
 </body>
 </html>
