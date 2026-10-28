@@ -2017,6 +2017,13 @@ select.field__input {
 
 .site-footer__company strong { color: #fff; font-weight: 600; }
 
+.site-footer__credit {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.06px;
+}
+
 .site-footer__social {
   display: flex;
   flex-wrap: wrap;
