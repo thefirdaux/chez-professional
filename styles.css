@@ -1772,6 +1772,38 @@ select.field__input {
   .page--wide .success__home { width: min(360px, 100%); margin: 40px auto 0; }
 }
 
+/* ---------- Policy pages (shipping, refund, privacy, terms) ---------- */
+.policy h1 { margin-bottom: 4px; }
+.policy__updated { color: #6b6b6b; }
+
+.policy__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 15px;
+  line-height: 22px;
+  letter-spacing: -0.23px;
+}
+
+.policy__body h2 {
+  margin-top: 16px;
+  font-size: 20px;
+  line-height: 25px;
+  font-weight: 600;
+  letter-spacing: -0.45px;
+}
+
+.policy__body ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.policy__body a { color: var(--color-brown); }
+
 /* ---------- Miss Universe Malaysia 2026 sponsorship (Figma 428:115, 1280 x 1272) ----------
    Sizes are the design's pixels as a share of the section width (cqw), so phones and
    desktops show the same layout. */
@@ -2002,6 +2034,22 @@ select.field__input {
 
 .site-footer__secure { margin-top: 12px; }
 
+.site-footer__shop ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.site-footer__shop a {
+  display: inline-block;
+  padding: 4px 0;
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-footer__shop a:hover,
+.site-footer__shop a[aria-current="page"] { text-decoration: underline; }
+
 .site-footer__company {
   display: flex;
   flex-direction: column;
@@ -2064,10 +2112,11 @@ select.field__input {
   .site-footer {
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 40px;
     padding: 40px max(24px, 3.75vw) 48px;
   }
+  .site-footer__payments { flex: 1 1 0; max-width: 520px; }
   .site-footer__company { text-align: right; align-items: flex-end; }
   .site-footer__social { justify-content: flex-end; }
 }
