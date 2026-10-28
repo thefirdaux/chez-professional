@@ -25,8 +25,8 @@ export async function createPurchase(env, body) {
 }
 
 /**
- * The payment methods switched on for the brand, with CHIP's logo for each, e.g.
- * [{ name: "FPX", logos: ["https://gate.chip-in.asia/static/images/…svg"] }, …].
+ * The payment methods switched on for the brand, with CHIP's logos for each, e.g.
+ * [{ code: "fpx", name: "FPX B2C", logos: ["https://gate.chip-in.asia/static/images/logo-fpx.svg"] }, …].
  */
 export async function paymentMethods(env) {
   const query = new URLSearchParams({ brand_id: env.CHIP_BRAND_ID, currency: 'MYR', amount: '1000' });
@@ -35,11 +35,15 @@ export async function paymentMethods(env) {
   const data = await res.json();
   const names = data.names || {};
   const logos = data.logos || {};
-  // Logo paths are relative to the API's host; some methods have several logos
+  // Logo paths are relative to the API's host. Some methods have several logos, and some
+  // only a blank placeholder image, which is left out.
   const host = new URL(API).origin;
   return (data.available_payment_methods || []).map((code) => ({
+    code,
     name: names[code] || code,
-    logos: [].concat(logos[code] || []).filter((path) => typeof path === 'string').map((path) => new URL(path, host).toString())
+    logos: [].concat(logos[code] || [])
+      .filter((path) => typeof path === 'string' && !/transparent|\.gif$/i.test(path))
+      .map((path) => new URL(path, host).toString())
   }));
 }
 
