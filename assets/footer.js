@@ -31,6 +31,11 @@
           img.alt = i === 0 ? method.name : '';
           img.height = 24;
           img.loading = 'lazy';
+          // A logo CHIP no longer hosts: fall back to the method's name
+          img.onerror = function () {
+            img.remove();
+            if (!li.querySelector('img')) li.textContent = method.name;
+          };
           li.appendChild(img);
         });
         return li;
