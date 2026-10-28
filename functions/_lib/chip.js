@@ -24,27 +24,14 @@ export async function createPurchase(env, body) {
   return data;
 }
 
-/**
- * The payment methods switched on for the brand, with CHIP's logos for each, e.g.
- * [{ code: "fpx", name: "FPX B2C", logos: ["https://gate.chip-in.asia/static/images/logo-fpx.svg"] }, …].
- */
+/** Names of the payment methods switched on for the brand, e.g. ["FPX", "DuitNow QR", "Visa"]. */
 export async function paymentMethods(env) {
   const query = new URLSearchParams({ brand_id: env.CHIP_BRAND_ID, currency: 'MYR', amount: '1000' });
   const res = await fetch(API + '/payment_methods/?' + query, { headers: headers(env) });
   if (!res.ok) throw new Error('CHIP payment methods failed: ' + res.status);
   const data = await res.json();
   const names = data.names || {};
-  const logos = data.logos || {};
-  // Logo paths are relative to the API's host. Some methods have several logos, and some
-  // only a blank placeholder image, which is left out.
-  const host = new URL(API).origin;
-  return (data.available_payment_methods || []).map((code) => ({
-    code,
-    name: names[code] || code,
-    logos: [].concat(logos[code] || [])
-      .filter((path) => typeof path === 'string' && !/transparent|\.gif$/i.test(path))
-      .map((path) => new URL(path, host).toString())
-  }));
+  return (data.available_payment_methods || []).map((code) => names[code] || code);
 }
 
 export async function getPurchase(env, id) {

@@ -356,10 +356,17 @@
     <footer class="site-footer">
       <div class="site-footer__payments">
         <h2 class="site-footer__label">Payment methods</h2>
-        <!-- footer.js swaps these for CHIP's logos of every method switched on -->
-        <ul class="site-footer__methods" data-payment-methods aria-label="Payment methods">
-          <li class="site-footer__method">FPX online banking</li>
-          <li class="site-footer__method">DuitNow QR</li>
+        <!-- The payment methods Chez offers, with CHIP's logos (footer.js shows the name if a logo fails to load) -->
+        <ul class="site-footer__methods" aria-label="Payment methods">
+          <li class="site-footer__method" title="FPX"><img src="https://gate.chip-in.asia/static/images/logo-fpx.svg" alt="FPX" height="24" loading="lazy"></li>
+          <li class="site-footer__method" title="DuitNow QR"><img src="https://gate.chip-in.asia/static/images/icon-duitnow_qr.svg" alt="DuitNow QR" height="24" loading="lazy"></li>
+          <li class="site-footer__method" title="Mastercard"><img src="https://gate.chip-in.asia/static/images/icon-mastercard.svg" alt="Mastercard" height="24" loading="lazy"></li>
+          <li class="site-footer__method" title="Visa"><img src="https://gate.chip-in.asia/static/images/icon-visa.svg" alt="Visa" height="24" loading="lazy"></li>
+          <li class="site-footer__method" title="Atome"><img src="https://gate.chip-in.asia/static/images/icon-razer_atome.svg" alt="Atome" height="24" loading="lazy"></li>
+          <li class="site-footer__method" title="ShopeePay"><img src="https://gate.chip-in.asia/static/images/icon-razer_shopeepay.svg" alt="ShopeePay" height="24" loading="lazy"></li>
+          <li class="site-footer__method" title="Maybank QRPay"><img src="https://gate.chip-in.asia/static/images/icon-razer_maybankqr.svg" alt="Maybank QRPay" height="24" loading="lazy"></li>
+          <li class="site-footer__method" title="Touch 'n Go eWallet"><img src="https://gate.chip-in.asia/static/images/icon-razer_tng.svg" alt="Touch 'n Go eWallet" height="24" loading="lazy"></li>
+          <li class="site-footer__method">SPayLater</li>
         </ul>
         <p class="site-footer__secure">Secure checkout by CHIP</p>
       </div>
@@ -425,6 +432,6 @@
   <script type="module" src="cart.js?v=935cc6ec"></script>
   <script type="module" src="script.js?v=66959362"></script>
   <script src="assets/track.js?v=8b8cd4fc" defer></script>
-  <script src="assets/footer.js?v=7e53ff72" defer></script>
+  <script src="assets/footer.js?v=4839e892" defer></script>
 </body>
 </html>
