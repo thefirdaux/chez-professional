@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=95662d39">
+  <link rel="stylesheet" href="styles.css?v=49b7c7a8">
 </head>
 <body>
   <div class="page page--wide">
@@ -127,11 +127,29 @@
         </aside>
       </form>
     </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__payments">
+        <h2 class="site-footer__label">Payment methods</h2>
+        <!-- footer.js swaps these for CHIP's logos of every method switched on -->
+        <ul class="site-footer__methods" data-payment-methods aria-label="Payment methods">
+          <li class="site-footer__method">FPX online banking</li>
+          <li class="site-footer__method">DuitNow QR</li>
+        </ul>
+        <p class="site-footer__secure">Secure checkout by CHIP</p>
+      </div>
+      <div class="site-footer__company">
+        <img src="assets/logo-756.png?v=e301074f" alt="Chez Professional" width="102" height="48" loading="lazy">
+        <p><strong>CHEZ H.H ENTERPRISE</strong><br>202003104948 (RA0057637-W)</p>
+        <p>&copy; <span data-year>2026</span> Chez Professional. All rights reserved.</p>
+      </div>
+    </footer>
   </div>
 
   <script type="module" src="products.js?v=8c251175"></script>
   <script type="module" src="cart.js?v=935cc6ec"></script>
   <script type="module" src="checkout.js?v=1f054bdd"></script>
   <script src="assets/track.js?v=8b8cd4fc" defer></script>
+  <script src="assets/footer.js?v=952a3686" defer></script>
 </body>
 </html>

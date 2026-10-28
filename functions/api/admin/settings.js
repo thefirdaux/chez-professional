@@ -22,7 +22,7 @@ export async function onRequestGet({ request, env }) {
 
   let methods = null;
   try {
-    methods = await paymentMethods(env);
+    methods = (await paymentMethods(env)).map((method) => method.name);
   } catch (error) {
     console.error(error.message);
   }
