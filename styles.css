@@ -1881,6 +1881,42 @@ select.field__input {
 
 .site-footer__company strong { color: #fff; font-weight: 600; }
 
+.site-footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.site-footer__social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-footer__social a:hover { text-decoration: underline; }
+
+/* Icon drawn in the text colour from the SVG's shape */
+.site-footer__icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 @media (min-width: 768px) {
   .site-footer {
     flex-direction: row;
@@ -1890,4 +1926,5 @@ select.field__input {
     padding: 40px max(24px, 3.75vw) 48px;
   }
   .site-footer__company { text-align: right; align-items: flex-end; }
+  .site-footer__social { justify-content: flex-end; }
 }
