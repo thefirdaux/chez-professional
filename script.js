@@ -186,13 +186,11 @@
     });
   }
 
-  /* --- Combo deals popup: once a day, a few seconds after the page opens --- */
+  /* --- Combo deals popup: every time the home page opens, after a few seconds --- */
   (function () {
     var promo = document.getElementById('combo-promo');
     var deals = promo && promo.querySelector('[data-promo-deals]');
     if (!promo || !deals || typeof promo.showModal !== 'function') return;
-    var KEY = 'chez-promo-seen';
-    var DAY = 24 * 60 * 60 * 1000;
 
     // Prices come from products.js, so the popup always matches the shop
     (CHEZ.shops.combos || []).forEach(function (id) {
@@ -208,13 +206,6 @@
       li.appendChild(price);
       deals.appendChild(li);
     });
-
-    function seenRecently() {
-      try { return Date.now() - Number(localStorage.getItem(KEY) || 0) < DAY; } catch (e) { return false; }
-    }
-    function remember() {
-      try { localStorage.setItem(KEY, String(Date.now())); } catch (e) { /* private mode */ }
-    }
 
     function close() {
       if (!promo.open || promo.classList.contains('is-closing')) return;
@@ -232,11 +223,11 @@
       promo.close();
     });
 
-    if (seenRecently() || location.hash) return;
+    // Not when the visitor was sent to a section, e.g. "Continue shopping" from checkout
+    if (location.hash) return;
     setTimeout(function () {
       // Wait for the buyer if a product or cart sheet is already open
       if (document.querySelector('dialog[open]')) return;
-      remember();
       promo.showModal();
     }, 3000);
   })();
