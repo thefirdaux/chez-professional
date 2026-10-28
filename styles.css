@@ -1768,6 +1768,60 @@ select.field__input {
   .page--wide .success__home { width: min(360px, 100%); margin: 40px auto 0; }
 }
 
+/* ---------- Miss Universe Malaysia 2026 sponsorship (Figma 428:115, 1280 x 1272) ----------
+   Sizes are the design's pixels as a share of the section width (cqw), so phones and
+   desktops show the same layout. */
+.sponsor {
+  container-type: inline-size;
+  background: #0e021a;
+  color: #fff;
+  font-family: "Inter", var(--font);
+  font-weight: 400;
+  text-align: center;
+}
+
+.sponsor__intro { padding: 12.42cqw 3.75cqw 0; }
+
+.sponsor__eyebrow {
+  font-size: max(12px, 1.875cqw);
+  line-height: 1.2;
+  text-transform: uppercase;
+  word-spacing: 0.3em;
+}
+
+.sponsor__title {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.08cqw;
+  font-weight: 400;
+  line-height: 1.21;
+  text-transform: uppercase;
+}
+
+/* Each line fades from white to plum across the full width, as in the design */
+.sponsor__name,
+.sponsor__year {
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.sponsor__name {
+  font-size: 10.05cqw;
+  background-image: linear-gradient(90deg, #fff, #850d45);
+}
+
+.sponsor__year {
+  font-size: 4.7cqw;
+  background-image: linear-gradient(90deg, #fff 0%, #850d45 92%);
+}
+
+.sponsor__image {
+  width: 100%;
+  height: auto;
+  margin-top: 0.08cqw;
+}
+
 /* ---------- Footer (every page) ---------- */
 .site-footer {
   display: flex;
