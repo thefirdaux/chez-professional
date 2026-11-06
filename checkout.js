@@ -12,6 +12,8 @@
   var SAVED_KEY = 'chez-customer';
   var demo = true;
   var testMode = false;
+  // 'checking' until the order server answers, 'unreachable' if it can't be reached
+  var configState = 'checking';
 
   var form = document.querySelector('[data-checkout-form]');
   var stateSelect = form.querySelector('[data-state-select]');
@@ -240,8 +242,9 @@
       : priced ? quote.label + ': ' + shippingText(quote.fee) + (quote.covered ? ' (we cover ' + rm(quote.covered) + ' of the postage)' : '') + '.' + abroad
       : waiting ? 'Working out the shipping fee…'
         : 'Enter your ' + (rules().places ? 'postcode and ' + rules().placeLabel.toLowerCase() : 'postal code') + ' to see the shipping fee.';
-    payButton.textContent = (demo ? 'Place demo order · ' : 'Pay ') + rm(total);
-    demoNotice.hidden = !demo;
+    var showDemo = demo && configState === 'demo';
+    payButton.textContent = (showDemo ? 'Place demo order · ' : 'Pay ') + rm(total);
+    demoNotice.hidden = !showDemo;
     testNotice.hidden = demo || !testMode;
   }
 
@@ -257,17 +260,31 @@
   });
   render();
 
-  // Ask the order server whether real payment is on. No server, an error or a slow answer keeps demo mode.
-  var configReady = fetch(CHEZ.config.orderApi + '/checkout-config', { cache: 'no-store' })
-    .then(function (res) { return res.ok ? res.json() : null; })
+  // Ask the order server whether real payment is on. Demo mode only when there is no order server
+  // (404) or it says payments are off; if it can't be reached, no order is placed at all.
+  function askConfig() {
+    return fetch(CHEZ.config.orderApi + '/checkout-config', { cache: 'no-store' }).then(function (res) {
+      if (res.status === 404) return { enabled: false };
+      if (!res.ok) throw new Error(res.status);
+      return res.json();
+    });
+  }
+
+  var configReady = askConfig()
+    .catch(function () { return askConfig(); }) // one more try after a network blip
     .then(function (config) {
       if (config && config.enabled) {
         demo = false;
         testMode = Boolean(config.testMode);
+        configState = 'live';
+      } else {
+        configState = 'demo';
       }
+    }, function () {
+      configState = 'unreachable';
     })
-    .catch(function () { /* stay in demo mode */ })
     .then(function () {
+      render();
       quoteKey = '';
       updateQuote();
     });
@@ -322,6 +339,11 @@
   });
 
   function submit() {
+    if (configState === 'unreachable') {
+      formError.textContent = 'We couldn\u2019t connect to the payment system. Please check your internet connection, refresh the page and try again.';
+      formError.hidden = false;
+      return;
+    }
 
     var firstInvalid = null;
     form.querySelectorAll('.field__input').forEach(function (input) {
