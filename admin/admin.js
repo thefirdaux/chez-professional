@@ -203,6 +203,7 @@
 
       var side = el('div', 'order__side');
       side.appendChild(el('p', 'order__total', 'RM' + (order.total / 100).toFixed(2)));
+      if (order.discount) side.appendChild(el('p', 'order__voucher', 'Voucher ' + order.voucher + ' \u2212' + rm(order.discount)));
       var actions = el('div', 'order__actions');
       var shipBox = el('div', 'ship');
       if (order.status === 'paid') {
@@ -261,12 +262,12 @@
 
   document.querySelector('[data-export]').addEventListener('click', function () {
     var rows = [['Order', 'Date', 'Status', 'Name', 'Phone', 'Email', 'Address', 'Postcode', 'City', 'State', 'Country',
-      'Items', 'Subtotal (RM)', 'Shipping (RM)', 'Fee (RM)', 'Total (RM)', 'Courier', 'AWB']];
+      'Items', 'Subtotal (RM)', 'Voucher', 'Discount (RM)', 'Shipping (RM)', 'Fee (RM)', 'Total (RM)', 'Courier', 'AWB']];
     visibleOrders().forEach(function (order) {
       rows.push([order.id, formatDate(order.created_at), statusOf(order).chip + (order.is_test ? ' (test)' : ''),
         order.name, order.phone, order.email, [order.address1, order.address2].filter(Boolean).join(', '),
         order.postcode, order.city, order.state, order.country || 'MY', order.items.map(itemText).join('; '),
-        ringgit(order.subtotal), ringgit(order.shipping), ringgit(order.fee), ringgit(order.total),
+        ringgit(order.subtotal), order.voucher || '', ringgit(order.discount || 0), ringgit(order.shipping), ringgit(order.fee), ringgit(order.total),
         order.ep_courier || '', order.ep_awb || '']);
     });
     var csv = '\ufeff' + rows.map(function (row) { return row.map(csvCell).join(','); }).join('\r\n');

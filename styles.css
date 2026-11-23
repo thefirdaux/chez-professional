@@ -988,10 +988,48 @@ html.is-sheet-open { overflow: hidden; }
 .checkout__section--contact { order: 1; }
 .checkout__section--address { order: 2; }
 .checkout__section--shipping { order: 3; }
+.checkout__voucher { order: 4; }
 .checkout__totals { order: 4; }
 .checkout__error { order: 5; }
 .checkout__pay { order: 6; }
 .checkout__aside .sheet__secure { order: 7; }
+
+/* Voucher code at checkout */
+.checkout__voucher { gap: 8px; }
+.voucher { display: flex; gap: 8px; }
+.voucher__input { flex: 1; min-width: 0; text-transform: uppercase; }
+.voucher__input::placeholder { text-transform: none; }
+
+.voucher__apply {
+  flex: none;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid var(--color-text);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.voucher__note { color: #1f7a3d; font-size: 14px; line-height: 20px; }
+.voucher__note.is-error { color: #a81318; }
+.voucher__note[hidden] { display: none; }
+
+.voucher__remove {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cart__row--discount span:last-child { color: #1f7a3d; }
 
 /* Form fields */
 .field {

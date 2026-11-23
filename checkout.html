@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=dcf8dd3d">
+  <link rel="stylesheet" href="styles.css?v=f7dc0a74">
 </head>
 <body>
   <div class="page page--wide">
@@ -114,8 +114,18 @@
           <ul class="cart__items" data-cart-items></ul>
         </section>
 
+        <section class="checkout__section checkout__voucher">
+          <label class="field__label" for="voucher-code">Voucher code</label>
+          <div class="voucher">
+            <input class="field__input voucher__input" id="voucher-code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30" placeholder="Enter code" data-voucher-input>
+            <button class="voucher__apply" type="button" data-voucher-apply>Apply</button>
+          </div>
+          <p class="voucher__note" data-voucher-note role="status" hidden></p>
+        </section>
+
         <section class="checkout__section checkout__totals">
           <div class="cart__row"><span>Subtotal</span><span data-subtotal></span></div>
+          <div class="cart__row cart__row--discount" data-discount-row hidden><span data-discount-label>Voucher</span><span data-discount></span></div>
           <div class="cart__row"><span>Shipping</span><span data-shipping>—</span></div>
           <div class="cart__row"><span>Payment processing fee</span><span data-fee></span></div>
           <div class="cart__row cart__row--total"><span>Total</span><span data-total></span></div>
@@ -167,9 +177,9 @@
     </footer>
   </div>
 
-  <script type="module" src="products.js?v=01cad815"></script>
+  <script type="module" src="products.js?v=2f2d97e0"></script>
   <script type="module" src="cart.js?v=935cc6ec"></script>
-  <script type="module" src="checkout.js?v=02bee30c"></script>
+  <script type="module" src="checkout.js?v=a3bf3ddb"></script>
   <script src="assets/track.js?v=8b8cd4fc" defer></script>
   <script src="assets/footer.js?v=4839e892" defer></script>
 </body>

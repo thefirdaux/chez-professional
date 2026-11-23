@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=dcf8dd3d">
+  <link rel="stylesheet" href="styles.css?v=f7dc0a74">
 </head>
 <body>
   <div class="page page--wide">
@@ -38,6 +38,7 @@
         <ul class="success__items" data-order-items></ul>
         <div class="checkout__totals">
           <div class="cart__row"><span>Subtotal</span><span data-order-subtotal></span></div>
+          <div class="cart__row cart__row--discount" data-order-discount-row hidden><span data-order-discount-label>Voucher</span><span data-order-discount></span></div>
           <div class="cart__row"><span>Shipping</span><span data-order-shipping></span></div>
           <div class="cart__row" data-order-fee-row hidden><span>Payment processing fee</span><span data-order-fee></span></div>
           <div class="cart__row cart__row--total"><span>Total</span><span data-order-total></span></div>
@@ -88,7 +89,7 @@
     </footer>
   </div>
 
-  <script type="module" src="products.js?v=01cad815"></script>
+  <script type="module" src="products.js?v=2f2d97e0"></script>
   <script type="module">
     (function () {
       var rm = window.CHEZ.formatRM;
@@ -162,6 +163,11 @@
         list.appendChild(li);
       });
       document.querySelector('[data-order-subtotal]').textContent = rm(order.subtotal);
+      if (order.discount) {
+        document.querySelector('[data-order-discount-label]').textContent = 'Voucher (' + order.voucher + ')';
+        document.querySelector('[data-order-discount]').textContent = '\u2212' + rm(order.discount);
+        document.querySelector('[data-order-discount-row]').hidden = false;
+      }
       document.querySelector('[data-order-shipping]').textContent = order.shipping === 0 ? 'Free' : rm(order.shipping);
       if (order.fee) {
         document.querySelector('[data-order-fee]').textContent = rm(order.fee);

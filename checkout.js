@@ -24,6 +24,9 @@
   var demoNotice = document.querySelector('[data-demo-notice]');
   var testNotice = document.querySelector('[data-test-notice]');
   var paymentNotice = document.querySelector('[data-payment-notice]');
+  var voucherInput = document.querySelector('[data-voucher-input]');
+  var voucherNote = document.querySelector('[data-voucher-note]');
+  var voucher = ''; // the code the buyer applied
 
   // Coming back from CHIP without paying
   var payment = new URLSearchParams(window.location.search).get('payment');
@@ -229,7 +232,11 @@
 
     var subtotal = cart.subtotal();
     var priced = quote && !quote.error;
-    var total = subtotal + (priced ? quote.fee : 0) + CHEZ.paymentFee.fee;
+    var discount = voucherOff();
+    var total = subtotal - discount + (priced ? quote.fee : 0) + CHEZ.paymentFee.fee;
+    form.querySelector('[data-discount-row]').hidden = !discount;
+    form.querySelector('[data-discount-label]').textContent = 'Voucher (' + voucher + ')';
+    form.querySelector('[data-discount]').textContent = '\u2212' + rm(discount);
     var waiting = !quote && destination();
     form.querySelector('[data-subtotal]').textContent = rm(subtotal);
     form.querySelector('[data-shipping]').textContent = priced ? shippingText(quote.fee) : waiting ? 'Calculating…' : '—';
@@ -288,6 +295,61 @@
       quoteKey = '';
       updateQuote();
     });
+
+  /* --- Voucher: the server checks the code again and works out the discount itself --- */
+  function voucherOff() {
+    return voucher ? CHEZ.voucherDiscount(voucher, cart.subtotal()) : 0;
+  }
+
+  function showVoucherNote(text, isError) {
+    voucherNote.textContent = '';
+    voucherNote.classList.toggle('is-error', Boolean(isError));
+    voucherNote.hidden = !text;
+    if (!text) return;
+    voucherNote.appendChild(document.createTextNode(text));
+    if (!isError) {
+      var remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'voucher__remove';
+      remove.textContent = 'Remove';
+      remove.addEventListener('click', function () {
+        voucher = '';
+        voucherInput.value = '';
+        showVoucherNote('');
+        render();
+        voucherInput.focus();
+      });
+      voucherNote.appendChild(document.createTextNode(' '));
+      voucherNote.appendChild(remove);
+    }
+  }
+
+  function applyVoucher() {
+    var code = voucherInput.value.trim().toUpperCase();
+    if (!code) {
+      showVoucherNote('Please enter a voucher code.', true);
+      return;
+    }
+    if (!CHEZ.voucherDiscount(code, cart.subtotal())) {
+      voucher = '';
+      showVoucherNote('This voucher code is not valid.', true);
+      render();
+      return;
+    }
+    voucher = code;
+    voucherInput.value = code;
+    showVoucherNote('Voucher ' + code + ' applied: ' + rm(voucherOff()) + ' off.');
+    render();
+  }
+
+  document.querySelector('[data-voucher-apply]').addEventListener('click', applyVoucher);
+  voucherInput.addEventListener('keydown', function (event) {
+    // Enter applies the code instead of sending the whole form
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      applyVoucher();
+    }
+  });
 
   /* --- Validation --- */
   function normalizePhone(value) {
@@ -382,9 +444,11 @@
         return { name: p.name, size: p.size, qty: item.qty, price: p.price };
       }),
       subtotal: cart.subtotal(),
+      voucher: voucher,
+      discount: voucherOff(),
       shipping: shipping.fee,
       fee: CHEZ.paymentFee.fee,
-      total: cart.subtotal() + shipping.fee + CHEZ.paymentFee.fee,
+      total: cart.subtotal() - voucherOff() + shipping.fee + CHEZ.paymentFee.fee,
       shipTo: details
     };
 
@@ -406,7 +470,7 @@
     fetch(CHEZ.config.orderApi + '/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: items, customer: details })
+      body: JSON.stringify({ items: items, customer: details, voucher: voucher })
     })
       .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, body: body }; }); })
       .then(function (result) {
@@ -419,6 +483,7 @@
         order.number = result.body.orderId;
         order.total = result.body.total;
         if (typeof result.body.shipping === 'number') order.shipping = result.body.shipping;
+        if (typeof result.body.discount === 'number') order.discount = result.body.discount;
         remember(order);
         window.location.href = result.body.checkoutUrl;
       })

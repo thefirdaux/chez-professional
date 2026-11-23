@@ -2,7 +2,7 @@
  * Order rules shared by the checkout, callback and admin endpoints.
  * Prices and shipping always come from products.js, never from the browser.
  */
-import { products, paymentFee, states, countries, districts } from '../../products.js';
+import { products, paymentFee, states, countries, districts, voucherDiscount } from '../../products.js';
 
 export const MAX_QTY = 20;
 const MAX_LINES = 20;
@@ -60,8 +60,14 @@ export function priceOrder(input) {
     items.push({ id, name: p.name, size: p.size, qty, price: p.price });
     subtotal += p.price * qty;
   }
+
+  // A voucher comes off the products only (see products.js)
+  const voucher = text(input && input.voucher, 30).toUpperCase();
+  const discount = voucher ? voucherDiscount(voucher, subtotal) : 0;
+  if (voucher && !discount) throw new InputError('This voucher code is not valid.');
+
   // Postage is added by the caller (see _lib/postage.js), because it comes from EasyParcel
-  return { items, customer, subtotal, fee: paymentFee.fee, feeLabel: paymentFee.label };
+  return { items, customer, subtotal, voucher: discount ? voucher : '', discount, fee: paymentFee.fee, feeLabel: paymentFee.label };
 }
 
 /** Checks the delivery address only (used to quote postage before the rest is filled in). */
@@ -120,6 +126,7 @@ let schemaReady = null;
 
 const LATER_COLUMNS = [
   'fee INTEGER NOT NULL DEFAULT 0',
+  'voucher TEXT', 'discount INTEGER NOT NULL DEFAULT 0',
   'country TEXT', 'ship_cost INTEGER', 'ship_service TEXT', 'ship_courier TEXT',
   // EasyParcel shipment (see _lib/easyparcel.js)
   'ep_order_no TEXT', 'ep_courier TEXT', 'ep_price INTEGER', 'ep_paid_at TEXT',

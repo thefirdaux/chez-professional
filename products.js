@@ -99,6 +99,16 @@ var parcels = {
   'keratin-set': BUNDLE, 'scalp-set': BUNDLE
 };
 
+// Voucher codes buyers can type at checkout (any letter case), in sen. The discount comes off
+// the products only, never off postage or the payment fee. No minimum spend, usable on every order.
+var vouchers = { HELLOCHEZ: 300 };
+
+/** The discount in sen a voucher code gives on this product subtotal, or 0 if the code is unknown. */
+function voucherDiscount(code, subtotal) {
+  var key = String(code || '').trim().toUpperCase();
+  return Object.prototype.hasOwnProperty.call(vouchers, key) ? Math.min(vouchers[key], subtotal) : 0;
+}
+
 // Payment processing fee in sen, listed as its own line on every order.
 // RM1.00 matches CHIP's FPX charge.
 var paymentFee = { label: 'Payment processing fee', fee: 100 };
@@ -119,8 +129,8 @@ function formatRM(sen) {
   return 'RM ' + (sen / 100).toFixed(2);
 }
 
-export { products, shops, shipping, paymentFee, states, countries, districts, config, formatRM, parcels };
+export { products, shops, shipping, paymentFee, states, countries, districts, config, formatRM, parcels, voucherDiscount };
 
 if (typeof window !== 'undefined') {
-  window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, countries: countries, districts: districts, config: config, formatRM: formatRM };
+  window.CHEZ = { products: products, shops: shops, shipping: shipping, paymentFee: paymentFee, states: states, countries: countries, districts: districts, config: config, formatRM: formatRM, voucherDiscount: voucherDiscount };
 }

@@ -393,6 +393,7 @@ body:not(.is-signed-out) { background: var(--cream); }
 .order__items li + li { margin-top: 6px; }
 .order__side { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .order__total { font-size: 24px; line-height: normal; font-weight: 700; }
+.order__voucher { color: var(--muted); font-size: 13px; }
 .order__actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
 @media (min-width: 900px) {

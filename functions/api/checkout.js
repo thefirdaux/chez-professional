@@ -1,6 +1,6 @@
 /*
  * POST /api/checkout
- * Body: { items: [{ id, qty }], customer: { name, phone, email, address1, address2, postcode, city, state, country } }
+ * Body: { items: [{ id, qty }], customer: { name, phone, email, address1, address2, postcode, city, state, country }, voucher? }
  * Prices the order from products.js and postage from EasyParcel (_lib/postage.js), stores it,
  * creates a CHIP purchase and returns its payment page.
  */
@@ -36,15 +36,15 @@ export async function onRequestPost({ request, env }) {
     if (error instanceof PostageUnavailable) return json({ error: error.message }, 503);
     throw error;
   }
-  order.total = order.subtotal + postage.fee + order.fee;
+  order.total = order.subtotal - order.discount + postage.fee + order.fee;
 
   const id = newOrderId();
   await env.DB.prepare(
-    `INSERT INTO orders (id, created_at, status, items, subtotal, shipping, fee, total,
+    `INSERT INTO orders (id, created_at, status, items, subtotal, voucher, discount, shipping, fee, total,
        name, phone, email, address1, address2, postcode, city, state, country, ship_cost, ship_service, ship_courier)
-     VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
-    .bind(id, new Date().toISOString(), JSON.stringify(order.items), order.subtotal, postage.fee, order.fee, order.total,
+    .bind(id, new Date().toISOString(), JSON.stringify(order.items), order.subtotal, order.voucher || null, order.discount, postage.fee, order.fee, order.total,
       c.name, c.phone, c.email, c.address1, c.address2, c.postcode, c.city, c.state,
       c.country, postage.cost, postage.serviceId, postage.courier)
     .run();
@@ -73,7 +73,7 @@ export async function onRequestPost({ request, env }) {
         shipping_state: c.state,
         shipping_country: c.country
       },
-      purchase: {
+      purchase: Object.assign({
         currency: 'MYR',
         language: 'en',
         products: order.items
@@ -82,14 +82,14 @@ export async function onRequestPost({ request, env }) {
             { name: 'Shipping (' + postage.label + ')', quantity: '1', price: postage.fee },
             { name: order.feeLabel, quantity: '1', price: order.fee }
           ])
-      },
+      }, order.discount ? { total_discount_override: order.discount } : {}),
       success_redirect: origin + '/order-success?order=' + id,
       failure_redirect: origin + '/checkout?payment=failed',
       cancel_redirect: origin + '/checkout?payment=cancelled',
       success_callback: origin + '/api/chip-callback'
     });
     await env.DB.prepare('UPDATE orders SET chip_purchase_id = ? WHERE id = ?').bind(purchase.id, id).run();
-    return json({ orderId: id, checkoutUrl: purchase.checkout_url, total: order.total, shipping: postage.fee });
+    return json({ orderId: id, checkoutUrl: purchase.checkout_url, total: order.total, shipping: postage.fee, discount: order.discount });
   } catch (error) {
     console.error(error);
     await env.DB.prepare("UPDATE orders SET status = 'failed' WHERE id = ?").bind(id).run();
