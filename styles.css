@@ -1947,7 +1947,7 @@ select.field__input {
   height: auto;
   aspect-ratio: 900 / 604;
   padding: 24px 16px 0;
-  background: var(--color-beige);
+  background: #fff;
   object-fit: contain;
 }
 
