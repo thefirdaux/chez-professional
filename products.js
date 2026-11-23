@@ -1,7 +1,7 @@
 /*
  * Product catalogue: the one place to change names, prices and descriptions.
  * Prices are in sen (RM 42.90 = 4290). `was` is the crossed-out original price, or null:
- * every product keeps its price from before the November 2026 change (new sets: old single prices added up).
+ * the price before the November 2026 change, as the client gave it.
  *
  * This file is shared: the browser uses it to show prices, and the order server
  * (functions/api/checkout.js) imports the same file to calculate what the buyer pays.
@@ -35,25 +35,20 @@ function product(name, size, price, was, info, extra) {
 }
 
 var products = {
-  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 3900, 4290, SHAMPOO),
-  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 11600, 12870, SHAMPOO),
-  'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 3900, 4290, MASK),
-  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 11600, 12870, MASK),
-  'shampoo-mask-combo': product('Keratin Treatment Shampoo + Mask (Combo)', '280ml x 2 bottle', 7700, 8580, {
-    eyebrow: 'KERATIN SHAMPOO & MASK',
-    description: 'Get both the Keratin Treatment Shampoo and the Keratin Treatment Mask, 280ml each, for a complete keratin care routine.',
-    highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml']
-  }, { combo: true }),
-  'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3600, 3990, SPRAY),
-  'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 10700, 11970, SPRAY),
-  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3700, 3990, TONIC),
-  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11000, 11970, TONIC),
-  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11300, 12570, {
+  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 4200, 6200, SHAMPOO),
+  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 12300, 18600, SHAMPOO),
+  'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 4200, 6500, MASK),
+  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 12300, 19500, MASK),
+  'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3900, 5200, SPRAY),
+  'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 11600, 15600, SPRAY),
+  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3900, 5800, TONIC),
+  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11600, 17400, TONIC),
+  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12000, 12300, {
     eyebrow: 'KERATIN TREATMENT SET',
     description: 'The complete keratin routine: the Keratin Treatment Shampoo and Mask to cleanse and repair, then the Keratin Spray Leave In for lasting moisture, heat protection and easier styling.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Keratin Spray Leave In 135ml']
   }, { combo: true }),
-  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11400, 12570, {
+  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12000, 12300, {
     eyebrow: 'SCALP TREATMENT SET',
     description: 'Care for your hair and scalp together: the Keratin Treatment Shampoo and Mask for softer, stronger hair, plus the Root Booster Hair Tonic with ginseng, biotin and menthol to nourish the roots.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Root Booster Hair Tonic 135ml']
@@ -62,10 +57,10 @@ var products = {
 
 // Which products appear in each shop grid on the home page, in order
 var shops = {
-  keratin: ['shampoo-1', 'shampoo-3', 'mask-1', 'mask-3', 'shampoo-mask-combo'],
+  keratin: ['shampoo-1', 'shampoo-3', 'mask-1', 'mask-3'],
   spray: ['spray-1', 'spray-3'],
   tonic: ['tonic-1', 'tonic-3'],
-  combos: ['shampoo-mask-combo', 'keratin-set', 'scalp-set']
+  combos: ['keratin-set', 'scalp-set']
 };
 
 // Postage in sen. The buyer pays EasyParcel's cheapest courier rate for their address, less
@@ -89,11 +84,9 @@ var districts = ['Brunei-Muara', 'Belait', 'Tutong', 'Temburong'];
 // weight in kg (packaging included) and box size in cm, length x width x height.
 // The admin can still change the weight before booking.
 var SINGLE = { weight: 0.5, box: [15, 10, 5] };
-var COMBO = { weight: 1, box: [15, 10, 10] };
 var BUNDLE = { weight: 1.5, box: [15, 15, 10] };
 var parcels = {
   'shampoo-1': SINGLE, 'mask-1': SINGLE, 'spray-1': SINGLE, 'tonic-1': SINGLE,
-  'shampoo-mask-combo': COMBO,
   'shampoo-3': BUNDLE, 'mask-3': BUNDLE, 'spray-3': BUNDLE, 'tonic-3': BUNDLE,
   // Three bottles, so packed like a bundle until the client gives the real size
   'keratin-set': BUNDLE, 'scalp-set': BUNDLE
