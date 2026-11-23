@@ -49,7 +49,7 @@ var products = {
   'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 11600, 15600, SPRAY),
   'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3900, 5800, TONIC),
   'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11600, 17400, TONIC),
-  'aqua-1': product('Aqua Base Styling Hydration', '1 jar', 3000, null, AQUA),
+  'aqua-1': product('Aqua Base Styling Hydration', '1 unit', 3000, null, AQUA),
   'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12200, 17900, {
     eyebrow: 'KERATIN TREATMENT SET',
     description: 'The complete keratin routine: the Keratin Treatment Shampoo and Mask to cleanse and repair, then the Keratin Spray Leave In for lasting moisture, heat protection and easier styling.',
