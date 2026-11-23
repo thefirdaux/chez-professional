@@ -36,19 +36,19 @@ function product(name, size, price, was, info, extra) {
 
 var products = {
   'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 4200, 6200, SHAMPOO),
-  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 12300, 18600, SHAMPOO),
+  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 12500, 18600, SHAMPOO),
   'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 4200, 6500, MASK),
-  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 12300, 19500, MASK),
+  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 12500, 19500, MASK),
   'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3900, 5200, SPRAY),
   'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 11600, 15600, SPRAY),
   'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3900, 5800, TONIC),
   'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11600, 17400, TONIC),
-  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12000, 12300, {
+  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12200, 17900, {
     eyebrow: 'KERATIN TREATMENT SET',
     description: 'The complete keratin routine: the Keratin Treatment Shampoo and Mask to cleanse and repair, then the Keratin Spray Leave In for lasting moisture, heat protection and easier styling.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Keratin Spray Leave In 135ml']
   }, { combo: true }),
-  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12000, 12300, {
+  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12200, 18500, {
     eyebrow: 'SCALP TREATMENT SET',
     description: 'Care for your hair and scalp together: the Keratin Treatment Shampoo and Mask for softer, stronger hair, plus the Root Booster Hair Tonic with ginseng, biotin and menthol to nourish the roots.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Root Booster Hair Tonic 135ml']
