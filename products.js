@@ -64,11 +64,11 @@ var shops = {
 };
 
 // Postage in sen. The buyer pays EasyParcel's cheapest courier rate for their address, less
-// `covered` (what the shop pays towards it). `fallback` is the estimated postage within Malaysia,
+// `covered` (what the shop pays towards it; nothing since 23 November 2026, it was RM4 in Malaysia). `fallback` is the estimated postage within Malaysia,
 // used only when EasyParcel can't be reached so checkout keeps working. Abroad there is no
 // estimate: the buyer is asked to try again in a few minutes.
 var shipping = {
-  covered: { MY: 400, SG: 0, BN: 0 },
+  covered: { MY: 0, SG: 0, BN: 0 },
   fallback: { west: 800, east: 1500 }
 };
 
