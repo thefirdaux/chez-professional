@@ -1995,6 +1995,26 @@ select.field__input {
   background: var(--color-beige);
 }
 
+.promo__deal-image {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.promo__deal-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.promo__deal-info .promo__deal-price { text-align: left; }
+.promo__deal-info .promo__deal-price s { display: inline; margin-right: 6px; }
+
 .promo__deal-name {
   flex: 1;
   font-size: 15px;

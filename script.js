@@ -197,13 +197,21 @@
       var p = products[id];
       if (!p) return;
       var li = el('li', 'promo__deal');
-      li.appendChild(el('span', 'promo__deal-name', p.name.replace(/\s*\(Combo\)$/, '')));
+      var photo = el('img', 'promo__deal-image');
+      photo.src = 'assets/products/' + id + '.png';
+      photo.alt = '';
+      photo.width = 72;
+      photo.height = 72;
+      li.appendChild(photo);
+      var info = el('span', 'promo__deal-info');
+      info.appendChild(el('span', 'promo__deal-name', p.name.replace(/\s*\(Combo\)$/, '')));
       var price = el('span', 'promo__deal-price', rm(p.price));
       if (p.was) {
         price.insertBefore(el('s', '', rm(p.was)), price.firstChild);
         price.appendChild(el('span', 'promo__deal-save', 'Save ' + rm(p.was - p.price)));
       }
-      li.appendChild(price);
+      info.appendChild(price);
+      li.appendChild(info);
       deals.appendChild(li);
     });
 
