@@ -1,6 +1,7 @@
 /*
  * Product catalogue: the one place to change names, prices and descriptions.
- * Prices are in sen (RM 42.90 = 4290). `was` is the crossed-out original price, or null.
+ * Prices are in sen (RM 42.90 = 4290). `was` is the crossed-out original price, or null:
+ * sets keep the prices from before the November 2026 change (new sets: old single prices added up).
  *
  * This file is shared: the browser uses it to show prices, and the order server
  * (functions/api/checkout.js) imports the same file to calculate what the buyer pays.
@@ -35,24 +36,24 @@ function product(name, size, price, was, info, extra) {
 
 var products = {
   'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 3900, null, SHAMPOO),
-  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 11600, 11700, SHAMPOO),
+  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 11600, 12870, SHAMPOO),
   'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 3900, null, MASK),
-  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 11600, 11700, MASK),
-  'shampoo-mask-combo': product('Keratin Treatment Shampoo + Mask (Combo)', '280ml x 2 bottle', 7700, 7800, {
+  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 11600, 12870, MASK),
+  'shampoo-mask-combo': product('Keratin Treatment Shampoo + Mask (Combo)', '280ml x 2 bottle', 7700, 8580, {
     eyebrow: 'KERATIN SHAMPOO & MASK',
     description: 'Get both the Keratin Treatment Shampoo and the Keratin Treatment Mask, 280ml each, for a complete keratin care routine.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml']
   }, { combo: true }),
   'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3600, null, SPRAY),
-  'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 10700, 10800, SPRAY),
+  'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 10700, 11970, SPRAY),
   'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3700, null, TONIC),
-  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11000, 11100, TONIC),
-  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11300, 11400, {
+  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11000, 11970, TONIC),
+  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11300, 12570, {
     eyebrow: 'KERATIN TREATMENT SET',
     description: 'The complete keratin routine: the Keratin Treatment Shampoo and Mask to cleanse and repair, then the Keratin Spray Leave In for lasting moisture, heat protection and easier styling.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Keratin Spray Leave In 135ml']
   }, { combo: true }),
-  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11400, 11500, {
+  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11400, 12570, {
     eyebrow: 'SCALP TREATMENT SET',
     description: 'Care for your hair and scalp together: the Keratin Treatment Shampoo and Mask for softer, stronger hair, plus the Root Booster Hair Tonic with ginseng, biotin and menthol to nourish the roots.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Root Booster Hair Tonic 135ml']
