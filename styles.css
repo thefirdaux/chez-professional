@@ -1052,7 +1052,8 @@ html.is-sheet-open { overflow: hidden; }
   font-weight: 400;
 }
 
-.field__input {
+.field__input,
+.voucher__input {
   width: 100%;
   min-height: 48px;
   padding: 12px 14px;
@@ -1074,7 +1075,8 @@ select.field__input {
   background-position: right 14px center;
 }
 
-.field__input:focus {
+.field__input:focus,
+.voucher__input:focus {
   border-color: var(--color-brown);
   outline: 2px solid rgba(166, 93, 63, 0.25);
   outline-offset: 0;
