@@ -9,6 +9,24 @@ import { createPurchase } from '../_lib/chip.js';
 import { json } from '../_lib/http.js';
 import { postageFor, PostageUnavailable } from '../_lib/postage.js';
 
+/**
+ * The products as CHIP lines. CHIP has no voucher field (total_discount_override is display-only),
+ * so a voucher is a `discount` on one unit of the dearest product, on a line of its own.
+ */
+export function productLines(order) {
+  const lines = order.items.map((item) => ({ name: item.name + ' (' + item.size + ')', quantity: String(item.qty), price: item.price }));
+  if (!order.discount) return lines;
+  const i = order.items.reduce((best, item, k) => (item.price > order.items[best].price ? k : best), 0);
+  const line = lines[i];
+  if (order.items[i].qty === 1) {
+    line.discount = order.discount;
+  } else {
+    line.quantity = String(order.items[i].qty - 1);
+    lines.splice(i + 1, 0, { name: line.name, quantity: '1', price: line.price, discount: order.discount });
+  }
+  return lines;
+}
+
 export async function onRequestPost({ request, env }) {
   if (!isConfigured(env)) return json({ error: 'Online payment is not available yet.' }, 503);
 
@@ -73,16 +91,14 @@ export async function onRequestPost({ request, env }) {
         shipping_state: c.state,
         shipping_country: c.country
       },
-      purchase: Object.assign({
+      purchase: {
         currency: 'MYR',
         language: 'en',
-        products: order.items
-          .map((item) => ({ name: item.name + ' (' + item.size + ')', quantity: String(item.qty), price: item.price }))
-          .concat([
-            { name: 'Shipping (' + postage.label + ')', quantity: '1', price: postage.fee },
-            { name: order.feeLabel, quantity: '1', price: order.fee }
-          ])
-      }, order.discount ? { total_discount_override: order.discount } : {}),
+        products: productLines(order).concat([
+          { name: 'Shipping (' + postage.label + ')', quantity: '1', price: postage.fee },
+          { name: order.feeLabel, quantity: '1', price: order.fee }
+        ])
+      },
       success_redirect: origin + '/order-success?order=' + id,
       failure_redirect: origin + '/checkout?payment=failed',
       cancel_redirect: origin + '/checkout?payment=cancelled',

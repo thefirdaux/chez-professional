@@ -63,7 +63,8 @@ export function priceOrder(input) {
 
   // A voucher comes off the products only (see products.js)
   const voucher = text(input && input.voucher, 30).toUpperCase();
-  const discount = voucher ? voucherDiscount(voucher, subtotal) : 0;
+  // Never more than one unit of the dearest product, which is where CHIP takes it off (api/checkout.js)
+  const discount = voucher ? Math.min(voucherDiscount(voucher, subtotal), Math.max(...items.map((item) => item.price))) : 0;
   if (voucher && !discount) throw new InputError('This voucher code is not valid.');
 
   // Postage is added by the caller (see _lib/postage.js), because it comes from EasyParcel
