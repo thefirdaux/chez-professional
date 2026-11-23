@@ -1,7 +1,7 @@
 /*
  * Product catalogue: the one place to change names, prices and descriptions.
  * Prices are in sen (RM 42.90 = 4290). `was` is the crossed-out original price, or null:
- * sets keep the prices from before the November 2026 change (new sets: old single prices added up).
+ * every product keeps its price from before the November 2026 change (new sets: old single prices added up).
  *
  * This file is shared: the browser uses it to show prices, and the order server
  * (functions/api/checkout.js) imports the same file to calculate what the buyer pays.
@@ -35,18 +35,18 @@ function product(name, size, price, was, info, extra) {
 }
 
 var products = {
-  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 3900, null, SHAMPOO),
+  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 3900, 4290, SHAMPOO),
   'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 11600, 12870, SHAMPOO),
-  'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 3900, null, MASK),
+  'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 3900, 4290, MASK),
   'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 11600, 12870, MASK),
   'shampoo-mask-combo': product('Keratin Treatment Shampoo + Mask (Combo)', '280ml x 2 bottle', 7700, 8580, {
     eyebrow: 'KERATIN SHAMPOO & MASK',
     description: 'Get both the Keratin Treatment Shampoo and the Keratin Treatment Mask, 280ml each, for a complete keratin care routine.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml']
   }, { combo: true }),
-  'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3600, null, SPRAY),
+  'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3600, 3990, SPRAY),
   'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 10700, 11970, SPRAY),
-  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3700, null, TONIC),
+  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3700, 3990, TONIC),
   'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11000, 11970, TONIC),
   'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11300, 12570, {
     eyebrow: 'KERATIN TREATMENT SET',
