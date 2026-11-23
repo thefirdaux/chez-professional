@@ -34,23 +34,28 @@ function product(name, size, price, was, info, extra) {
 }
 
 var products = {
-  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 4290, null, SHAMPOO),
-  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 12000, 12870, SHAMPOO),
-  'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 4290, null, MASK),
-  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 12000, 12870, MASK),
-  'shampoo-mask-combo': product('Keratin Treatment Shampoo + Mask (Combo)', '280ml x 2 bottle', 8000, 8580, {
+  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 3900, null, SHAMPOO),
+  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 11600, 11700, SHAMPOO),
+  'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 3900, null, MASK),
+  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 11600, 11700, MASK),
+  'shampoo-mask-combo': product('Keratin Treatment Shampoo + Mask (Combo)', '280ml x 2 bottle', 7700, 7800, {
     eyebrow: 'KERATIN SHAMPOO & MASK',
     description: 'Get both the Keratin Treatment Shampoo and the Keratin Treatment Mask, 280ml each, for a complete keratin care routine.',
     highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml']
   }, { combo: true }),
-  'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3990, null, SPRAY),
-  'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 11000, 11970, SPRAY),
-  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3990, null, TONIC),
-  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11000, 11970, TONIC),
-  'spray-tonic-combo': product('Leave In Keratin Spray + Root Booster Hair Tonic (Combo)', '135ml x 2 bottle', 7500, 7980, {
-    eyebrow: 'KERATIN SPRAY + HAIR TONIC',
-    description: 'Get both the Keratin Spray Leave In and the Root Booster Hair Tonic, 135ml each, to care for your hair and scalp.',
-    highlights: ['Keratin Spray Leave In 135ml', 'Root Booster Hair Tonic 135ml']
+  'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3600, null, SPRAY),
+  'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 10700, 10800, SPRAY),
+  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3700, null, TONIC),
+  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11000, 11100, TONIC),
+  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11300, 11400, {
+    eyebrow: 'KERATIN TREATMENT SET',
+    description: 'The complete keratin routine: the Keratin Treatment Shampoo and Mask to cleanse and repair, then the Keratin Spray Leave In for lasting moisture, heat protection and easier styling.',
+    highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Keratin Spray Leave In 135ml']
+  }, { combo: true }),
+  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 11400, 11500, {
+    eyebrow: 'SCALP TREATMENT SET',
+    description: 'Care for your hair and scalp together: the Keratin Treatment Shampoo and Mask for softer, stronger hair, plus the Root Booster Hair Tonic with ginseng, biotin and menthol to nourish the roots.',
+    highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Root Booster Hair Tonic 135ml']
   }, { combo: true })
 };
 
@@ -59,7 +64,7 @@ var shops = {
   keratin: ['shampoo-1', 'shampoo-3', 'mask-1', 'mask-3', 'shampoo-mask-combo'],
   spray: ['spray-1', 'spray-3'],
   tonic: ['tonic-1', 'tonic-3'],
-  combos: ['shampoo-mask-combo', 'spray-tonic-combo']
+  combos: ['shampoo-mask-combo', 'keratin-set', 'scalp-set']
 };
 
 // Postage in sen. The buyer pays EasyParcel's cheapest courier rate for their address, less
@@ -87,8 +92,10 @@ var COMBO = { weight: 1, box: [15, 10, 10] };
 var BUNDLE = { weight: 1.5, box: [15, 15, 10] };
 var parcels = {
   'shampoo-1': SINGLE, 'mask-1': SINGLE, 'spray-1': SINGLE, 'tonic-1': SINGLE,
-  'shampoo-mask-combo': COMBO, 'spray-tonic-combo': COMBO,
-  'shampoo-3': BUNDLE, 'mask-3': BUNDLE, 'spray-3': BUNDLE, 'tonic-3': BUNDLE
+  'shampoo-mask-combo': COMBO,
+  'shampoo-3': BUNDLE, 'mask-3': BUNDLE, 'spray-3': BUNDLE, 'tonic-3': BUNDLE,
+  // Three bottles, so packed like a bundle until the client gives the real size
+  'keratin-set': BUNDLE, 'scalp-set': BUNDLE
 };
 
 // Payment processing fee in sen, listed as its own line on every order.
