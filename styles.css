@@ -531,6 +531,82 @@ main > section + section { margin-top: 1px; }
 .tonic .section-copy { margin-top: 16px; }
 .tonic__benefits { margin-top: 62px; }
 
+/* ---------- Aqua Base ---------- */
+.aqua { padding: 44px 0 56px; }
+
+.aqua__badge {
+  align-self: center;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: var(--color-brown);
+  color: #fff;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.aqua__tagline {
+  color: var(--color-brown-dark);
+  font-weight: 600;
+}
+
+.aqua__tagline span { margin: 0 6px; color: var(--color-brown); }
+
+.aqua__image {
+  display: block;
+  width: 280px;
+  height: auto;
+  aspect-ratio: 1000 / 1140;
+  margin: 28px auto 0;
+  filter: drop-shadow(0 18px 24px rgba(74, 44, 32, 0.22));
+}
+
+.aqua__benefits {
+  display: grid;
+  gap: 14px;
+  margin: 36px var(--gutter) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aqua-benefit {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  column-gap: 14px;
+  row-gap: 2px;
+  align-items: start;
+  padding: 18px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(74, 44, 32, 0.08);
+}
+
+.aqua-benefit__icon {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-beige);
+  color: var(--color-brown);
+}
+
+.aqua-benefit__title {
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.aqua-benefit__text {
+  color: #4a4a4a;
+  font-size: 15px;
+  line-height: 21px;
+}
+
 /* ---------- Combo deals ---------- */
 .combos { padding: 44px 0 77px; }
 .combos__image { aspect-ratio: 1536 / 1024; }
@@ -1602,6 +1678,29 @@ select.field__input {
     width: min(max(731px, 57.1vw), 100% - 2 * var(--gutter));
     margin: 32px auto 0;
   }
+
+  /* Aqua Base */
+  .page--home .aqua { padding: 40px 0 64px; }
+  .page--home .aqua__image { width: 420px; margin-top: 32px; }
+
+  .page--home .aqua__benefits {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    width: min(1100px, 100% - 2 * var(--gutter));
+    margin: 48px auto 0;
+  }
+
+  .page--home .aqua-benefit {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    row-gap: 8px;
+    padding: 32px 28px;
+    text-align: center;
+  }
+
+  .page--home .aqua-benefit__icon { grid-row: auto; width: 64px; height: 64px; margin-bottom: 8px; }
+  .page--home .aqua-benefit__title { font-size: 21px; line-height: 26px; }
+  .page--home .aqua-benefit__text { font-size: 17px; line-height: 24px; }
 
   /* Chez Hamdan */
   .page--home .about { padding: 78px 0 77px; }

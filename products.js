@@ -28,6 +28,12 @@ var TONIC = {
   highlights: ['With ginseng, biotin and menthol', 'Nourishes hair roots', 'Invigorates the scalp', 'Keeps your scalp fresh all day, even under your hijab']
 };
 
+var AQUA = {
+  eyebrow: 'AQUA BASE',
+  description: 'Water-based styling with a strong hold that keeps your hairstyle neat and well-defined, and washes out easily with water.',
+  highlights: ['Strong hold for a neat, well-defined look', 'Water-based formula for everyday use', 'Easy to rinse: washes out with water']
+};
+
 function product(name, size, price, was, info, extra) {
   var p = { name: name, size: size, price: price, was: was, eyebrow: info.eyebrow, description: info.description, highlights: info.highlights };
   for (var key in extra) p[key] = extra[key];
@@ -43,6 +49,7 @@ var products = {
   'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 11600, 15600, SPRAY),
   'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3900, 5800, TONIC),
   'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11600, 17400, TONIC),
+  'aqua-1': product('Aqua Base Styling Hydration', '1 jar', 3000, null, AQUA),
   'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12200, 17900, {
     eyebrow: 'KERATIN TREATMENT SET',
     description: 'The complete keratin routine: the Keratin Treatment Shampoo and Mask to cleanse and repair, then the Keratin Spray Leave In for lasting moisture, heat protection and easier styling.',
@@ -60,6 +67,7 @@ var shops = {
   keratin: ['shampoo-1', 'shampoo-3', 'mask-1', 'mask-3'],
   spray: ['spray-1', 'spray-3'],
   tonic: ['tonic-1', 'tonic-3'],
+  aqua: ['aqua-1'],
   combos: ['keratin-set', 'scalp-set']
 };
 
@@ -86,7 +94,7 @@ var districts = ['Brunei-Muara', 'Belait', 'Tutong', 'Temburong'];
 var SINGLE = { weight: 0.5, box: [15, 10, 5] };
 var BUNDLE = { weight: 1.5, box: [15, 15, 10] };
 var parcels = {
-  'shampoo-1': SINGLE, 'mask-1': SINGLE, 'spray-1': SINGLE, 'tonic-1': SINGLE,
+  'shampoo-1': SINGLE, 'mask-1': SINGLE, 'spray-1': SINGLE, 'tonic-1': SINGLE, 'aqua-1': SINGLE,
   'shampoo-3': BUNDLE, 'mask-3': BUNDLE, 'spray-3': BUNDLE, 'tonic-3': BUNDLE,
   // Three bottles, so packed like a bundle until the client gives the real size
   'keratin-set': BUNDLE, 'scalp-set': BUNDLE
