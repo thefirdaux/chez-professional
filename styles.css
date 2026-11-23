@@ -1947,7 +1947,7 @@ select.field__input {
   height: auto;
   aspect-ratio: 900 / 604;
   padding: 24px 16px 0;
-  background: #fff;
+  background: var(--color-beige);
   object-fit: contain;
 }
 
@@ -1991,8 +1991,9 @@ select.field__input {
   align-items: center;
   gap: 12px;
   padding: 12px;
+  border: 1px solid #ece6e0;
   border-radius: 12px;
-  background: var(--color-beige);
+  background: #fff;
 }
 
 .promo__deal-image {
