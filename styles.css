@@ -291,15 +291,12 @@ main > section + section { margin-top: 1px; }
 .duo__brand,
 .duo__size {
   color: #757575;
-  font-size: 8px;
-  line-height: 10px;
+  font-size: 11px; /* Caption 2 */
+  line-height: 13px;
   letter-spacing: 0.06px;
 }
 
-.duo__brand {
-  text-align: center;
-  white-space: nowrap;
-}
+.duo__brand { text-align: left; } /* wraps to two lines on phones at Caption 2 size */
 
 .duo__name {
   font-size: 13px;
@@ -394,10 +391,10 @@ main > section + section { margin-top: 1px; }
   border-radius: 99px;
   background: #a81318;
   color: #fff;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 12px; /* Caption 1 */
+  line-height: 16px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   white-space: nowrap;
   vertical-align: middle;
 }
@@ -411,10 +408,12 @@ main > section + section { margin-top: 1px; }
   top: 6px;
   left: 6px;
   padding: 4px 10px;
-  font-size: 13px;
+  font-size: 13px; /* Footnote */
+  line-height: 18px;
+  letter-spacing: -0.08px;
 }
 
-.sheet__price .discount-badge { align-self: center; font-size: 13px; }
+.sheet__price .discount-badge { align-self: center; font-size: 13px; line-height: 18px; letter-spacing: -0.08px; }
 
 .shop-card__image {
   width: 100%;
@@ -624,16 +623,17 @@ main > section + section { margin-top: 1px; }
 }
 
 .aqua-benefit__title {
-  font-size: 17px;
+  font-size: 17px; /* Headline */
   line-height: 22px;
   font-weight: 700;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.43px;
 }
 
 .aqua-benefit__text {
   color: #4a4a4a;
-  font-size: 15px;
-  line-height: 21px;
+  font-size: 15px; /* Subheadline */
+  line-height: 20px;
+  letter-spacing: -0.23px;
 }
 
 /* ---------- Combo deals ---------- */
@@ -921,6 +921,8 @@ html.is-sheet-open { overflow: hidden; }
   font: inherit;
   font-size: 13px;
   cursor: pointer;
+  line-height: 18px;
+  letter-spacing: -0.08px;
 }
 
 .qty {
@@ -939,8 +941,9 @@ html.is-sheet-open { overflow: hidden; }
   background: none;
   color: var(--color-text);
   font: inherit;
-  font-size: 18px;
+  font-size: 17px;
   cursor: pointer;
+  line-height: 22px;
 }
 
 .qty__btn:disabled {
@@ -952,6 +955,8 @@ html.is-sheet-open { overflow: hidden; }
   min-width: 24px;
   font-size: 15px;
   text-align: center;
+  line-height: 20px;
+  letter-spacing: -0.23px;
 }
 
 .cart__footer {
@@ -976,6 +981,7 @@ html.is-sheet-open { overflow: hidden; }
   font-size: 17px;
   line-height: 22px;
   font-weight: 600;
+  letter-spacing: -0.43px;
 }
 
 .cart__hint {
@@ -1117,9 +1123,11 @@ html.is-sheet-open { overflow: hidden; }
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  line-height: 20px;
+  letter-spacing: -0.23px;
 }
 
-.voucher__note { color: #1f7a3d; font-size: 14px; line-height: 20px; }
+.voucher__note { color: #1f7a3d; font-size: 13px; line-height: 18px; letter-spacing: -0.08px; } /* Footnote */
 .voucher__note.is-error { color: #a81318; }
 .voucher__note[hidden] { display: none; }
 
@@ -1168,9 +1176,10 @@ html.is-sheet-open { overflow: hidden; }
   color: var(--color-text);
   font: inherit;
   font-size: 16px; /* 16px stops iOS from zooming into the field */
-  line-height: 22px;
+  line-height: 21px;
   -webkit-appearance: none;
   appearance: none;
+  letter-spacing: -0.31px;
 }
 
 select.field__input {
@@ -1386,6 +1395,29 @@ select.field__input {
    Sizes scale down smoothly between 768px and 1280px.
    ===================================================================== */
 @media (min-width: 768px) {
+  /* Type on computers and iPads follows apple.com: fixed sizes, one step larger from 1069px.
+     Headline 48 → 64, Section heading 40 → 48, Subsection 32 → 40, Lead 24 → 28,
+     Intro 21 → 24, then Body 17/25, Small 14/20 and Caption 12/16 on every width. */
+  :root {
+    --type-headline: 48px;    --type-headline-lh: 52px; --type-headline-ls: -0.003em;
+    --type-section: 40px;     --type-section-lh: 44px;  --type-section-ls: 0;
+    --type-subsection: 32px;  --type-subsection-lh: 36px; --type-subsection-ls: 0.004em;
+    --type-lead: 24px;        --type-lead-lh: 28px;     --type-lead-ls: 0.009em;
+    --type-intro: 21px;       --type-intro-lh: 29px;    --type-intro-ls: 0.011em;
+  }
+}
+
+@media (min-width: 1069px) {
+  :root {
+    --type-headline: 64px;    --type-headline-lh: 68px; --type-headline-ls: -0.009em;
+    --type-section: 48px;     --type-section-lh: 52px;  --type-section-ls: -0.003em;
+    --type-subsection: 40px;  --type-subsection-lh: 44px; --type-subsection-ls: 0;
+    --type-lead: 28px;        --type-lead-lh: 32px;     --type-lead-ls: 0.007em;
+    --type-intro: 24px;       --type-intro-lh: 32px;    --type-intro-ls: 0.009em;
+  }
+}
+
+@media (min-width: 768px) {
   /* Fills the whole window: below 1280px things shrink with the window, above it they grow
      in the same proportions as the 1280px design */
   .page--home {
@@ -1412,10 +1444,10 @@ select.field__input {
   .page--home .section-title {
     display: block;
     padding: 0;
-    font-size: clamp(40px, 4.375vw, 72px);
-    line-height: 1.07;
+    font-size: var(--type-headline);
+    line-height: var(--type-headline-lh);
     font-weight: 600;
-    letter-spacing: -1.5px;
+    letter-spacing: var(--type-headline-ls);
     text-wrap: balance;
   }
 
@@ -1429,10 +1461,10 @@ select.field__input {
   .page--home .section-intro > p {
     max-width: max(1000px, 78vw);
     margin: 0 auto;
-    font-size: clamp(17px, 1.5625vw, 24px);
-    line-height: 1.4;
+    font-size: var(--type-intro);
+    line-height: var(--type-intro-lh);
     font-weight: 500;
-    letter-spacing: -0.2px;
+    letter-spacing: var(--type-intro-ls);
     text-wrap: balance;
   }
 
@@ -1441,20 +1473,20 @@ select.field__input {
     max-width: max(1000px, 78vw);
     margin-left: auto;
     margin-right: auto;
-    font-size: clamp(21px, 2.1875vw, 34px);
-    line-height: 1.21;
+    font-size: var(--type-lead);
+    line-height: var(--type-lead-lh);
     font-weight: 500;
-    letter-spacing: -0.4px;
+    letter-spacing: var(--type-lead-ls);
     text-wrap: balance;
   }
 
   /* Block headings: Product Review / Shop Product */
   .page--home .reviews__title,
   .page--home .shop-block > h3 {
-    font-size: clamp(32px, 3.4375vw, 56px);
-    line-height: 1.09;
+    font-size: var(--type-section);
+    line-height: var(--type-section-lh);
     font-weight: 600;
-    letter-spacing: -1px;
+    letter-spacing: var(--type-section-ls);
   }
 
   /* Hero, main product, combos */
@@ -1491,9 +1523,9 @@ select.field__input {
   .page--home .duo__brand,
   .page--home .duo__size {
     color: #000;
-    font-size: 13px;
-    line-height: 18px;
-    letter-spacing: 0.1px;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.016em;
     text-align: left;
   }
 
@@ -1501,6 +1533,7 @@ select.field__input {
     margin-top: -4px; /* brand and name sit 4px apart */
     font-size: 17px;
     line-height: 25px;
+    letter-spacing: -0.022em;
   }
 
   .page--home .keratin__details {
@@ -1522,15 +1555,15 @@ select.field__input {
   .page--home .product-list__item { gap: 16px; }
 
   .page--home .product-list dt {
-    font-size: clamp(22px, 2.1875vw, 34px);
-    line-height: 1.21;
-    letter-spacing: -0.4px;
+    font-size: var(--type-lead);
+    line-height: var(--type-lead-lh);
+    letter-spacing: var(--type-lead-ls);
   }
 
   .page--home .product-list dd {
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: 0;
+    letter-spacing: -0.022em;
   }
 
   .page--home .keratin__side-image {
@@ -1547,9 +1580,9 @@ select.field__input {
   .page--home .transformation__title {
     padding-top: 10px;
     padding-bottom: 10px;
-    font-size: clamp(28px, 2.8125vw, 46px);
-    line-height: 1.11;
-    letter-spacing: -0.7px;
+    font-size: var(--type-subsection);
+    line-height: var(--type-subsection-lh);
+    letter-spacing: var(--type-subsection-ls);
   }
 
   .page--home .carousel {
@@ -1577,10 +1610,10 @@ select.field__input {
   }
 
   .page--home .carousel__caption {
-    font-size: clamp(20px, 2.03vw, 34px);
-    line-height: 1.31;
+    font-size: var(--type-lead);
+    line-height: var(--type-lead-lh);
     font-weight: 700;
-    letter-spacing: -0.4px;
+    letter-spacing: var(--type-lead-ls);
   }
 
   /* Reviews */
@@ -1595,7 +1628,7 @@ select.field__input {
     box-shadow: none;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: 0;
+    letter-spacing: -0.022em;
   }
 
   .page--home .review-card__meta img[alt="TikTok"] { width: 24px; height: 24px; }
@@ -1631,7 +1664,7 @@ select.field__input {
   .page--home .shop-card__name h4 {
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: 0;
+    letter-spacing: -0.022em;
   }
 
   .page--home .shop-card__name p {
@@ -1643,7 +1676,7 @@ select.field__input {
     column-gap: 8px;
     font-size: 17px;
     line-height: 25px;
-    letter-spacing: 0;
+    letter-spacing: -0.022em;
   }
 
   .page--home .shop-card__buy {
@@ -1651,7 +1684,7 @@ select.field__input {
     font-size: 17px;
     line-height: 25px;
     font-weight: 600;
-    letter-spacing: 0;
+    letter-spacing: -0.022em;
   }
 
   .page--home .scroll-area:has(.shop) .scroll-hint { top: calc(286px / 2 - 16px); transform: none; }
@@ -1681,7 +1714,7 @@ select.field__input {
     font-size: 17px;
     line-height: 25px;
     font-weight: 500;
-    letter-spacing: 0;
+    letter-spacing: -0.022em;
   }
 
   .page--home .benefit-card__text br { display: none; }
@@ -1729,25 +1762,25 @@ select.field__input {
   }
 
   .page--home .aqua-benefit__icon { grid-row: auto; width: 64px; height: 64px; margin-bottom: 8px; }
-  .page--home .aqua-benefit__title { font-size: 21px; line-height: 26px; }
-  .page--home .aqua-benefit__text { font-size: 17px; line-height: 24px; }
+  .page--home .aqua-benefit__title { font-size: 21px; line-height: 25px; letter-spacing: 0.011em; }
+  .page--home .aqua-benefit__text { font-size: 17px; line-height: 25px; letter-spacing: -0.022em; }
 
   /* Chez Hamdan */
   .page--home .about { padding: 78px 0 77px; }
   .page--home .about__intro { gap: 16px; }
 
   .page--home .about__intro h2 {
-    font-size: clamp(40px, 4.375vw, 72px);
-    line-height: 1.07;
+    font-size: var(--type-headline);
+    line-height: var(--type-headline-lh);
     font-weight: 600;
-    letter-spacing: -1.5px;
+    letter-spacing: var(--type-headline-ls);
   }
 
   .page--home .about__intro p,
   .page--home .about__roles {
-    font-size: clamp(21px, 2.1875vw, 34px);
-    line-height: 1.21;
-    letter-spacing: -0.4px;
+    font-size: var(--type-lead);
+    line-height: var(--type-lead-lh);
+    letter-spacing: var(--type-lead-ls);
   }
 
   .page--home .about__roles { margin-top: -8px; }
@@ -1758,13 +1791,13 @@ select.field__input {
     aspect-ratio: 1856 / 2304;
   }
 
-  /* Headline style: 22px / 28px at 1280px, a blank line between paragraphs */
+  /* A blank line between paragraphs */
   .page--home .about__text {
     gap: 1.2727em;
     margin-top: 48px;
-    font-size: clamp(17px, 1.71875vw, 27px);
-    line-height: 1.2727;
-    letter-spacing: -0.3px;
+    font-size: var(--type-intro);
+    line-height: var(--type-intro-lh);
+    letter-spacing: var(--type-intro-ls);
   }
 }
 
@@ -1821,11 +1854,11 @@ select.field__input {
 
   #product-sheet .sheet__summary h2 {
     font-size: 32px;
-    line-height: 38px;
-    letter-spacing: -0.6px;
+    line-height: 36px;
+    letter-spacing: 0.004em;
   }
 
-  #product-sheet .sheet__price { margin-top: 12px; font-size: 26px; line-height: 32px; }
+  #product-sheet .sheet__price { margin-top: 12px; font-size: 28px; line-height: 32px; letter-spacing: 0.007em; }
   #product-sheet .sheet__actions { margin-top: 24px; gap: 12px; }
 
   #product-sheet .sheet__details {
@@ -1895,8 +1928,8 @@ select.field__input {
 
   .page--wide .checkout__title {
     font-size: 40px;
-    line-height: 46px;
-    letter-spacing: -1px;
+    line-height: 44px;
+    letter-spacing: 0;
   }
 
   .page--wide .checkout__demo,
@@ -1951,7 +1984,7 @@ select.field__input {
   gap: 12px;
   margin-top: 24px;
   font-size: 15px;
-  line-height: 22px;
+  line-height: 20px;
   letter-spacing: -0.23px;
 }
 
@@ -2102,10 +2135,10 @@ select.field__input {
 }
 
 .promo__title {
-  font-size: 24px;
-  line-height: 30px;
+  font-size: 22px; /* Title 2 */
+  line-height: 28px;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.26px;
 }
 
 .promo__deals {
@@ -2258,7 +2291,7 @@ select.field__input {
 .site-footer__credit {
   color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
-  line-height: 14px;
+  line-height: 13px;
   letter-spacing: 0.06px;
 }
 
