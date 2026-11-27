@@ -13,6 +13,12 @@
     return node;
   }
 
+  /** "32% OFF" for a product with a crossed-out price, or null. Rounded to the nearest whole percent. */
+  function discountText(product) {
+    if (!product.was || product.was <= product.price) return null;
+    return Math.round((product.was - product.price) / product.was * 100) + '% OFF';
+  }
+
   function priceNode(product, className) {
     var p = el('p', className);
     if (product.was) {
@@ -40,6 +46,9 @@
       img.sizes = '(min-width: 768px) 286px, 45vw';
       img.alt = product.name + ', ' + product.size;
       img.loading = 'lazy';
+      var media = el('div', 'shop-card__media');
+      media.appendChild(img);
+      if (discountText(product)) media.appendChild(el('span', 'discount-badge shop-card__badge', discountText(product)));
 
       var name = el('div', 'shop-card__name');
       name.appendChild(el('h4', null, product.name));
@@ -55,7 +64,7 @@
       var body = el('div', 'shop-card__body');
       body.appendChild(details);
       body.appendChild(buy);
-      card.appendChild(img);
+      card.appendChild(media);
       card.appendChild(body);
       list.appendChild(card);
     });
@@ -137,6 +146,7 @@
     field('was').textContent = product.was ? rm(product.was) : '';
     field('price').textContent = rm(product.price);
     field('price').classList.toggle('is-sale', !!product.was);
+    field('discount').textContent = discountText(product) || '';
     field('description').textContent = product.description;
     var list = field('highlights');
     list.textContent = '';
@@ -208,7 +218,9 @@
       var price = el('span', 'promo__deal-price', rm(p.price));
       if (p.was) {
         price.insertBefore(el('s', '', rm(p.was)), price.firstChild);
-        price.appendChild(el('span', 'promo__deal-save', 'Save ' + rm(p.was - p.price)));
+        var save = el('span', 'promo__deal-save', 'Save ' + rm(p.was - p.price) + ' ');
+        save.appendChild(el('span', 'discount-badge', discountText(p)));
+        price.appendChild(save);
       }
       info.appendChild(price);
       li.appendChild(info);
