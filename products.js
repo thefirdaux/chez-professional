@@ -7,22 +7,27 @@
  * (functions/api/checkout.js) imports the same file to calculate what the buyer pays.
  * The server never trusts prices sent from the browser.
  */
+// `sold`: how many the client has sold on TikTok Shop, shown on the product's cards as the client gives it
 var SHAMPOO = {
+  sold: '2.8k',
   eyebrow: 'KERATIN SHAMPOO & MASK',
   description: 'Direka untuk menyuburkan dan menjaga rambut anda. Formula ini membantu meningkatkan kelembapan, memperbaiki struktur rambut dan mengurangkan kekakuan akibat air laut.',
   highlights: ['Tanpa SLS. Tanpa Paraben. Lembut pada rambut dan kulit kepala', 'Meningkatkan kelembapan', 'Memperbaiki struktur rambut', 'Mengurangkan kekakuan akibat air laut']
 };
 var MASK = {
+  sold: '2.4k',
   eyebrow: 'KERATIN SHAMPOO & MASK',
   description: 'Melembapkan rambut kering dan rapuh secara mendalam untuk helaian yang lebih lembut dan sihat. Menggantikan protein keratin untuk membaiki kerosakan akibat peluntur, pewarna rambut dan alat penggayaan panas. Menguatkan setiap helai untuk mengurangkan rambut patah dan bercabang, sambil melicinkan rambut kembang dan kusut supaya lebih mudah digayakan.',
   highlights: ['Tanpa SLS. Tanpa Paraben. Lembut pada rambut dan kulit kepala', 'Melembapkan rambut kering dan rapuh secara mendalam', 'Menggantikan protein keratin', 'Mengurangkan rambut patah dan bercabang', 'Melicinkan rambut kembang dan kusut']
 };
 var SPRAY = {
+  sold: '3k',
   eyebrow: 'KERATIN SPRAY',
   description: 'Rambut lebih mudah diurus dengan kelembapan berpanjangan, perlindungan haba dan tambahan keratin. Rambut anda jadi lebih lembut, sihat dan mudah digayakan.',
   highlights: ['Rambut lebih mudah dikawal dan diurus', 'Kelembapan tambahan untuk rambut anda', 'Melindungi daripada haba pengering rambut dan pelurus rambut', 'Diperkaya dengan protein keratin']
 };
 var TONIC = {
+  sold: '1.9k',
   eyebrow: 'HAIR TONIC',
   description: 'Mengandungi bahan seperti ginseng, biotin dan mentol untuk membantu menyuburkan akar rambut, menyegarkan kulit kepala dan menyokong pertumbuhan rambut yang sihat.',
   highlights: ['Dengan ginseng, biotin dan mentol', 'Menyuburkan akar rambut', 'Menyegarkan kulit kepala', 'Kulit kepala kekal segar sepanjang hari, walaupun di bawah tudung']
@@ -35,7 +40,7 @@ var AQUA = {
 };
 
 function product(name, size, price, was, info, extra) {
-  var p = { name: name, size: size, price: price, was: was, eyebrow: info.eyebrow, description: info.description, highlights: info.highlights };
+  var p = { name: name, size: size, price: price, was: was, sold: info.sold || null, eyebrow: info.eyebrow, description: info.description, highlights: info.highlights };
   for (var key in extra) p[key] = extra[key];
   return p;
 }

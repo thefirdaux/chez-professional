@@ -87,6 +87,19 @@ var linkedSection = (function () {
     return '-' + Math.round((product.was - product.price) / product.was * 100) + '%';
   }
 
+  /** "2.8k terjual di TikTok", with the TikTok mark */
+  function soldNode(product, className) {
+    var p = el('p', className);
+    var icon = el('img');
+    icon.src = 'assets/icon-tiktok.svg?v=2c7d9041';
+    icon.alt = '';
+    icon.width = 14;
+    icon.height = 14;
+    p.appendChild(icon);
+    p.appendChild(document.createTextNode(product.sold + ' terjual di TikTok'));
+    return p;
+  }
+
   function priceNode(product, className) {
     var p = el('p', className);
     if (product.was) {
@@ -121,6 +134,7 @@ var linkedSection = (function () {
       var name = el('div', 'shop-card__name');
       name.appendChild(el('h4', null, product.name));
       name.appendChild(el('p', null, product.size));
+      if (product.sold) name.appendChild(soldNode(product, 'shop-card__sold'));
       var details = el('div', 'shop-card__details');
       details.appendChild(name);
       details.appendChild(priceNode(product, 'shop-card__price'));
@@ -211,6 +225,10 @@ var linkedSection = (function () {
     field('eyebrow').textContent = product.eyebrow;
     field('name').textContent = product.name;
     field('size').textContent = product.size;
+    var sold = field('sold');
+    sold.textContent = '';
+    if (product.sold) sold.appendChild(soldNode(product, 'sheet__sold-line'));
+    sold.hidden = !product.sold;
     field('was').textContent = product.was ? rm(product.was) : '';
     field('price').textContent = rm(product.price);
     field('price').classList.toggle('is-sale', !!product.was);

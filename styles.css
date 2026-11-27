@@ -415,6 +415,24 @@ main > section + section { margin-top: 1px; }
 
 .sheet__price .discount-badge { align-self: center; font-size: 13px; line-height: 18px; letter-spacing: -0.08px; }
 
+.shop-card__name .shop-card__sold,
+.sheet__sold-line {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  color: #4a4a4a;
+  font-size: 13px; /* Footnote */
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+}
+
+.shop-card__sold img,
+.sheet__sold-line img { flex: none; width: 14px; height: 14px; }
+
+.sheet__sold[hidden] { display: none; }
+
 .shop-card__image {
   width: 100%;
   aspect-ratio: 1;
@@ -1681,6 +1699,8 @@ select.field__input {
     color: #000;
     line-height: 25px;
   }
+
+  .page--home .shop-card__name .shop-card__sold { color: #4a4a4a; line-height: 20px; font-size: 14px; letter-spacing: -0.016em; }
 
   .page--home .shop-card__price {
     column-gap: 8px;
