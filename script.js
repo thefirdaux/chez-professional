@@ -1,23 +1,30 @@
-/* ---------- Short links that open the home page at a section, e.g. www.chezprofessional.com/aqua-base ---------- */
-// _redirects serves the home page at these addresses; here it scrolls to the section with the same id.
-// The other short links (/keratin, /sponsor, /about) open the home page from the top.
+/* ---------- The address follows the section being read, e.g. www.chezprofessional.com/aqua-base ---------- */
+// The page always opens from the top. While the visitor scrolls, the address in the browser bar changes to
+// the product section on screen, and back to / elsewhere, without reloading. _redirects serves the home
+// page at each of these addresses, so a copied or shared address opens the shop too.
 var SECTION_LINKS = ['keratin-shampoo-mask', 'keratin-spray', 'hair-tonic', 'aqua-base', 'combos'];
-var linkedSection = (function () {
-  var name = location.pathname.replace(/^\/+|\/+$/g, '');
-  if (SECTION_LINKS.indexOf(name) === -1) return null;
-  var section = document.getElementById(name);
-  if (!section || location.hash) return section;
+(function () {
+  if (!window.history || !history.replaceState) return;
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
+  if (!sections.length) return;
+  var ticking = false;
 
-  var moved = false; // stop following the section once the visitor scrolls by themselves
-  ['wheel', 'touchstart', 'keydown'].forEach(function (type) {
-    window.addEventListener(type, function () { moved = true; }, { once: true, passive: true });
-  });
-  function go() { if (!moved) section.scrollIntoView({ behavior: 'instant', block: 'start' }); }
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  go();
-  // Images above it can still change its place while they load
-  window.addEventListener('load', go);
-  return section;
+  function update() {
+    ticking = false;
+    // The section that covers the line a third of the way down the screen
+    var line = window.innerHeight / 3;
+    var current = null;
+    sections.forEach(function (section) {
+      if (section.getBoundingClientRect().top <= line) current = section;
+    });
+    var path = current && SECTION_LINKS.indexOf(current.id) !== -1 ? '/' + current.id : '/';
+    if (path !== location.pathname) history.replaceState(history.state, '', path + location.search);
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
 })();
 
 /* ---------- Shop, product sheet and cart ---------- */
@@ -265,8 +272,8 @@ var linkedSection = (function () {
       promo.close();
     });
 
-    // Not when the visitor was sent to a section, e.g. "Continue shopping" from checkout or a short link
-    if (location.hash || linkedSection) return;
+    // Not when the visitor was sent to a section, e.g. "Continue shopping" from checkout
+    if (location.hash) return;
     setTimeout(function () {
       // Wait for the buyer if a product or cart sheet is already open
       if (document.querySelector('dialog[open]')) return;
