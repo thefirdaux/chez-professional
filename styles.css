@@ -1423,8 +1423,14 @@ select.field__input {
   .page--home {
     --gutter: max(24px, 3.75vw);
     --header-height: 80px;
+    /* Tallest a section's main picture may be, so its title and the whole picture fit on one screen
+       together: the window less the header, the section's top space and a two-line title */
+    --fit-height: max(260px, calc(100svh - 330px));
     max-width: none;
   }
+
+  /* Sections stop below the taller header when the page goes to one */
+  html { scroll-padding-top: 80px; }
 
   .br-desktop { display: inline; }
   .br-mobile { display: none; }
@@ -1498,13 +1504,16 @@ select.field__input {
 
   .page--home .combos { padding: 40px 0 80px; }
   .page--home .combos .section-intro { gap: 24px; }
-  .page--home .combos__image { margin-top: 48px; }
+  .page--home .combos__image {
+    width: min(100% - 2 * var(--gutter), (var(--fit-height) - 80px) * 1.5);
+    margin: 48px auto 0;
+  }
 
   /* Keratin shampoo & mask */
   .page--home .keratin { padding: 40px 0; }
 
   .page--home .duo {
-    width: min(max(859px, 67.1vw), 100% - 2 * var(--gutter));
+    width: min(max(859px, 67.1vw), 100% - 2 * var(--gutter), max(640px, var(--fit-height) * 1.3135));
     height: auto;
     aspect-ratio: 859 / 654;
     margin: 48px auto 0;
@@ -1728,7 +1737,7 @@ select.field__input {
   .page--home .tonic { padding: 40px 0 64px; }
 
   .page--home .spray__image {
-    width: min(60vw, max(487px, 38.05vw));
+    width: min(60vw, max(487px, 38.05vw), var(--fit-height) * 0.6662);
     height: auto;
     aspect-ratio: 487 / 731;
     margin-top: 32px;
@@ -1738,13 +1747,13 @@ select.field__input {
   .page--home .tonic .section-copy { margin-top: 32px; }
 
   .page--home .tonic__image {
-    width: min(max(731px, 57.1vw), 100% - 2 * var(--gutter));
+    width: min(max(731px, 57.1vw), 100% - 2 * var(--gutter), var(--fit-height));
     margin: 32px auto 0;
   }
 
   /* Aqua Base */
   .page--home .aqua { padding: 40px 0 64px; }
-  .page--home .aqua__image { width: 420px; margin-top: 32px; }
+  .page--home .aqua__image { width: min(420px, (var(--fit-height) - 100px) * 0.8772); margin-top: 32px; }
 
   .page--home .aqua__benefits {
     grid-template-columns: repeat(3, 1fr);
