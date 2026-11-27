@@ -13,10 +13,10 @@
     return node;
   }
 
-  /** "DISKAUN 32%" for a product with a crossed-out price, or null. Rounded to the nearest whole percent. */
+  /** "-32%" for a product with a crossed-out price, or null. Rounded to the nearest whole percent. */
   function discountText(product) {
     if (!product.was || product.was <= product.price) return null;
-    return 'DISKAUN ' + Math.round((product.was - product.price) / product.was * 100) + '%';
+    return '-' + Math.round((product.was - product.price) / product.was * 100) + '%';
   }
 
   function priceNode(product, className) {
