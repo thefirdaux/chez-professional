@@ -1,6 +1,6 @@
 # Short links for TikTok and Instagram bios, ads and WhatsApp, e.g. www.chezprofessional.com/aqua-base.
-# Each one serves the home page from the top. While the visitor scrolls, script.js changes the address
-# to the product section on screen (SECTION_LINKS), so every address here must keep working.
+# Each one serves the home page. script.js (SECTION_LINKS) opens the five product addresses at their
+# section, and changes the address to the product section on screen while the visitor scrolls.
 
 # A trailing slash would break the page's relative links, so it is dropped first
 /keratin/               /keratin               301

@@ -1,8 +1,26 @@
-/* ---------- The address follows the section being read, e.g. www.chezprofessional.com/aqua-base ---------- */
-// The page always opens from the top. While the visitor scrolls, the address in the browser bar changes to
-// the product section on screen, and back to / elsewhere, without reloading. _redirects serves the home
-// page at each of these addresses, so a copied or shared address opens the shop too.
+/* ---------- Section addresses, e.g. www.chezprofessional.com/aqua-base ---------- */
+// Opening one of these addresses (a copied or shared link) goes straight to that section. While the
+// visitor scrolls, the address in the browser bar follows the product section on screen, and is / elsewhere.
+// _redirects serves the home page at each of these addresses.
 var SECTION_LINKS = ['keratin-shampoo-mask', 'keratin-spray', 'hair-tonic', 'aqua-base', 'combos'];
+var linkedSection = (function () {
+  var name = location.pathname.replace(/^\/+|\/+$/g, '');
+  if (SECTION_LINKS.indexOf(name) === -1) return null;
+  var section = document.getElementById(name);
+  if (!section || location.hash) return section;
+
+  var moved = false; // stop following the section once the visitor scrolls by themselves
+  ['wheel', 'touchstart', 'keydown'].forEach(function (type) {
+    window.addEventListener(type, function () { moved = true; }, { once: true, passive: true });
+  });
+  function go() { if (!moved) section.scrollIntoView({ behavior: 'instant', block: 'start' }); }
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  go();
+  // Images above it can still change its place while they load
+  window.addEventListener('load', go);
+  return section;
+})();
+
 (function () {
   if (!window.history || !history.replaceState) return;
   var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
@@ -272,8 +290,8 @@ var SECTION_LINKS = ['keratin-shampoo-mask', 'keratin-spray', 'hair-tonic', 'aqu
       promo.close();
     });
 
-    // Not when the visitor was sent to a section, e.g. "Continue shopping" from checkout
-    if (location.hash) return;
+    // Not when the visitor was sent to a section, e.g. "Continue shopping" from checkout or a section address
+    if (location.hash || linkedSection) return;
     setTimeout(function () {
       // Wait for the buyer if a product or cart sheet is already open
       if (document.querySelector('dialog[open]')) return;
