@@ -100,21 +100,21 @@
       var qty = el('div', 'qty');
       var minus = el('button', 'qty__btn', '\u2212');
       minus.type = 'button';
-      minus.setAttribute('aria-label', 'Decrease quantity of ' + product.name);
+      minus.setAttribute('aria-label', 'Kurangkan kuantiti ' + product.name);
       minus.disabled = item.qty <= 1;
       minus.addEventListener('click', function () { setQty(item.id, item.qty - 1); });
       var value = el('span', 'qty__value', String(item.qty));
-      value.setAttribute('aria-label', 'Quantity ' + item.qty);
+      value.setAttribute('aria-label', 'Kuantiti ' + item.qty);
       var plus = el('button', 'qty__btn', '+');
       plus.type = 'button';
-      plus.setAttribute('aria-label', 'Increase quantity of ' + product.name);
+      plus.setAttribute('aria-label', 'Tambah kuantiti ' + product.name);
       plus.disabled = item.qty >= MAX_QTY;
       plus.addEventListener('click', function () { setQty(item.id, item.qty + 1); });
       qty.appendChild(minus);
       qty.appendChild(value);
       qty.appendChild(plus);
 
-      var removeBtn = el('button', 'cart-item__remove', 'Remove');
+      var removeBtn = el('button', 'cart-item__remove', 'Buang');
       removeBtn.type = 'button';
       removeBtn.addEventListener('click', function () { remove(item.id); });
 
@@ -136,7 +136,7 @@
       badge.hidden = n === 0;
     });
     document.querySelectorAll('.site-header__cart').forEach(function (link) {
-      link.setAttribute('aria-label', 'Cart, ' + n + (n === 1 ? ' item' : ' items'));
+      link.setAttribute('aria-label', 'Troli, ' + n + ' item');
     });
   }
 

@@ -13,10 +13,10 @@
     return node;
   }
 
-  /** "32% OFF" for a product with a crossed-out price, or null. Rounded to the nearest whole percent. */
+  /** "DISKAUN 32%" for a product with a crossed-out price, or null. Rounded to the nearest whole percent. */
   function discountText(product) {
     if (!product.was || product.was <= product.price) return null;
-    return Math.round((product.was - product.price) / product.was * 100) + '% OFF';
+    return 'DISKAUN ' + Math.round((product.was - product.price) / product.was * 100) + '%';
   }
 
   function priceNode(product, className) {
@@ -57,7 +57,7 @@
       details.appendChild(name);
       details.appendChild(priceNode(product, 'shop-card__price'));
 
-      var buy = el('button', 'shop-card__buy', 'Buy Now');
+      var buy = el('button', 'shop-card__buy', 'Beli Sekarang');
       buy.type = 'button';
       buy.dataset.product = id;
 
@@ -165,7 +165,7 @@
     productDialog.querySelector('.sheet__add').addEventListener('click', function () {
       cart.add(currentId, 1);
       productSheet.close();
-      showToast('Added to cart');
+      showToast('Ditambah ke troli');
     });
 
     productDialog.querySelector('.sheet__buy').addEventListener('click', function () {
@@ -218,7 +218,7 @@
       var price = el('span', 'promo__deal-price', rm(p.price));
       if (p.was) {
         price.insertBefore(el('s', '', rm(p.was)), price.firstChild);
-        var save = el('span', 'promo__deal-save', 'Save ' + rm(p.was - p.price) + ' ');
+        var save = el('span', 'promo__deal-save', 'Jimat ' + rm(p.was - p.price) + ' ');
         save.appendChild(el('span', 'discount-badge', discountText(p)));
         price.appendChild(save);
       }
@@ -265,7 +265,7 @@
     var hint = document.createElement('button');
     hint.type = 'button';
     hint.className = 'scroll-hint';
-    hint.setAttribute('aria-label', 'See more');
+    hint.setAttribute('aria-label', 'Lihat lagi');
     hint.innerHTML = '<img src="assets/icon-see-more.svg?v=a443a171" alt="" width="32" height="32">';
     area.appendChild(hint);
 

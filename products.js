@@ -9,29 +9,29 @@
  */
 var SHAMPOO = {
   eyebrow: 'KERATIN SHAMPOO & MASK',
-  description: 'Designed to nourish and care for your hair, this formula helps boost hydration, improve hair structure, and reduce stiffness caused by seawater buildup.',
-  highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Boosts hydration', 'Improves hair structure', 'Reduces stiffness caused by seawater buildup']
+  description: 'Direka untuk menyuburkan dan menjaga rambut anda. Formula ini membantu meningkatkan kelembapan, memperbaiki struktur rambut dan mengurangkan kekakuan akibat air laut.',
+  highlights: ['Tanpa SLS. Tanpa Paraben. Lembut pada rambut dan kulit kepala', 'Meningkatkan kelembapan', 'Memperbaiki struktur rambut', 'Mengurangkan kekakuan akibat air laut']
 };
 var MASK = {
   eyebrow: 'KERATIN SHAMPOO & MASK',
-  description: 'Deeply moisturizes dry, brittle hair for softer, healthier strands. Replenishes keratin protein to repair damage from bleaching, coloring, and heat styling. Strengthens each strand to reduce breakage and split ends while smoothing frizz and tangles for easier styling.',
-  highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Deeply moisturizes dry, brittle hair', 'Replenishes keratin protein', 'Reduces breakage and split ends', 'Smooths frizz and tangles']
+  description: 'Melembapkan rambut kering dan rapuh secara mendalam untuk helaian yang lebih lembut dan sihat. Menggantikan protein keratin untuk membaiki kerosakan akibat peluntur, pewarna rambut dan alat penggayaan panas. Menguatkan setiap helai untuk mengurangkan rambut patah dan bercabang, sambil melicinkan rambut kembang dan kusut supaya lebih mudah digayakan.',
+  highlights: ['Tanpa SLS. Tanpa Paraben. Lembut pada rambut dan kulit kepala', 'Melembapkan rambut kering dan rapuh secara mendalam', 'Menggantikan protein keratin', 'Mengurangkan rambut patah dan bercabang', 'Melicinkan rambut kembang dan kusut']
 };
 var SPRAY = {
   eyebrow: 'KERATIN SPRAY',
-  description: 'Enhance hair manageability with lasting moisture, heat protection, and added keratin. Leaves your hair softer, healthier, and easier to style.',
-  highlights: ['Better control and manageability', 'Extra moisture for your hair', 'Protects from the heat of hair dryers and irons', 'Enriched with keratin protein']
+  description: 'Rambut lebih mudah diurus dengan kelembapan berpanjangan, perlindungan haba dan tambahan keratin. Rambut anda jadi lebih lembut, sihat dan mudah digayakan.',
+  highlights: ['Rambut lebih mudah dikawal dan diurus', 'Kelembapan tambahan untuk rambut anda', 'Melindungi daripada haba pengering rambut dan pelurus rambut', 'Diperkaya dengan protein keratin']
 };
 var TONIC = {
   eyebrow: 'HAIR TONIC',
-  description: 'Powered by ingredients like ginseng, biotin, and menthol to help nourish hair roots, invigorate the scalp, and support healthy hair growth.',
-  highlights: ['With ginseng, biotin and menthol', 'Nourishes hair roots', 'Invigorates the scalp', 'Keeps your scalp fresh all day, even under your hijab']
+  description: 'Mengandungi bahan seperti ginseng, biotin dan mentol untuk membantu menyuburkan akar rambut, menyegarkan kulit kepala dan menyokong pertumbuhan rambut yang sihat.',
+  highlights: ['Dengan ginseng, biotin dan mentol', 'Menyuburkan akar rambut', 'Menyegarkan kulit kepala', 'Kulit kepala kekal segar sepanjang hari, walaupun di bawah tudung']
 };
 
 var AQUA = {
   eyebrow: 'AQUA BASE',
-  description: 'Water-based styling with a strong hold that keeps your hairstyle neat and well-defined, and washes out easily with water.',
-  highlights: ['Strong hold for a neat, well-defined look', 'Water-based formula for everyday use', 'Easy to rinse: washes out with water']
+  description: 'Produk penggayaan berasaskan air dengan pegangan kuat yang mengekalkan gaya rambut anda kemas dan terbentuk, dan mudah dicuci dengan air.',
+  highlights: ['Pegangan kuat untuk penampilan kemas dan terbentuk', 'Formula berasaskan air untuk kegunaan harian', 'Mudah dibilas: tanggal dengan air sahaja']
 };
 
 function product(name, size, price, was, info, extra) {
@@ -41,24 +41,24 @@ function product(name, size, price, was, info, extra) {
 }
 
 var products = {
-  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 bottle', 4200, 6200, SHAMPOO),
-  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 bottle', 12500, 18600, SHAMPOO),
-  'mask-1': product('Keratin Treatment Mask', '280ml x 1 bottle', 4200, 6500, MASK),
-  'mask-3': product('Keratin Treatment Mask', '280ml x 3 bottle', 12500, 19500, MASK),
-  'spray-1': product('Keratin Spray Leave In', '135ml x 1 bottle', 3900, 5200, SPRAY),
-  'spray-3': product('Keratin Spray Leave In', '135ml x 3 bottle', 11600, 15600, SPRAY),
-  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 bottle', 3900, 5800, TONIC),
-  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 bottle', 11600, 17400, TONIC),
+  'shampoo-1': product('Keratin Treatment Shampoo', '280ml x 1 botol', 4200, 6200, SHAMPOO),
+  'shampoo-3': product('Keratin Treatment Shampoo', '280ml x 3 botol', 12500, 18600, SHAMPOO),
+  'mask-1': product('Keratin Treatment Mask', '280ml x 1 botol', 4200, 6500, MASK),
+  'mask-3': product('Keratin Treatment Mask', '280ml x 3 botol', 12500, 19500, MASK),
+  'spray-1': product('Keratin Spray Leave In', '135ml x 1 botol', 3900, 5200, SPRAY),
+  'spray-3': product('Keratin Spray Leave In', '135ml x 3 botol', 11600, 15600, SPRAY),
+  'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 botol', 3900, 5800, TONIC),
+  'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 botol', 11600, 17400, TONIC),
   'aqua-1': product('Aqua Base Styling Hydration', '1 unit', 3000, null, AQUA),
-  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12200, 17900, {
+  'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 botol', 12200, 17900, {
     eyebrow: 'KERATIN TREATMENT SET',
-    description: 'The complete keratin routine: the Keratin Treatment Shampoo and Mask to cleanse and repair, then the Keratin Spray Leave In for lasting moisture, heat protection and easier styling.',
-    highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Keratin Spray Leave In 135ml']
+    description: 'Rutin keratin yang lengkap: Keratin Treatment Shampoo dan Mask untuk membersih dan membaiki, diikuti Keratin Spray Leave In untuk kelembapan berpanjangan, perlindungan haba dan penggayaan yang lebih mudah.',
+    highlights: ['Tanpa SLS. Tanpa Paraben. Lembut pada rambut dan kulit kepala', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Keratin Spray Leave In 135ml']
   }, { combo: true }),
-  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 bottle', 12200, 18500, {
+  'scalp-set': product('Scalp Treatment Set', '280ml x 2 + 135ml x 1 botol', 12200, 18500, {
     eyebrow: 'SCALP TREATMENT SET',
-    description: 'Care for your hair and scalp together: the Keratin Treatment Shampoo and Mask for softer, stronger hair, plus the Root Booster Hair Tonic with ginseng, biotin and menthol to nourish the roots.',
-    highlights: ['No SLS. No Paraben. Gentle on hair and scalp', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Root Booster Hair Tonic 135ml']
+    description: 'Jaga rambut dan kulit kepala serentak: Keratin Treatment Shampoo dan Mask untuk rambut yang lebih lembut dan kuat, serta Root Booster Hair Tonic dengan ginseng, biotin dan mentol untuk menyuburkan akar rambut.',
+    highlights: ['Tanpa SLS. Tanpa Paraben. Lembut pada rambut dan kulit kepala', 'Keratin Treatment Shampoo 280ml', 'Keratin Treatment Mask 280ml', 'Root Booster Hair Tonic 135ml']
   }, { combo: true })
 };
 
