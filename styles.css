@@ -433,6 +433,41 @@ main > section + section { margin-top: 1px; }
 
 .sheet__sold[hidden] { display: none; }
 
+/* In each product section's highlight: a pill under the title, and a line beside each bottle */
+.section-sold {
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: #fff;
+  color: #000;
+  font-size: 15px; /* Subheadline */
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: -0.23px;
+  box-shadow: 0 2px 8px rgba(74, 44, 32, 0.08);
+}
+
+.section-sold[hidden] { display: none; }
+.section-sold img { width: 16px; height: 16px; }
+
+.duo__sold {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #000;
+  font-size: 11px; /* Caption 2 */
+  line-height: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06px;
+}
+
+.duo__sold:empty { display: none; }
+.duo__sold img { flex: none; width: 11px; height: 11px; }
+
 .shop-card__image {
   width: 100%;
   aspect-ratio: 1;
@@ -1557,6 +1592,11 @@ select.field__input {
     text-align: left;
   }
 
+  .page--home .duo__sold { font-size: 14px; line-height: 20px; letter-spacing: -0.016em; gap: 6px; }
+  .page--home .duo__sold img { width: 14px; height: 14px; }
+  .page--home .section-intro > .section-sold { max-width: none; margin: 8px auto 0; font-weight: 600; font-size: 17px; line-height: 25px; letter-spacing: -0.022em; padding: 8px 18px; }
+  .page--home .section-intro > .section-sold img { width: 18px; height: 18px; }
+
   .page--home .duo__name {
     margin-top: -4px; /* brand and name sit 4px apart */
     font-size: 17px;
@@ -1758,7 +1798,7 @@ select.field__input {
   .page--home .tonic { padding: 40px 0 64px; }
 
   .page--home .spray__image {
-    width: min(60vw, max(487px, 38.05vw), var(--fit-height) * 0.6662);
+    width: min(60vw, max(487px, 38.05vw), (var(--fit-height) - 56px) * 0.6662);
     height: auto;
     aspect-ratio: 487 / 731;
     margin-top: 32px;
@@ -1768,7 +1808,7 @@ select.field__input {
   .page--home .tonic .section-copy { margin-top: 32px; }
 
   .page--home .tonic__image {
-    width: min(max(731px, 57.1vw), 100% - 2 * var(--gutter), var(--fit-height));
+    width: min(max(731px, 57.1vw), 100% - 2 * var(--gutter), var(--fit-height) - 56px);
     margin: 32px auto 0;
   }
 

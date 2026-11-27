@@ -113,6 +113,15 @@ var linkedSection = (function () {
     return p;
   }
 
+  /* --- TikTok sold counts in each section's highlight (beside the bottles, under the title) --- */
+  document.querySelectorAll('[data-sold]').forEach(function (node) {
+    var product = products[node.dataset.sold];
+    if (!product || !product.sold) return;
+    var line = soldNode(product, 'sold');
+    while (line.firstChild) node.appendChild(line.firstChild);
+    node.hidden = false;
+  });
+
   /* --- Shop grids, rendered from products.js --- */
   document.querySelectorAll('[data-shop]').forEach(function (list) {
     var ids = CHEZ.shops[list.dataset.shop];
