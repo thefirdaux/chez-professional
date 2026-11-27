@@ -1,8 +1,8 @@
 /*
- * Postage for an order: EasyParcel's cheapest courier for the address, less the part the shop
- * covers (shipping.covered in products.js). If EasyParcel can't be reached or isn't connected,
- * Malaysian addresses use the estimates in shipping.fallback; Singapore and Brunei can't be
- * estimated, so postageFor throws PostageUnavailable and the buyer is asked to try again.
+ * Postage for an order. Within Malaysia the buyer pays the flat fee in shipping.flat (products.js),
+ * one per order; EasyParcel is still asked, for the courier to book (J&T first, see easyparcel.quote)
+ * and what it will cost the shop. Singapore and Brunei pay EasyParcel's rate; if EasyParcel can't be
+ * reached, postageFor throws PostageUnavailable and the buyer is asked to try again.
  */
 import { shipping, states } from '../../products.js';
 import * as easyparcel from './easyparcel.js';
@@ -15,15 +15,15 @@ export class PostageUnavailable extends Error {
   }
 }
 
-function fallbackCost(destination) {
-  if (destination.country !== 'MY') throw new PostageUnavailable(destination.country);
+function flatFee(destination) {
   const state = states.filter((s) => s[0] === destination.state)[0];
-  return shipping.fallback[state && state[1] === 'east' ? 'east' : 'west'];
+  return shipping.flat[state && state[1] === 'east' ? 'east' : 'west'];
 }
 
 /**
  * destination: { country, postcode, state } (already checked by readDestination)
- * Returns { fee, cost, covered, serviceId, courier, label, live }; amounts in sen.
+ * Returns { fee, cost, serviceId, courier, label, live }; amounts in sen. `fee` is what the buyer
+ * pays, `cost` what the courier charges the shop (the flat fee when EasyParcel couldn't be asked).
  */
 export async function postageFor(env, destination, items, subtotal) {
   let cost = null;
@@ -38,13 +38,14 @@ export async function postageFor(env, destination, items, subtotal) {
     }
   }
   const live = cost !== null;
-  if (!live) cost = fallbackCost(destination);
-  const covered = Math.min(cost, shipping.covered[destination.country] || 0);
-  const where = destination.country === 'MY' ? destination.state : NAMES[destination.country];
+  const domestic = destination.country === 'MY';
+  if (!live && !domestic) throw new PostageUnavailable(destination.country);
+  const fee = domestic ? flatFee(destination) : cost;
+  if (!live) cost = fee;
+  const where = domestic ? destination.state : NAMES[destination.country];
   return {
-    fee: cost - covered,
+    fee,
     cost,
-    covered,
     serviceId: rate ? rate.serviceId : null,
     courier: rate ? rate.courier : '',
     label: 'Delivery to ' + where + (rate && rate.courier ? ' by ' + rate.courier : ''),

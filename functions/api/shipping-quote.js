@@ -46,5 +46,5 @@ export async function onRequestPost({ request, env }) {
     if (error instanceof PostageUnavailable) return json({ error: error.message }, 503);
     throw error;
   }
-  return json({ fee: postage.fee, cost: postage.cost, covered: postage.covered, label: postage.label, live: postage.live });
+  return json({ fee: postage.fee, cost: postage.cost, label: postage.label, live: postage.live });
 }

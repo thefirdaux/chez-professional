@@ -71,13 +71,13 @@ var shops = {
   combos: ['keratin-set', 'scalp-set']
 };
 
-// Postage in sen. The buyer pays EasyParcel's cheapest courier rate for their address, less
-// `covered` (what the shop pays towards it; nothing since 23 November 2026, it was RM4 in Malaysia). `fallback` is the estimated postage within Malaysia,
-// used only when EasyParcel can't be reached so checkout keeps working. Abroad there is no
-// estimate: the buyer is asked to try again in a few minutes.
+// Postage in sen. Within Malaysia the buyer pays one flat fee per order, whatever is in it (since
+// 27 November 2026): `flat.west` to Peninsular Malaysia, `flat.east` to Sabah, Sarawak and Labuan.
+// The shop books `courier` through EasyParcel; if it can't take a parcel, the cheapest other courier.
+// Abroad the buyer pays EasyParcel's rate, and if EasyParcel can't be reached is asked to try again.
 var shipping = {
-  covered: { MY: 0, SG: 0, BN: 0 },
-  fallback: { west: 800, east: 1500 }
+  flat: { west: 800, east: 1500 },
+  courier: 'J&T Express'
 };
 
 // Countries the shop delivers to: code, name, phone country code, open for orders.

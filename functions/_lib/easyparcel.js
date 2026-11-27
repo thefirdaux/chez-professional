@@ -12,7 +12,7 @@
  *                             allows test orders and keeps its tokens apart from the live ones
  * The app's Redirect URI must be <site>/api/easyparcel-callback.
  */
-import { parcels } from '../../products.js';
+import { parcels, shipping } from '../../products.js';
 import { nationalNumber } from './orders.js';
 
 const API = 'https://api.easyparcel.com';
@@ -258,7 +258,7 @@ function size(weight, box) {
   return { weight, length: box.length, width: box.width, height: box.height };
 }
 
-/** Courier services for this order's address, cheapest first. */
+/** Courier services for this order's address: the shop's courier (shipping.courier) first, then cheapest first. */
 export async function quote(env, order, weight, box) {
   const to = destinationOf(order);
   const data = await call(env, 'shipment/quotations', {
@@ -286,8 +286,14 @@ export async function quote(env, order, weight, box) {
       };
     })
     .filter((rate) => rate.serviceId && Number.isFinite(rate.price))
-    // Cheapest first; at the same price, a courier who collects beats a drop-off
-    .sort((a, b) => a.price - b.price || (a.detail === 'dropoff') - (b.detail === 'dropoff'));
+    // The shop's courier first; then cheapest first; at the same price, a courier who collects beats a drop-off
+    .sort((a, b) => isShopCourier(b) - isShopCourier(a) || a.price - b.price || (a.detail === 'dropoff') - (b.detail === 'dropoff'));
+}
+
+/** Whether a quoted service is the courier the shop uses (J&T Express), whatever EasyParcel calls it exactly. */
+export function isShopCourier(rate) {
+  const key = (name) => String(name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  return key(rate.courier).indexOf(key(shipping.courier).replace(/express$/, '')) === 0;
 }
 
 function shipmentResult(shipment) {

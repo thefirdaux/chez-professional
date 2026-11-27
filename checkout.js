@@ -158,7 +158,7 @@
   cityInput.addEventListener('input', function () { cityTypedByBuyer = true; });
 
   /* --- Shipping fee --- */
-  var quote = null;        // { fee, covered, label } for the address below
+  var quote = null;        // { fee, label } for the address below
   var quoteKey = '';
   var quoteReady = Promise.resolve();
   var quoteTimer;
@@ -170,15 +170,14 @@
     return { country: countrySelect.value, postcode: postcode, state: r.places ? stateSelect.value : '' };
   }
 
-  // Estimated postage within Malaysia when the order server can't be asked; abroad there is no estimate
+  // Flat postage within Malaysia when the order server can't be asked; abroad there is no estimate
   function estimate(where) {
     if (where.country !== 'MY') {
       return { error: 'We can\'t work out the shipping fee to ' + countrySelect.selectedOptions[0].textContent + ' right now. Please try again in a few minutes.' };
     }
     var state = CHEZ.states.filter(function (s) { return s[0] === where.state; })[0];
-    var cost = CHEZ.shipping.fallback[state && state[1] === 'east' ? 'east' : 'west'];
-    var covered = Math.min(cost, CHEZ.shipping.covered.MY || 0);
-    return { fee: cost - covered, covered: covered, label: 'Estimated delivery to ' + where.state };
+    var fee = CHEZ.shipping.flat[state && state[1] === 'east' ? 'east' : 'west'];
+    return { fee: fee, label: 'Delivery to ' + where.state + ' by ' + CHEZ.shipping.courier };
   }
 
   function updateQuote() {
@@ -246,7 +245,7 @@
       ? ' Any import duty or tax is paid by you when the parcel arrives. Prices are in Malaysian Ringgit (RM); your card issuer converts the amount to your currency.'
       : '';
     form.querySelector('[data-shipping-info]').textContent = quote && quote.error ? quote.error
-      : priced ? quote.label + ': ' + shippingText(quote.fee) + (quote.covered ? ' (we cover ' + rm(quote.covered) + ' of the postage)' : '') + '.' + abroad
+      : priced ? quote.label + ': ' + shippingText(quote.fee) + '.' + abroad
       : waiting ? 'Working out the shipping fee…'
         : 'Enter your ' + (rules().places ? 'postcode and ' + rules().placeLabel.toLowerCase() : 'postal code') + ' to see the shipping fee.';
     var showDemo = demo && configState === 'demo';

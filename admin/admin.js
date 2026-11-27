@@ -697,9 +697,10 @@
           option.total += rate.price;
         });
       });
-      // Couriers that reach the most orders first, then the cheapest
+      // Couriers that reach the most orders first, then the shop's courier (J&T), then the cheapest
+      var shopCourier = function (option) { return /^j\W*t/i.test(option.courier) ? 1 : 0; };
       options.sort(function (a, b) {
-        return Object.keys(b.prices).length - Object.keys(a.prices).length || a.total - b.total;
+        return Object.keys(b.prices).length - Object.keys(a.prices).length || shopCourier(b) - shopCourier(a) || a.total - b.total;
       });
 
       options.forEach(function (option, index) {
@@ -1037,15 +1038,14 @@
       });
 
       var p = data.postage;
-      var covered = p.covered.MY ? 'Courier rate less ' + rm(p.covered.MY) + ' (the shop pays that part)' : 'Courier rate';
       service('postage').facts([
         ['Delivers to', p.countries.join(', ')],
-        ['Malaysia', covered],
+        ['Malaysia', 'Flat ' + rm(p.flat.west) + ' to Peninsular Malaysia, ' + rm(p.flat.east) + ' to Sabah, Sarawak and Labuan, once per order'],
+        ['Courier', p.courier + ' first; the cheapest other courier if ' + p.courier + ' can\u2019t take a parcel'],
         ['Singapore and Brunei', p.countries.length > 1
           ? 'Full courier rate; any import duty is paid by the buyer'
           : 'Closed until CHIP card payments are approved (FPX and DuitNow only work with Malaysian banks)'],
-        ['If EasyParcel can\u2019t be reached', 'Peninsular ' + rm(p.fallback.west) + ', Sabah/Sarawak/Labuan ' + rm(p.fallback.east) +
-          (p.covered.MY ? ' (less ' + rm(p.covered.MY) + ')' : '') + '; abroad the buyer is asked to try again']
+        ['If EasyParcel can\u2019t be reached', 'Malaysia still pays the flat fee; abroad the buyer is asked to try again']
       ]);
     }, handleError);
   }
