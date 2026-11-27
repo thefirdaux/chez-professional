@@ -49,7 +49,7 @@ var products = {
   'spray-3': product('Keratin Spray Leave In', '135ml x 3 botol', 11600, 15600, SPRAY),
   'tonic-1': product('Root Booster Hair Tonic', '135ml x 1 botol', 3900, 5800, TONIC),
   'tonic-3': product('Root Booster Hair Tonic', '135ml x 3 botol', 11600, 17400, TONIC),
-  'aqua-1': product('Aqua Base Styling Hydration', '1 unit', 3000, null, AQUA),
+  'aqua-1': product('Aqua Base Styling Hydration', '1 unit', 3800, null, AQUA),
   'keratin-set': product('Keratin Treatment Set', '280ml x 2 + 135ml x 1 botol', 12200, 17900, {
     eyebrow: 'KERATIN TREATMENT SET',
     description: 'Rutin keratin yang lengkap: Keratin Treatment Shampoo dan Mask untuk membersih dan membaiki, diikuti Keratin Spray Leave In untuk kelembapan berpanjangan, perlindungan haba dan penggayaan yang lebih mudah.',
