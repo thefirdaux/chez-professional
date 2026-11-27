@@ -1364,6 +1364,7 @@ select.field__input {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  text-align: center;
   margin-top: 33px;
   padding: 0 var(--gutter);
   font-size: 13px;
