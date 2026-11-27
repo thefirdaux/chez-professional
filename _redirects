@@ -1,0 +1,22 @@
+# Short links to each part of the home page, e.g. www.chezprofessional.com/aqua-base
+# (for TikTok and Instagram bios, ads and WhatsApp). Each one serves the home page at that address,
+# and script.js scrolls to the section with the same id. Add a line to both lists for a new section.
+
+# A trailing slash would break the page's relative links, so it is dropped first
+/keratin/               /keratin               301
+/keratin-shampoo-mask/  /keratin-shampoo-mask  301
+/keratin-spray/         /keratin-spray         301
+/hair-tonic/            /hair-tonic            301
+/aqua-base/             /aqua-base             301
+/combos/                /combos                301
+/sponsor/               /sponsor               301
+/about/                 /about                 301
+
+/keratin                /  200
+/keratin-shampoo-mask   /  200
+/keratin-spray          /  200
+/hair-tonic             /  200
+/aqua-base              /  200
+/combos                 /  200
+/sponsor                /  200
+/about                  /  200
