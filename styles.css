@@ -2283,6 +2283,54 @@ select.field__input {
 
 .promo__cta { margin-top: 4px; }
 
+/* ---------- Floating WhatsApp button (every page, added by footer.js) ---------- */
+.wa-float {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right));
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 15; /* under the toast, product sheet, cart and popup */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wa-float:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26); }
+.wa-float:active { transform: scale(0.96); }
+.wa-float:focus-visible { outline: 3px solid var(--color-brown); outline-offset: 3px; }
+
+/* The label shows on computers only, beside the icon */
+.wa-float__label { display: none; }
+
+@media (min-width: 768px) {
+  .wa-float {
+    right: 24px;
+    bottom: 24px;
+    width: auto;
+    height: 56px;
+    gap: 8px;
+    padding: 0 22px 0 16px;
+    border-radius: 99px;
+  }
+
+  .wa-float__label {
+    display: inline;
+    font-size: 17px; /* Headline */
+    line-height: 22px;
+    font-weight: 600;
+    letter-spacing: -0.43px;
+  }
+}
+
+@media print { .wa-float { display: none; } }
+
 /* ---------- Footer (every page) ---------- */
 .site-footer {
   display: flex;
