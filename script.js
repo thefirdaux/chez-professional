@@ -10,14 +10,35 @@ var linkedSection = (function () {
   if (!section || location.hash) return section;
 
   var moved = false; // stop following the section once the visitor scrolls by themselves
-  ['wheel', 'touchstart', 'keydown'].forEach(function (type) {
+  ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (type) {
     window.addEventListener(type, function () { moved = true; }, { once: true, passive: true });
   });
-  function go() { if (!moved) section.scrollIntoView({ behavior: 'instant', block: 'start' }); }
+
+  // Jump without the page's smooth scrolling: a long smooth scroll (the combos are far down) can be
+  // cut short in Safari while pictures load. The header height comes from the page's scroll padding.
+  var root = document.documentElement;
+  function go() {
+    if (moved) return;
+    var offset = parseFloat(getComputedStyle(root).scrollPaddingTop) || 0;
+    var y = Math.max(0, section.getBoundingClientRect().top + window.pageYOffset - offset);
+    if (Math.abs(window.pageYOffset - y) < 2) return;
+    var smooth = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, y);
+    root.style.scrollBehavior = smooth;
+  }
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   go();
-  // Images above it can still change its place while they load
+
+  // Pictures and fonts can still move the section while they load: keep it in place for a few
+  // seconds, until the visitor scrolls themselves
   window.addEventListener('load', go);
+  if (window.ResizeObserver) {
+    var watcher = new ResizeObserver(go);
+    watcher.observe(document.body);
+    setTimeout(function () { watcher.disconnect(); }, 4000);
+  }
+  [300, 1000, 2000].forEach(function (ms) { setTimeout(go, ms); });
   return section;
 })();
 
