@@ -1527,7 +1527,7 @@ select.field__input {
 
   /* Labels keep a fixed width beside the bottles, so they stay readable when the picture is smaller */
   .page--home .duo__label { width: 170px; gap: 8px; }
-  .page--home .duo__label--left { top: 65%; left: auto; right: calc(81.49% + 8px); } /* 425 / 654, ends at the shampoo */
+  .page--home .duo__label--left { top: 65%; left: auto; right: calc(81.49% + 8px); width: min(170px, 18.51% - 8px + var(--gutter)); } /* 425 / 654, ends at the shampoo, never past the page edge */
   .page--home .duo__label--right { top: 33%; left: 78.7%; } /* 216 / 654, 676 / 859 */
 
   .page--home .duo__brand,
