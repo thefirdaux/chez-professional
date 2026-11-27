@@ -1,3 +1,25 @@
+/* ---------- Short links that open the home page at a section, e.g. www.chezprofessional.com/aqua-base ---------- */
+// _redirects serves the home page at these addresses; here it scrolls to the section with the same id.
+// The other short links (/keratin, /sponsor, /about) open the home page from the top.
+var SECTION_LINKS = ['keratin-shampoo-mask', 'keratin-spray', 'hair-tonic', 'aqua-base', 'combos'];
+var linkedSection = (function () {
+  var name = location.pathname.replace(/^\/+|\/+$/g, '');
+  if (SECTION_LINKS.indexOf(name) === -1) return null;
+  var section = document.getElementById(name);
+  if (!section || location.hash) return section;
+
+  var moved = false; // stop following the section once the visitor scrolls by themselves
+  ['wheel', 'touchstart', 'keydown'].forEach(function (type) {
+    window.addEventListener(type, function () { moved = true; }, { once: true, passive: true });
+  });
+  function go() { if (!moved) section.scrollIntoView({ behavior: 'instant', block: 'start' }); }
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  go();
+  // Images above it can still change its place while they load
+  window.addEventListener('load', go);
+  return section;
+})();
+
 /* ---------- Shop, product sheet and cart ---------- */
 (function () {
   var CHEZ = window.CHEZ;
@@ -243,8 +265,8 @@
       promo.close();
     });
 
-    // Not when the visitor was sent to a section, e.g. "Continue shopping" from checkout
-    if (location.hash) return;
+    // Not when the visitor was sent to a section, e.g. "Continue shopping" from checkout or a short link
+    if (location.hash || linkedSection) return;
     setTimeout(function () {
       // Wait for the buyer if a product or cart sheet is already open
       if (document.querySelector('dialog[open]')) return;
