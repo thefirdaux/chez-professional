@@ -978,6 +978,54 @@
     };
   }
 
+  /* Meta Pixel: the ID every page uses for Facebook and Instagram ads tracking (assets/pixel.js) */
+  var pixelForm = settingsSection.querySelector('[data-pixel-form]');
+
+  function showPixel(meta) {
+    var card = service('meta');
+    var note = card.card.querySelector('[data-service-note]');
+    var actions = card.card.querySelector('[data-service-actions]');
+    actions.textContent = '';
+    pixelForm.elements.pixelId.value = meta.pixelId || '';
+    if (meta.pixelId) {
+      card.status('Connected', true);
+      card.facts([
+        ['Pixel ID', meta.pixelId],
+        ['Events sent', 'PageView on every page, ViewContent, AddToCart, InitiateCheckout'],
+        ['Purchase', 'Once per order, only after CHIP confirms the payment, with the total paid in MYR']
+      ]);
+      note.textContent = 'Visitors get a new ID within 5 minutes. Test with Meta Events Manager \u2192 Test events.';
+      var remove = button('Remove');
+      remove.addEventListener('click', function () {
+        if (!window.confirm('Remove the Meta Pixel? Facebook and Instagram ads will stop seeing visits and purchases.')) return;
+        savePixel('');
+      });
+      actions.appendChild(remove);
+    } else {
+      card.status('Not set up', false);
+      card.facts([]);
+      note.textContent = 'Paste the Pixel ID from Meta Events Manager (Data sources \u2192 your pixel \u2192 Settings). The pixel must belong to the ad account the shop advertises with.';
+    }
+    var site = el('a', 'button', 'Open Events Manager');
+    site.href = 'https://business.facebook.com/events_manager2';
+    site.target = '_blank';
+    site.rel = 'noopener';
+    actions.appendChild(site);
+  }
+
+  function savePixel(id) {
+    request('/api/admin/settings', 'POST', { action: 'metaPixel', pixelId: id }).then(function (result) {
+      showPixel({ pixelId: result.pixelId });
+    }, function (error) {
+      service('meta').card.querySelector('[data-service-note]').textContent = error.message;
+    });
+  }
+
+  pixelForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    savePixel(pixelForm.elements.pixelId.value.replace(/\s/g, ''));
+  });
+
   function loadSettings() {
     request('/api/admin/settings', 'GET').then(function (data) {
       var chip = service('chip');
@@ -1036,6 +1084,8 @@
         note.textContent = error.message;
         actions.appendChild(site);
       });
+
+      showPixel(data.meta || {});
 
       var p = data.postage;
       service('postage').facts([

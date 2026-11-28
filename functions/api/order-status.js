@@ -25,5 +25,10 @@ export async function onRequestGet({ request, env }) {
       console.error(error);
     }
   }
-  return json({ order: order.id, status, total: order.total });
+  // What was bought (no personal details), for the Meta Pixel purchase event
+  let items = [];
+  try {
+    items = JSON.parse(order.items).map((item) => ({ id: item.id, quantity: item.qty, price: item.price }));
+  } catch (e) { /* none */ }
+  return json({ order: order.id, status, total: order.total, items });
 }

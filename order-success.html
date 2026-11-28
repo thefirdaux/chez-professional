@@ -89,6 +89,7 @@
     </footer>
   </div>
 
+  <script src="assets/pixel.js?v=80a0e52f" defer></script>
   <script type="module" src="products.js?v=83fed173"></script>
   <script type="module">
     (function () {
@@ -130,6 +131,20 @@
               if (status === 'paid') {
                 show('paid');
                 try { localStorage.setItem('chez-cart', '[]'); } catch (e) { /* ignore */ }
+                // Meta Pixel (assets/pixel.js): one Purchase per order, only once CHIP has confirmed
+                // the payment, for the total paid in MYR. The order number lets Meta drop a repeat.
+                if (window.chezPixel) {
+                  var items = result.items || [];
+                  window.chezPixel('Purchase', {
+                    value: result.total / 100,
+                    currency: 'MYR',
+                    content_type: 'product',
+                    content_ids: items.map(function (item) { return item.id; }),
+                    contents: items.map(function (item) { return { id: item.id, quantity: item.quantity, item_price: item.price / 100 }; }),
+                    num_items: items.reduce(function (n, item) { return n + item.quantity; }, 0),
+                    order_id: result.order
+                  }, { eventID: 'purchase-' + result.order, once: 'purchase-' + result.order });
+                }
               } else if (status === 'failed') {
                 show('failed');
               } else if (++tries < 10) {

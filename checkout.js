@@ -266,6 +266,20 @@
   });
   render();
 
+  // Meta Pixel (assets/pixel.js): the buyer has started checkout with these products
+  (function () {
+    var items = cart.items();
+    if (!window.chezPixel || !items.length) return;
+    window.chezPixel('InitiateCheckout', {
+      content_ids: items.map(function (item) { return item.id; }),
+      contents: items.map(function (item) { return { id: item.id, quantity: item.qty }; }),
+      content_type: 'product',
+      num_items: items.reduce(function (n, item) { return n + item.qty; }, 0),
+      value: cart.subtotal() / 100,
+      currency: 'MYR'
+    });
+  })();
+
   // Ask the order server whether real payment is on. Demo mode only when there is no order server
   // (404) or it says payments are off; if it can't be reached, no order is placed at all.
   function askConfig() {

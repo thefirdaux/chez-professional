@@ -3,6 +3,8 @@
  * What the Settings page shows: the CHIP payment setup (and the payment methods CHIP has
  * switched on), whether EasyParcel is set up, and the postage rules from products.js.
  * EasyParcel's live connection and credit come from /api/admin/shipping { action: 'status' }.
+ *
+ * POST /api/admin/settings { action: 'metaPixel', pixelId }  saves the Meta Pixel ID ('' removes it).
  */
 import { isConfigured } from '../../_lib/orders.js';
 import { requireAdmin } from '../../_lib/access.js';
@@ -10,6 +12,7 @@ import { json } from '../../_lib/http.js';
 import { paymentMethods } from '../../_lib/chip.js';
 import { easyParcelReady, isDemo, SHIP_FROM } from '../../_lib/easyparcel.js';
 import { shipping, countries } from '../../../products.js';
+import { getPixelId, setPixelId, validPixelId } from '../../_lib/meta.js';
 
 function masked(id) {
   return id && id.length > 12 ? id.slice(0, 8) + '…' + id.slice(-4) : id || '';
@@ -34,6 +37,25 @@ export async function onRequestGet({ request, env }) {
       demo: isDemo(env),
       shipFrom: [SHIP_FROM.address1, SHIP_FROM.address2, SHIP_FROM.postcode + ' ' + SHIP_FROM.city].join(', ')
     },
-    postage: { flat: shipping.flat, courier: shipping.courier, countries: countries.filter((c) => c[3]).map((c) => c[1]) }
+    postage: { flat: shipping.flat, courier: shipping.courier, countries: countries.filter((c) => c[3]).map((c) => c[1]) },
+    meta: { pixelId: await getPixelId(env) }
   });
+}
+
+export async function onRequestPost({ request, env }) {
+  if (!isConfigured(env)) return json({ error: 'Orders are not set up yet.' }, 503);
+  const admin = await requireAdmin(request, env);
+  if (admin.error) return json({ error: admin.error }, admin.status);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch (e) {
+    return json({ error: 'Invalid request.' }, 400);
+  }
+  if (!body || body.action !== 'metaPixel') return json({ error: 'Invalid request.' }, 400);
+  const id = String(body.pixelId || '').replace(/\s/g, '');
+  if (id && !validPixelId(id)) return json({ error: 'A Meta Pixel ID is 15 or 16 digits. Copy it from Meta Events Manager.' }, 400);
+  await setPixelId(env, id);
+  return json({ ok: true, pixelId: id || null });
 }

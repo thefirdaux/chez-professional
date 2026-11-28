@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=cb1b552d">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png?v=1056d844">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=9d50453a">
-  <link rel="stylesheet" href="admin.css?v=ef0db3e5">
+  <link rel="stylesheet" href="admin.css?v=b7ac4f36">
 </head>
 <body>
   <!-- Sidebar (Figma "Sidebar" 414:110, in the shop's beige); a bar across the top on phones -->
@@ -131,6 +131,25 @@
           <p class="service__note" data-service-note></p>
           <div class="service__actions" data-service-actions></div>
         </article>
+        <article class="service service--wide" data-service="meta">
+          <div class="service__head">
+            <div>
+              <h2 class="service__name">Meta Pixel</h2>
+              <p class="service__role">Facebook and Instagram ads tracking</p>
+            </div>
+            <span class="badge" data-service-status>Checking…</span>
+          </div>
+          <dl class="service__facts" data-service-facts></dl>
+          <form class="pixel-form" data-pixel-form>
+            <label class="pixel-form__label" for="pixel-id">Pixel ID</label>
+            <div class="pixel-form__row">
+              <input class="pixel-form__input" id="pixel-id" name="pixelId" inputmode="numeric" autocomplete="off" placeholder="15 or 16 digits from Meta Events Manager">
+              <button class="button button--primary" type="submit">Save</button>
+            </div>
+          </form>
+          <p class="service__note" data-service-note></p>
+          <div class="service__actions" data-service-actions></div>
+        </article>
         <article class="service service--wide" data-service="postage">
           <div class="service__head">
             <div>
@@ -201,6 +220,6 @@
 
   <div class="tooltip" data-tooltip role="status" hidden></div>
 
-  <script src="admin.js?v=e02ff8e1"></script>
+  <script src="admin.js?v=bd0cc1f4"></script>
 </body>
 </html>

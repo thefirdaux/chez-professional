@@ -113,6 +113,20 @@ var linkedSection = (function () {
     return p;
   }
 
+  /* Meta Pixel product events (assets/pixel.js); prices in MYR */
+  function pixel(name, id) {
+    var product = products[id];
+    if (!window.chezPixel || !product) return;
+    window.chezPixel(name, {
+      content_ids: [id],
+      content_name: product.name + ' (' + product.size + ')',
+      content_type: 'product',
+      contents: [{ id: id, quantity: 1 }],
+      value: product.price / 100,
+      currency: 'MYR'
+    });
+  }
+
   /* --- TikTok sold counts in each section's highlight (beside the bottles, under the title) --- */
   document.querySelectorAll('[data-sold]').forEach(function (node) {
     var product = products[node.dataset.sold];
@@ -255,16 +269,19 @@ var linkedSection = (function () {
       currentId = button.dataset.product;
       fillProduct(currentId);
       productSheet.open(button);
+      pixel('ViewContent', currentId);
     });
 
     productDialog.querySelector('.sheet__add').addEventListener('click', function () {
       cart.add(currentId, 1);
+      pixel('AddToCart', currentId);
       productSheet.close();
       showToast('Ditambah ke troli');
     });
 
     productDialog.querySelector('.sheet__buy').addEventListener('click', function () {
       cart.add(currentId, 1);
+      pixel('AddToCart', currentId);
       window.location.href = 'checkout.html';
     });
   }

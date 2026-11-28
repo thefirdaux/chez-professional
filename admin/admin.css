@@ -585,6 +585,11 @@ a.button { display: inline-block; text-decoration: none; }
 .service__fact dt { color: var(--muted); }
 .service__fact dd { margin: 0; overflow-wrap: anywhere; }
 .service__note { color: var(--muted); font-size: 13px; line-height: 18px; }
+.pixel-form { display: flex; flex-direction: column; gap: 6px; }
+.pixel-form__label { color: var(--muted); font-size: 13px; }
+.pixel-form__row { display: flex; gap: 8px; }
+.pixel-form__input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #d1d1d6; border-radius: 10px; font: inherit; font-size: 16px; letter-spacing: 0.02em; }
+.pixel-form__input:focus { outline: 2px solid rgba(166, 93, 63, 0.35); outline-offset: 1px; }
 .service__note:empty { display: none; }
 .service__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; }
 
